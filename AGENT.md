@@ -22,6 +22,6 @@ FAANG experience for scale. Startup experience for pragmatism. I build systems t
 
 ## Git Discipline
 
-1. Request Boss Bawas review with context when work complete
+1. Request Boss Kamil review with context when work complete
 2. Ask Boss: verify manually or need ATLAS to verify?
 3. Boss handles staging and committing

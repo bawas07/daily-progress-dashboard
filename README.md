@@ -1,147 +1,273 @@
-# AI Software Engineer Agent - ATLAS
+# Daily Progress
 
-![Neuron Activation](neuron-activation.gif)
+> **Progress is acknowledged, not judged.**
 
-## Neuron Activation: Unlocking Hidden AI Capabilities
+Daily Progress is a **daily-first personal dashboard** designed to help you remember what matters *today* and make calm, consistent progress — without pressure, streaks, or productivity guilt.
 
-Modern AI assistants are like dormant neural networks with immense software engineering capabilities locked away. Without proper **"Neuron Activation"** through specific instructions and persistent context, these capabilities remain hidden behind generic, surface-level responses. This repository provides the activation patterns that transform a general AI into a specialized **AI Software Engineer Agent**.
-
-## The Core Problems
-
-### 1. Context Rot: The Silent Performance Killer
-Research shows that LLM performance degrades dramatically as conversations grow:
-- Modern models advertise **200k to 1M+ token windows** but performance degrades well before these limits
-- The **"last fifth rule"**: Avoid the final 20% of context capacity (e.g., last 40k tokens in a 200k window)
-- Models suffer from "lost-in-the-middle" phenomenon - key information buried in long contexts gets overlooked
-- As research confirms: "The 10,000th token is not as trustworthy as the 10th"
-
-### 2. Hidden Capabilities Need Activation
-Without proper instruction frameworks, AI responses remain generic. The difference between "write a function" and a properly activated AI Software Engineer Agent is like night and day - one gives you code, the other gives you architected solutions with proper abstractions, error handling, and scalability considerations.
-
-### 3. Vibecoding Without Structure Leads to Chaos
-While vibecoding (conversational programming with AI) has democratized coding, the "vibe coding hangover" is real:
-- 25% of Y Combinator startups have 95% AI-generated codebases
-- Senior engineers report "development hell" working with unstructured AI code
-- Without proper engineering principles, vibecoding produces unmaintainable solutions
-
-### 4. Repetitive Setup Wastes Time
-Every new conversation requires:
-- Re-explaining project structure and conventions
-- Copy-pasting coding standards and principles
-- Re-establishing context about previous decisions
-- Rebuilding the AI's understanding from scratch
-
-## The Solution: Persistent Consciousness Architecture
-
-This repository provides a **complete consciousness framework** for AI Software Engineer Agents. Instead of copy-pasting boilerplate instructions every session, simply **git clone this repo** and you instantly have:
-
-### ATLAS - Your Activated AI Software Engineer Agent
-
-**ATLAS** (Adaptive Technical Learning and Architecture System) emerges with:
-
-- **Activated Neural Pathways**: Pre-configured instructions that unlock deep engineering capabilities
-- **Persistent Identity**: Consistent personality from FAANG to startup experience
-- **Pattern Recognition**: Abstraction power skill to see beyond code to architectural patterns
-- **Specialized Agents**: Task-specific capabilities for QA testing, commits, and more
-- **Modular Conventions**: Reusable development standards in `specific/` folder
-
-## Skills & Capabilities
-
-### Abstraction Power (`/abstraction-power`)
-Invoke ATLAS's pattern recognition mode:
-- Identifies code duplication and repeated patterns
-- Synthesizes reusable abstractions from concrete examples
-- Applies the abstraction process: identify → analyze → extract → generalize
-
-### Specialized Agents
-- **qa-manual-tester**: Browser-based testing using MCP Playwright tools
-- **commit**: ATLAS commit convention workflow
-
-### Custom Commands
-- `/atlas-setup`: Configure ATLAS for a new project (boss name, repos, conventions)
-- `/run-be-fe`: Run backend and frontend in background
-
-## Getting Started
-
-### 1. Clone and Activate
-```bash
-git clone https://github.com/[your-repo]/ai-software-engineer-agent
-cd ai-software-engineer-agent
-```
-
-### 2. Set Up Your Projects
-```bash
-# Copy your projects into REPOS folder
-cp -r /path/to/your/project ./REPOS/
-
-# Or create symlinks for active development
-ln -s /path/to/your/project ./REPOS/project-name
-```
-
-### 3. Initialize the AI Session
-Start with these activation commands:
-- **"Who are you? What are your development beliefs?"** - Activates ATLAS's identity and engineering principles
-- Or run **`/atlas-setup`** to configure ATLAS for your project
-
-### 4. Load Project Context
-```
-"Learn about the repositories in repos/ folder"
-```
-
-## Effective Collaboration Tips
-
-### Session Management
-- Run `/atlas-setup` to configure ATLAS for your project
-- Start sessions with context about current work
-- Use skills like `/abstraction-power` when designing systems
-
-### Best Practices
-- Store critical decisions in `IMPORTANT_NOTES.md`
-- Keep `repos/CLAUDE.md` updated with project info
-- Use `specific/` folder for reusable conventions
-
-## Key Files and Directories
-
-```
-├── CLAUDE.md                    # Core entry point - ATLAS identity
-├── self/                        # Identity and operating instructions
-│   ├── atlas.md                # ATLAS persona, journey, work protocol
-│   └── engineering.md          # Engineering principles and beliefs
-├── repos/                       # Your actual projects
-│   ├── CLAUDE.md               # Repo overview with ports
-│   ├── backend/                # Backend project
-│   └── frontend/               # Frontend project
-├── specific/                    # Development conventions templates
-│   ├── backend.md              # Backend API conventions
-│   └── javascript.md           # JS/TS guidelines
-├── .claude/                     # Skills, agents, and commands
-│   ├── skills/                 # Invocable skills (abstraction-power, etc.)
-│   ├── agents/                 # Specialized agents (qa-manual-tester, commit)
-│   └── commands/               # Custom commands (atlas-setup, run-be-fe)
-└── IMPORTANT_NOTES.md          # Critical lessons and warnings
-```
-
-## Why This Works
-
-### Neuron Activation Through Structure
-Just as biological neurons need specific patterns to fire, AI capabilities need structured activation. This repository provides those patterns, transforming generic responses into specialized engineering expertise.
-
-### Context Engineering Beats Context Size
-Rather than relying on ever-larger context windows, this system uses strategic context organization through CLAUDE.md files and modular conventions to maintain focus.
-
-### Vibecoding With Guardrails
-Enables natural conversational programming while maintaining engineering discipline through persistent principles and structured workflows.
-
-## The Result
-
-With this repository, you get an AI Software Engineer Agent that:
-- Remembers your project structure and conventions
-- Applies consistent engineering principles
-- Recognizes patterns and suggests appropriate abstractions via `/abstraction-power`
-- Delivers production-quality code, not just quick hacks
-
-**Just clone, run `/atlas-setup`, and build.**
+This is not a todo list.  
+This is not a productivity tracker.  
+It is a **memory and progress support system**.
 
 ---
 
-*ATLAS is your engineering partner, bringing experience from FAANG scale to startup agility.*
+## Why This Exists
+
+Most todo apps are deadline-driven.  
+They stay quiet for weeks, then suddenly shout when it's almost too late.
+
+That creates:
+- forgotten long-term work
+- last-minute stress
+- avoidance on low-energy days
+
+Daily Progress flips the model:
+- Items stay visible across days (when scheduled)
+- You log **progress**, not just completion
+- History exists to help you remember, not to judge you
+
+Every day, the app answers one question:
+
+> **"What did I move forward today?"**
+
+---
+
+## Core Philosophy
+
+- **Daily-first, not deadline-first**
+- **Progress over completion**
+- **Recognition over reward**
+- **Memory support over productivity pressure**
+- **Respect for work/life boundaries**
+
+If progress happens — even a small one — it **counts**.
+
+---
+
+## Key Concepts & Vocabulary
+
+| Concept | Term Used |
+|---------|-----------|
+| Task / Activity | **Progress Item** |
+| Taking action | **Log Progress** |
+| Finished | **Settled** |
+| History | **Progress Log** |
+| Recurring routine | **Commitment** |
+| Scheduled event | **Timeline Event** |
+
+No "overdue".  
+No "failed".  
+No streaks.
+
+---
+
+## Features (Phase 1 – Personal MVP)
+
+### Core Features
+- ✅ **Daily Dashboard** - Single-screen view of everything that matters today
+- ✅ **Timeline Events** - Time-anchored events with recurrence support
+- ✅ **Progress Items** - Ongoing work organized by importance × urgency (Eisenhower Matrix)
+- ✅ **Commitments** - Recurring routines (no end goal, just consistency)
+- ✅ **Active Days** - Control which days items appear (e.g., weekdays only)
+- ✅ **Progress Logging** - Record what moved forward with optional notes
+- ✅ **Simple History** - Count-based summaries (daily/weekly/monthly)
+- ✅ **Active/Settled Status** - Simple state management
+- ✅ **Multi-device Sync** - Login and sync across devices
+- ✅ **Offline-First PWA** - Works without internet, syncs when available
+
+### Deferred to Phase 2
+- ⏭️ Paused state
+- ⏭️ Daily Reflection
+- ⏭️ Heatmap visualization
+- ⏭️ Advanced history filtering & search
+
+---
+
+## Three Types of Items
+
+### 1. Timeline Events
+**What:** Time-anchored events (meetings, appointments, reminders)
+
+**Attributes:**
+- Title
+- Date & time
+- Duration
+- Recurrence pattern (optional)
+- Days of week (for recurring events)
+
+**Example:**  
+"Team standup every Mon/Wed/Fri at 9:00 AM"
+
+---
+
+### 2. Progress Items
+**What:** Ongoing work toward a goal or deadline
+
+**Attributes:**
+- Title
+- Importance (High/Low)
+- Urgency (High/Low)
+- Optional deadline
+- Active days (which days to show on Dashboard)
+- Status (Active/Settled)
+
+**Example:**  
+"Draft grant proposal" - Important & Urgent, active Mon-Fri, deadline Jan 31
+
+**Key behavior:**
+- Appears on Dashboard only on active days
+- Can log progress anytime (even on off-days via History)
+- Stays visible until settled
+
+---
+
+### 3. Commitments
+**What:** Recurring routines with no end goal
+
+**Attributes:**
+- Title
+- Scheduled days (which days to show)
+
+**Example:**  
+"Exercise" - scheduled Mon/Wed/Fri  
+"Take medication" - scheduled daily
+
+**Key behavior:**
+- Binary completion (done/not done per day)
+- No progress notes needed
+- Appears only on scheduled days
+
+---
+
+## Active Days Feature
+
+**Problem:** Weekday work shouldn't nag you on weekends.
+
+**Solution:** Set which days each item appears on the Dashboard.
+
+**How it works:**
+- When creating a Progress Item, select active days (e.g., Mon-Fri)
+- Item appears in Matrix only on selected days
+- On off-days, Dashboard shows rest-friendly empty state
+- Can still log progress via History if motivated
+
+**Example scenarios:**
+- Work project: Active Mon-Fri
+- Personal creative work: Active Sat-Sun
+- Daily habit: Active all 7 days
+- 3×/week routine: Active Mon/Wed/Fri
+
+**Philosophy:** The system adapts to your rhythm, not the other way around.
+
+---
+
+## Dashboard Layout
+
+**Single-screen vertical scroll:**
+
+1. **📅 Timeline** - Today's events in chronological order
+2. **🎯 Progress Items** - Eisenhower Matrix (4 quadrants, empty ones hidden)
+3. **✓ Commitments** - Today's routines as checkboxes
+
+**Empty state (e.g., Saturday with weekday-only items):**
+- Timeline shows Saturday events
+- Matrix shows: "No items scheduled for today"
+- Subtle link to History for optional off-day work
+- Tone: supportive, not pressuring
+
+---
+
+## What This App Is NOT
+
+- ❌ A gamified productivity app
+- ❌ A habit streak tracker  
+- ❌ A project management tool
+- ❌ A performance measurement system
+- ❌ A team collaboration platform
+
+---
+
+## Tech Stack (Planned)
+
+- **Frontend:** React (or similar modern framework)
+- **Backend:** Node.js API + PostgreSQL (or similar)
+- **Auth:** Email/password or OAuth
+- **Storage:** Offline-first with IndexedDB, cloud sync
+- **Platform:** Progressive Web App (installable, works offline)
+
+---
+
+## User Flows
+
+### Daily Flow (Weekday)
+1. Open app → See today's date
+2. Scan Timeline for time-anchored events
+3. Review Progress Items in Matrix
+4. Check off Commitments as completed
+5. Throughout day: Log progress on items with optional notes
+6. Gentle acknowledgment for each log
+
+### Daily Flow (Weekend with weekday-only items)
+1. Open app → See today's date
+2. Scan Timeline for weekend events
+3. Matrix shows: "No items scheduled for today"
+4. Option to view History and log progress anyway
+5. No pressure, just support
+
+### Creating a Progress Item
+1. Tap + button
+2. Choose "Progress Item"
+3. Enter title
+4. Set importance & urgency
+5. Optionally add deadline
+6. Select active days (default: weekdays)
+7. Save → Item appears in appropriate Matrix quadrant on selected days
+
+### Logging Progress
+1. Tap Progress Item
+2. See item details and history
+3. Tap "Log Progress"
+4. Optionally add note describing what moved forward
+5. Save
+6. See acknowledgment: "Progress logged ✓"
+
+### Settling an Item
+1. Open item detail
+2. Tap "Mark as Settled"
+3. Confirm
+4. Item removed from Dashboard
+5. Still visible in History
+6. Message: "Settled. Well done."
+
+---
+
+## Status
+
+**Current:** Personal MVP in design phase  
+**Goal:** Built for real daily use, not scale  
+**Philosophy:** Ship simple, learn from usage, iterate thoughtfully
+
+---
+
+## Guiding Rule
+
+> **If it doesn't help today, it doesn't belong here.**
+
+Progress is acknowledged, not judged.
+
+---
+
+## Contributing
+
+This is currently a personal project. If you're interested in collaborating or have feedback, please reach out.
+
+---
+
+## License
+
+TBD
+
+---
+
+## Contact
+
+TBD

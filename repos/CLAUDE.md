@@ -1,2 +1,2 @@
-backend at @repos/backend (port xxxx)
-frontend at @repos/frontend (port yyyy)
+backend at @repos/backend (port 3000)
+frontend at @repos/frontend (port 5173)
