@@ -186,13 +186,61 @@ No streaks.
 
 ---
 
-## Tech Stack (Planned)
+## Tech Stack
 
-- **Frontend:** React (or similar modern framework)
-- **Backend:** Node.js API + PostgreSQL (or similar)
-- **Auth:** Email/password or OAuth
-- **Storage:** Offline-first with IndexedDB, cloud sync
-- **Platform:** Progressive Web App (installable, works offline)
+### Frontend
+- **Framework:** Vue 3 with TypeScript and Composition API
+- **Build Tool:** Vite
+- **Routing:** Vue Router v4 with navigation guards
+- **State Management:** Pinia for global state
+- **Styling:** Tailwind CSS with CSS variables (shadcn pattern)
+- **Forms:** VueUse for form handling and validation
+- **Offline Storage:** IndexedDB with Dexie.js
+- **Icons:** Lucide Vue Next
+- **Testing:** Vitest + Vue Test Utils + Playwright for E2E
+- **PWA:** Vite PWA plugin for offline capabilities
+
+### Backend
+- **Runtime:** Bun (JavaScript/TypeScript runtime and package manager)
+- **Framework:** Hono (lightweight web framework)
+- **Database:** PostgreSQL with Prisma ORM
+- **Cache:** Redis for performance optimization
+- **Authentication:** JWT with bcrypt password hashing
+- **Validation:** Zod for request/response validation
+- **Logging:** Winston for structured logging
+- **Testing:** Bun test runner with TDD approach
+
+### Architecture
+- **Frontend:** Feature-based folder structure with composables
+- **Backend:** Modular architecture with dependency injection
+- **API:** RESTful endpoints with standardized response format
+- **Offline-First:** PWA with sync queue for offline actions
+- **Development:** Test-driven development (TDD) for all features
+
+### Development Commands
+
+```bash
+# Frontend Development
+cd repos/frontend
+bun install
+bun run dev        # Start development server
+bun run build      # Build for production
+bun run preview    # Preview production build
+bun run test       # Run unit tests
+bun run test:e2e   # Run E2E tests
+
+# Backend Development
+cd repos/backend
+bun install
+bun run dev        # Start development server
+bun test           # Run tests
+bun test --coverage # Run tests with coverage
+bunx prisma migrate dev  # Database migrations
+bunx prisma generate     # Generate Prisma client
+
+# Start databases (PostgreSQL + Redis)
+docker-compose up -d
+```
 
 ---
 

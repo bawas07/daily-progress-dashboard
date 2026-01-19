@@ -1,0 +1,173 @@
+# =============================================
+# Daily Progress - .gitignore
+# =============================================
+
+# =============================================
+# OS Files
+# =============================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+*~
+
+# =============================================
+# IDE and Editor Files
+# =============================================
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+.vs/
+
+# =============================================
+# Node.js / Bun / Package Managers
+# =============================================
+node_modules/
+.bun/
+bun.lockb
+yarn-error.log
+yarn-debug.log
+npm-debug.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# =============================================
+# Build Outputs and Compiled Files
+# =============================================
+dist/
+dist-ssr/
+*.local
+.output/
+*.tsbuildinfo
+
+# =============================================
+# Vite / Vue Build
+# =============================================
+.vite/
+.cache/
+*.cache
+*.tsbuildinfo
+
+# =============================================
+# Environment Variables
+# =============================================
+.env
+.env.local
+.env.*.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# =============================================
+# Database
+# =============================================
+*.db
+*.sqlite
+*.sqlite3
+prisma/migrations/*.db
+prisma/migrations/*.sqlite
+
+# =============================================
+# Logs
+# =============================================
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+bun-debug.log*
+bun-error.log*
+
+# =============================================
+# Test Coverage and Reports
+# =============================================
+coverage/
+.nyc_output/
+*.lcov
+html-report/
+
+# =============================================
+# Temporary Files
+# =============================================
+tmp/
+temp/
+*.tmp
+*.temp
+*.swp
+*.swn
+*.swm
+
+# =============================================
+# Secrets and Certificates
+# =============================================
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+secrets/
+credentials/
+
+# =============================================
+# OS-specific ignores
+# =============================================
+# Linux
+*~ 
+.*.swp
+.*.swo
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# =============================================
+# MacOS
+# =============================================
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# =============================================
+# Debug and Profiling
+# =============================================
+*.trace
+*.profile
+*.perf
+npm-debug.log*
+yarn-debug.log*
+node_modules/.cache/
+
+# =============================================
+# Documentation Build
+# =============================================
+docs/.vuepress/dist/
+docs/.vuepress/cache/
+
+# =============================================
+# Backup Files
+# =============================================
+*.bak
+*.backup
+*.orig
+*.rej
+*~
+.#*
+.#*
+
+# =============================================
+# Misc
+# =============================================
+*.pid
+*.seed
+*.pid.lock
+.kiro
