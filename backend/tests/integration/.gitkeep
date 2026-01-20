@@ -1,0 +1,22 @@
+// Integration tests directory
+// Tests module interactions with real dependencies
+
+/**
+ * Example integration test structure:
+ * 
+ * import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+ * 
+ * describe('Database Integration', () => {
+ *   beforeAll(async () => {
+ *     // Setup test database connection
+ *   });
+ *   
+ *   afterAll(async () => {
+ *     // Cleanup
+ *   });
+ *   
+ *   it('should create and retrieve user', async () => {
+ *     // Integration test with real database
+ *   });
+ * });
+ */

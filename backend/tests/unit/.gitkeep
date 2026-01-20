@@ -1,0 +1,32 @@
+// Unit tests directory
+// Add .test.ts files here following TDD pattern
+// 1. Write failing test
+// 2. Implement code to pass test
+// 3. Refactor
+
+/**
+ * Example test structure:
+ * 
+ * import { describe, it, expect, beforeEach } from 'vitest';
+ * import { MockContainer, createMockedContainer } from '../setup/mocks/mock-container';
+ * 
+ * describe('AuthService', () => {
+ *   let mockContainer: MockContainer;
+ *   
+ *   beforeEach(() => {
+ *     mockContainer = createMockedContainer();
+ *   });
+ *   
+ *   it('should authenticate user with valid credentials', async () => {
+ *     // Arrange
+ *     const authService = mockContainer.get('AuthService');
+ *     
+ *     // Act
+ *     const result = await authService.login('test@test.com', 'password123');
+ *     
+ *     // Assert
+ *     expect(result).toBeDefined();
+ *     expect(result.token).toBeDefined();
+ *   });
+ * });
+ */
