@@ -1,0 +1,113 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  name         String
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  lastLogin    DateTime? @map("last_login")
+
+  preferences    UserPreferences?
+  progressItems  ProgressItem[]
+  commitments    Commitment[]
+  timelineEvents TimelineEvent[]
+
+  @@map("users")
+}
+
+model UserPreferences {
+  id                  String   @id @default(cuid())
+  userId              String   @unique @map("user_id")
+  defaultActiveDays   Json     @default("[\"mon\",\"tue\",\"wed\",\"thu\",\"fri\"]") @map("default_active_days")
+  theme               String   @default("auto")
+  timezone            String   @default("UTC")
+  enableNotifications Boolean  @default(true) @map("enable_notifications")
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_preferences")
+}
+
+model ProgressItem {
+  id          String   @id @default(cuid())
+  userId      String   @map("user_id")
+  title       String
+  importance  String
+  urgency     String
+  deadline    DateTime?
+  activeDays  Json     @map("active_days")
+  status      String   @default("active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  logs ProgressLog[]
+
+  @@map("progress_items")
+}
+
+model ProgressLog {
+  id             String   @id @default(cuid())
+  progressItemId String   @map("progress_item_id")
+  loggedAt       DateTime @map("logged_at")
+  note           String?
+  isOffDay       Boolean  @default(false) @map("is_off_day")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  progressItem ProgressItem @relation(fields: [progressItemId], references: [id], onDelete: Cascade)
+
+  @@map("progress_logs")
+}
+
+model Commitment {
+  id            String   @id @default(cuid())
+  userId        String   @map("user_id")
+  title         String
+  scheduledDays Json     @map("scheduled_days")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  logs CommitmentLog[]
+
+  @@map("commitments")
+}
+
+model CommitmentLog {
+  id           String   @id @default(cuid())
+  commitmentId String   @map("commitment_id")
+  completedAt  DateTime @map("completed_at")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  commitment Commitment @relation(fields: [commitmentId], references: [id], onDelete: Cascade)
+
+  @@map("commitment_logs")
+}
+
+model TimelineEvent {
+  id                String    @id @default(cuid())
+  userId            String    @map("user_id")
+  title             String
+  startTime         DateTime  @map("start_time")
+  durationMinutes   Int       @default(30) @map("duration_minutes")
+  recurrencePattern String?   @map("recurrence_pattern")
+  daysOfWeek        Json?     @map("days_of_week")
+  status            String    @default("active")
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("timeline_events")
+}

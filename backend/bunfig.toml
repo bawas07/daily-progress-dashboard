@@ -1,0 +1,7 @@
+[dev]
+splitting = false
+sourcemap = "inline"
+transform = ["typescript"]
+
+[test]
+sourcemap = "inline"
