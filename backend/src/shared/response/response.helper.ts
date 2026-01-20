@@ -1,4 +1,5 @@
 import type { SuccessResponse, ErrorResponse, PaginatedResponse } from './response.types';
+import { ResponseCodes } from './response.types';
 
 /**
  * Create a standardized success response
@@ -40,7 +41,7 @@ export function createErrorResponse(
 export function createPaginatedResponse<T>(
   code: `S${string}`,
   message: string,
-  data: T[],
+  items: T[],
   pagination: {
     total: number;
     perPage: number;
@@ -50,7 +51,7 @@ export function createPaginatedResponse<T>(
 ): PaginatedResponse<T> {
   return {
     data: {
-      data,
+      data: items,
       pagination,
     },
     message,
@@ -62,7 +63,7 @@ export function createPaginatedResponse<T>(
  * Helper to create a not found error response
  */
 export function notFound(message: string = 'Resource not found'): ErrorResponse {
-  return createErrorResponse('E003', message);
+  return createErrorResponse(ResponseCodes.NOT_FOUND, message);
 }
 
 /**
@@ -72,19 +73,19 @@ export function validationError(
   details: Record<string, string[]>,
   field?: string
 ): ErrorResponse {
-  return createErrorResponse('E001', 'Validation failed', details, field);
+  return createErrorResponse(ResponseCodes.VALIDATION_ERROR, 'Validation failed', details, field);
 }
 
 /**
  * Helper to create an unauthorized error response
  */
 export function unauthorized(message: string = 'Unauthorized'): ErrorResponse {
-  return createErrorResponse('E002', message);
+  return createErrorResponse(ResponseCodes.AUTH_ERROR, message);
 }
 
 /**
  * Helper to create a server error response
  */
 export function serverError(message: string = 'Internal server error'): ErrorResponse {
-  return createErrorResponse('E004', message);
+  return createErrorResponse(ResponseCodes.SERVER_ERROR, message);
 }

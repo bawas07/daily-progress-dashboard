@@ -3,12 +3,7 @@ import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 import { env } from './shared/config/env';
 import { logger as winstonLogger } from './shared/logger/logger.service';
-import { container } from './shared/container';
-import { JwtService } from './shared/jwt/jwt.service';
 import { createSuccessResponse, notFound } from './shared/response/response.helper';
-
-// Register services in container
-container.register('JwtService', JwtService);
 
 export const app = new Hono<{Bindings: typeof env}>();
 
@@ -48,5 +43,5 @@ app.notFound((c) => {
 
 winstonLogger.info('Hono app initialized with modular architecture', {
   env: env.NODE_ENV,
-  services: ['JwtService'],
+  services: ['JwtService', 'DatabaseService'],
 });

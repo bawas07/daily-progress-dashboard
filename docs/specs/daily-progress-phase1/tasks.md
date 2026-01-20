@@ -5,6 +5,7 @@
   - Set up Prisma schema (no Docker, user provides PostgreSQL)
   - Configure Prisma with database schema (no migrations yet)
   - Set up basic project structure with modular architecture
+  - Fix code review issues (type safety, side-effects, error codes)
   - _Requirements: 1.1, 8.1_
 
 - [x] 1.1 Backend Project Initialization
@@ -19,16 +20,38 @@
   - Set up database connection
   - _Requirements: 1.1, 3.1, 5.1, 6.1_
 
-- [ ] 1.3 Modular Architecture Foundation
-  - Create module system with dependency injection container
-  - Implement base classes for controllers, services, and repositories
-  - Set up shared modules (Database, JWT, Logger, Response helpers)
+- [x] 1.3 Modular Architecture Foundation
+  - Create module system with simple service locator container
+  - Implement shared modules (Database, JWT, Logger, Response helpers)
+  - Set up validation middleware and common schemas
   - _Requirements: 1.1_
 
-- [ ] 1.4 Development Tooling Setup
+- [x] 1.4 Development Tooling Setup
   - Configure Bun test runner and coverage reporting
   - Set up linting (ESLint) and formatting (Prettier)
   - Create development scripts and hot reload configuration
+  - _Requirements: 1.1_
+
+- [x] 1.5 Testing Tools Setup
+  - Configure Vitest with coverage thresholds
+  - Create test utilities (mock container, database mock, JWT mock)
+  - Set up test setup file with fake timers and isolation
+  - _Requirements: 1.1_
+
+- [x] 1.6 Code Review Fixes
+  - Fix side-effect registration pattern (create registry.ts)
+  - Improve container type safety (use unknown instead of any)
+  - Fix JWT verify return type (typed result instead of null)
+  - Use consistent error codes (constants instead of hardcoded)
+  - Fix database logging in production (conditional logging)
+  - Extract duplicated validation error formatting code
+  - Rename paginated response parameter for clarity
+  - _Requirements: 1.1_
+
+- [ ] 1.7 Final Type Safety Improvements
+  - Change Constructor args from any[] to unknown[]
+  - Change ApiResponse data generic from any to unknown
+  - Change logger meta parameter from any to Record<string, unknown>
   - _Requirements: 1.1_
 
 - [ ] 2. Authentication System (TDD)

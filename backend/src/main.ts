@@ -1,12 +1,13 @@
-import { Hono } from 'hono';
-import { cors } from 'hono/cors';
-import { logger as honoLogger } from 'hono/logger';
 import { app } from './app';
 import { env } from './shared/config/env';
 import { logger as winstonLogger } from './shared/logger/logger.service';
+import { registerServices } from './shared/registry';
 
 // Import env early to validate
 import './shared/config/env';
+
+// Register all services (called again for safety, but idempotent due to container check)
+registerServices();
 
 console.log('🚀 Starting Daily Progress Backend...');
 console.log(`📍 Environment: ${env.NODE_ENV}`);

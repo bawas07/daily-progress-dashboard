@@ -1,7 +1,19 @@
-import { ZodSchema, ZodError } from 'zod';
-import { Context, Next } from 'hono';
+import type { ZodSchema, ZodError } from 'zod';
+import type { Context, Next } from 'hono';
 import { createErrorResponse, validationError } from '../response/response.helper';
 import { logger } from '../logger/logger.service';
+
+/**
+ * Format Zod validation errors into a structured format
+ */
+function formatZodErrors(error: ZodError): Record<string, string[]> {
+  const errors: Record<string, string[]> = {};
+  const fieldErrors = error.flatten().fieldErrors;
+  for (const [key, value] of Object.entries(fieldErrors)) {
+    errors[key] = Array.isArray(value) ? value : [];
+  }
+  return errors;
+}
 
 /**
  * Create a Hono middleware for Zod validation
@@ -13,19 +25,13 @@ export function validateRequest<T>(schema: ZodSchema<T>) {
   return async (c: Context, next: Next): Promise<Response | void> => {
     try {
       // Parse request body
-      const body = await c.req.json();
+      const body = await c.req.json() as T;
 
       // Validate against schema
       const result = schema.safeParse(body);
 
       if (!result.success) {
-        // Format Zod errors
-        const errors: Record<string, string[]> = {};
-        const fieldErrors = result.error.flatten().fieldErrors;
-        for (const [key, value] of Object.entries(fieldErrors)) {
-          errors[key] = Array.isArray(value) ? value : [];
-        }
-
+        const errors = formatZodErrors(result.error);
         logger.debug('Validation failed', { errors });
         return c.json(validationError(errors), 400);
       }
@@ -36,11 +42,7 @@ export function validateRequest<T>(schema: ZodSchema<T>) {
       await next();
     } catch (error) {
       if (error instanceof ZodError) {
-        const errors: Record<string, string[]> = {};
-        const fieldErrors = error.flatten().fieldErrors;
-        for (const [key, value] of Object.entries(fieldErrors)) {
-          errors[key] = Array.isArray(value) ? value : [];
-        }
+        const errors = formatZodErrors(error);
         return c.json(validationError(errors), 400);
       }
 
@@ -65,11 +67,7 @@ export function validateQuery<T>(schema: ZodSchema<T>) {
       const result = schema.safeParse(query);
 
       if (!result.success) {
-        const errors: Record<string, string[]> = {};
-        const fieldErrors = result.error.flatten().fieldErrors;
-        for (const [key, value] of Object.entries(fieldErrors)) {
-          errors[key] = Array.isArray(value) ? value : [];
-        }
+        const errors = formatZodErrors(result.error);
         return c.json(validationError(errors), 400);
       }
 

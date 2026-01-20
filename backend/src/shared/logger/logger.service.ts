@@ -13,7 +13,8 @@ const consoleFormat = winston.format.combine(
   winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
   winston.format.colorize(),
   winston.format.errors({ stack: true }),
-  winston.format.printf(({ timestamp, level, message, ...meta }) => {
+  winston.format.printf((info) => {
+    const { timestamp, level, message, ...meta } = info as { timestamp: string; level: string; message: string; [key: string]: unknown };
     const metaStr = Object.keys(meta).length ? JSON.stringify(meta) : '';
     return `${timestamp} [${level}]: ${message} ${metaStr}`;
   })
@@ -38,14 +39,14 @@ export type { Logger };
 
 
 // Convenience methods
-export const logError = (message: string, meta?: Record<string, any>) =>
+export const logError = (message: string, meta?: Record<string, unknown>) =>
   logger.error(message, meta);
 
-export const logWarn = (message: string, meta?: Record<string, any>) =>
+export const logWarn = (message: string, meta?: Record<string, unknown>) =>
   logger.warn(message, meta);
 
-export const logInfo = (message: string, meta?: Record<string, any>) =>
+export const logInfo = (message: string, meta?: Record<string, unknown>) =>
   logger.info(message, meta);
 
-export const logDebug = (message: string, meta?: Record<string, any>) =>
+export const logDebug = (message: string, meta?: Record<string, unknown>) =>
   logger.debug(message, meta);

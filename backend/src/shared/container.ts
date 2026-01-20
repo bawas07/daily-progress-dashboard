@@ -9,11 +9,11 @@
  *   const db = container.resolve<DatabaseService>('DatabaseService');
  */
 
-type Constructor<T> = new (...args: any[]) => T;
+type Constructor<T = unknown> = new (...args: unknown[]) => T;
 
 export class Container {
-  private factories = new Map<string, Constructor<any>>();
-  private instances = new Map<string, any>();
+  private factories = new Map<string, Constructor>();
+  private instances = new Map<string, unknown>();
 
   /**
    * Register a service factory
@@ -28,10 +28,10 @@ export class Container {
   /**
    * Resolve a service (creates instance if needed)
    */
-  resolve<T>(name: string): T {
+  resolve<T = unknown>(name: string): T {
     // Return existing instance
     if (this.instances.has(name)) {
-      return this.instances.get(name);
+      return this.instances.get(name) as T;
     }
 
     // Create new instance
@@ -43,7 +43,7 @@ export class Container {
     // Create instance with container as first argument (for dependency injection)
     const instance = new Factory(this);
     this.instances.set(name, instance);
-    return instance;
+    return instance as T;
   }
 
   /**
@@ -68,4 +68,11 @@ export const container = new Container();
 // Type helper for services that need container access
 export interface HasContainer {
   container: Container;
+}
+
+/**
+ * Type-safe resolve for known services
+ */
+export function resolveService<T>(name: string, containerInstance: Container): T {
+  return containerInstance.resolve<T>(name);
 }

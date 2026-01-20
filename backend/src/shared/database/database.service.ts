@@ -1,12 +1,18 @@
 import { PrismaClient } from '@prisma/client';
 import { logger } from '../logger/logger.service';
+import { env } from '../config/env';
 
 export class DatabaseService {
   private prisma: PrismaClient;
 
   constructor() {
+    // Only log queries in development to avoid performance/security issues in production
+    const logOptions = env.NODE_ENV === 'development'
+      ? ['query', 'info', 'warn', 'error']
+      : ['error'];
+
     this.prisma = new PrismaClient({
-      log: ['query', 'info', 'warn', 'error'],
+      log: logOptions,
     });
   }
 
