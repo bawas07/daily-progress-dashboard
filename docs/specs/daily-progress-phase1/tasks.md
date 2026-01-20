@@ -1,22 +1,22 @@
 # Implementation Plan
 
-- [ ] 1. Project Setup and Infrastructure
+- [x] 1. Project Setup and Infrastructure
   - Initialize Bun project with TypeScript configuration
-  - Set up development environment with Docker for PostgreSQL and Redis
-  - Configure Prisma with database schema and migrations
+  - Set up Prisma schema (no Docker, user provides PostgreSQL)
+  - Configure Prisma with database schema (no migrations yet)
   - Set up basic project structure with modular architecture
   - _Requirements: 1.1, 8.1_
 
-- [ ] 1.1 Backend Project Initialization
+- [x] 1.1 Backend Project Initialization
   - Create Bun project with package.json and TypeScript config
   - Install core dependencies: Hono, Prisma, bcrypt, JWT, Zod, Winston
-  - Set up environment configuration and Docker Compose for databases
+  - Set up environment configuration (no Docker, user provides PostgreSQL)
   - _Requirements: 1.1, 8.1_
 
-- [ ] 1.2 Database Schema Implementation
+- [x] 1.2 Database Schema Implementation
   - Implement Prisma schema based on design document
-  - Create and run initial database migrations
-  - Set up database connection and basic CRUD operations
+  - Create database service wrapper (no migrations yet)
+  - Set up database connection
   - _Requirements: 1.1, 3.1, 5.1, 6.1_
 
 - [ ] 1.3 Modular Architecture Foundation
