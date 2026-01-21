@@ -54,21 +54,21 @@
   - Change logger meta parameter from any to Record<string, unknown>
   - _Requirements: 1.1_
 
-- [ ] 2. Authentication System (TDD)
+- [ ] 2. Authentication System (TDD) IN PROGRESS
   - Implement user registration and login with JWT authentication
   - Create password hashing and validation
   - Set up authentication middleware for protected routes
   - Build user preferences management
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 9.1, 9.2, 9.3_
 
-- [ ] 2.1 User Model and Repository (TDD)
+- [x] 2.1 User Model and Repository (TDD)
   - Write failing tests for User repository CRUD operations
   - Implement User repository with Prisma for database operations
   - Write failing tests for password hashing and validation
   - Implement secure password handling with bcrypt
   - _Requirements: 1.1, 1.2_
 
-- [ ] 2.2 Authentication Service (TDD)
+- [x] 2.2 Authentication Service (TDD)
   - Write failing tests for user registration logic
   - Implement user registration with email validation and password requirements
   - Write failing tests for login authentication
@@ -101,6 +101,20 @@
   - Test registration → login → protected route access
   - Test error scenarios and edge cases
   - _Requirements: 1.1, 1.2, 1.3, 10.1, 10.2_
+
+- [ ] 2.7 JWT Refresh Token Implementation
+  - Create RefreshToken model in Prisma schema
+  - Implement RefreshToken repository (create, validate, revoke)
+  - Write failing tests for refresh token generation and validation
+  - Implement token rotation for security
+  - _Requirements: 1.1, 9.1_
+
+- [ ] 2.8 Refresh Token Endpoints (TDD)
+  - Write failing tests for POST /api/auth/refresh endpoint
+  - Implement refresh endpoint to exchange token for new access token
+  - Write failing tests for POST /api/auth/revoke endpoint
+  - Implement logout with refresh token revocation
+  - _Requirements: 1.1, 1.2, 1.3_
 
 - [ ] 3. Progress Items Module (TDD)
   - Implement Progress Items with Eisenhower Matrix categorization
@@ -368,21 +382,21 @@
   - Test error response format consistency
   - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.5_
 
-- [ ] 10. Frontend Vue.js Application Setup
+- [ ] 10. Frontend Vue.js Application Setup ✅ PARTIALLY COMPLETE
   - Initialize Vue 3 project with TypeScript and Vite
   - Set up PWA configuration and offline capabilities
   - Configure routing, state management, and styling
   - Create basic project structure and development environment
   - _Requirements: 2.1, 8.1_
 
-- [ ] 10.1 Frontend Project Initialization
+- [x] 10.1 Frontend Project Initialization
   - Create Vue 3 project with Vite and TypeScript
   - Install dependencies: Vue Router, Pinia, VueUse, Tailwind CSS
   - Set up PWA configuration with Vite PWA plugin
   - Configure development environment and build scripts
   - _Requirements: 2.1, 8.1_
 
-- [ ] 10.2 Frontend Architecture Setup
+- [x] 10.2 Frontend Architecture Setup
   - Create modular folder structure for components, composables, and services
   - Set up Vue Router with authentication guards
   - Configure Pinia stores for state management
@@ -405,9 +419,9 @@
 
 - [ ] 11. Authentication Frontend (TDD)
   - Implement login and registration forms with validation
-  - Create authentication state management
+  - Create authentication state management with token refresh
   - Build route guards and session handling
-  - Set up token storage and automatic refresh
+  - Set up token storage, automatic refresh, and revocation
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5_
 
 - [ ] 11.1 Authentication Components (TDD)
@@ -424,17 +438,32 @@
   - Implement secure token storage with automatic expiration handling
   - _Requirements: 1.1, 1.4, 1.5_
 
-- [ ] 11.3 Authentication Guards (TDD)
+- [ ] 11.3 Token Refresh Service (TDD)
+  - Write failing tests for automatic token refresh logic
+  - Implement token refresh service with interceptor
+  - Write failing tests for 401 handling and retry flow
+  - Implement automatic token refresh on expiration
+  - _Requirements: 1.1, 1.4, 1.5_
+
+- [ ] 11.4 Logout and Token Revocation (TDD)
+  - Write failing tests for logout functionality
+  - Implement logout with server-side token revocation
+  - Write failing tests for clearing all tokens
+  - Implement proper cleanup on logout (local + server)
+  - _Requirements: 1.1, 1.2, 1.3_
+
+- [ ] 11.5 Authentication Guards (TDD)
   - Write failing tests for route protection logic
   - Implement Vue Router guards for protected routes
   - Write failing tests for automatic redirect handling
   - Implement login redirect and session restoration
   - _Requirements: 1.4, 1.5_
 
-- [ ] 11.4 Authentication Integration Tests
+- [ ] 11.6 Authentication Integration Tests
   - Write E2E tests for complete authentication flow
   - Test login → dashboard → logout → login again
   - Test registration → automatic login → dashboard access
+  - Test token refresh and session persistence
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5_
 
 - [ ] 12. Dashboard Frontend (TDD)

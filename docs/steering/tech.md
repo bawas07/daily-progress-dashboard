@@ -11,6 +11,34 @@
 - **Logging**: Winston for structured logging
 - **Testing**: Bun test runner with TDD approach
 
+## JWT Authentication
+
+### Token Configuration
+
+- **Algorithm**: HS256
+- **Token Lifetime**: 7 days (initial implementation)
+- **Secret**: Stored in environment variable `JWT_SECRET`
+- **Payload**: `{ sub: userId, email, iat, exp }`
+
+### Token Storage (Frontend)
+
+- **Phase 1**: Stored in localStorage for simplicity
+- **Production Enhancement**: HTTP-only cookies recommended
+
+### Password Security
+
+- **Hashing**: bcrypt with 10 salt rounds
+- **Requirements**: 8+ chars, uppercase, lowercase, number, special character
+
+### Refresh Tokens
+
+**Documentation**: See `docs/enhancements/jwt-refresh-token.md` for planned implementation of:
+
+- Short-lived access token (15 min)
+- Long-lived refresh token (7 days)
+- Refresh token rotation
+- Token revocation
+
 ## Frontend Stack
 
 - **Framework**: Vue 3 with TypeScript and Composition API
@@ -34,6 +62,7 @@
 ## Development Commands
 
 ### Backend Development
+
 ```bash
 # Install dependencies
 bun install
@@ -54,6 +83,7 @@ bunx prisma studio
 ```
 
 ### Frontend Development
+
 ```bash
 # Install dependencies
 bun install
@@ -75,6 +105,7 @@ bun run test:e2e
 ```
 
 ### Docker Development
+
 ```bash
 # Start databases (PostgreSQL + Redis)
 docker-compose up -d
@@ -99,7 +130,7 @@ docker-compose logs -f
 ## API Conventions
 
 - **Base URL**: `/api/`
-- **Authentication**: JWT tokens in HTTP-only cookies
+- **Authentication**: Bearer token in Authorization header
 - **Response Format**: `{ data: {...} }` for success, `{ error: {...} }` for errors
 - **Status Codes**: Standard HTTP codes (200, 201, 400, 401, 404, 500)
 - **Validation**: Zod schemas for all request/response validation
