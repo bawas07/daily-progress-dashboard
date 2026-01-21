@@ -9,20 +9,20 @@
  *   const db = container.resolve<DatabaseService>('DatabaseService');
  */
 
-type Constructor<T = unknown> = new (...args: unknown[]) => T;
+type Constructor<T, TArgs extends unknown[] = []> = new (...args: TArgs) => T;
 
 export class Container {
-  private factories = new Map<string, Constructor>();
+  private factories = new Map<string, Constructor<unknown, [Container]>>();
   private instances = new Map<string, unknown>();
 
   /**
    * Register a service factory
    */
-  register<T>(name: string, Factory: Constructor<T>): void {
+  register<T>(name: string, Factory: Constructor<T, [Container]>): void {
     if (this.factories.has(name)) {
       throw new Error(`Service ${name} already registered`);
     }
-    this.factories.set(name, Factory);
+    this.factories.set(name, Factory as Constructor<unknown, [Container]>);
   }
 
   /**

@@ -11,6 +11,8 @@
 import { container } from './container';
 import { JwtService } from './jwt/jwt.service';
 import { DatabaseService } from './database/database.service';
+import { UserRepository } from '../modules/auth/repositories/user.repository';
+import { UserPreferencesRepository } from '../modules/auth/repositories/user.preferences.repository';
 // LoggerService is a singleton instance, not a class, so we don't register it
 
 // Track if services have been registered to prevent duplicate registration
@@ -26,6 +28,10 @@ export function registerServices(): void {
   // Services with no dependencies first
   container.register('DatabaseService', DatabaseService);
   container.register('JwtService', JwtService);
+
+  // Repositories (depend on DatabaseService)
+  container.register('UserRepository', UserRepository);
+  container.register('UserPreferencesRepository', UserPreferencesRepository);
 
   servicesRegistered = true;
   console.log('Services registered in container');
