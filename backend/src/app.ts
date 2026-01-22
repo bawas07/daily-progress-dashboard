@@ -4,12 +4,23 @@ import { logger } from 'hono/logger';
 import { env } from './shared/config/env';
 import { logger as winstonLogger } from './shared/logger/logger.service';
 import { createSuccessResponse, notFound } from './shared/response/response.helper';
+import { container } from './shared/registry';
+import { AuthController, AuthService } from './modules/auth';
 
 export const app = new Hono<{Bindings: typeof env}>();
 
 // Global middleware
 app.use('*', cors());
 app.use('*', logger());
+
+// Resolve services from container
+const authService = container.resolve<AuthService>('AuthService');
+const authController = new AuthController();
+
+// Set up auth routes with authService injected
+app.post('/api/auth/login', authController.login(authService));
+app.post('/api/auth/register', authController.register(authService));
+app.get('/api/auth/me', authController.getMe(authService));
 
 // Health check endpoint
 app.get('/health', (c) => {

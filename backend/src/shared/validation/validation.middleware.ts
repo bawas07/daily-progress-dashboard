@@ -1,4 +1,4 @@
-import type { ZodSchema, ZodError } from 'zod';
+import { ZodSchema, ZodError } from 'zod';
 import type { Context, Next } from 'hono';
 import { createErrorResponse, validationError } from '../response/response.helper';
 import { logger } from '../logger/logger.service';

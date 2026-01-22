@@ -7,7 +7,8 @@ export class DatabaseService {
 
   constructor() {
     // Only log queries in development to avoid performance/security issues in production
-    const logOptions = env.NODE_ENV === 'development'
+    // Using type assertion for Prisma's log option which accepts ('query' | 'info' | 'warn' | 'error')[]
+    const logOptions: ('query' | 'info' | 'warn' | 'error')[] = env.NODE_ENV === 'development'
       ? ['query', 'info', 'warn', 'error']
       : ['error'];
 

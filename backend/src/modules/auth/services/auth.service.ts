@@ -3,6 +3,7 @@ import { UserPreferencesRepository } from '../repositories/user.preferences.repo
 import { PasswordService } from './password.service';
 import { JwtService } from '../../../shared/jwt/jwt.service';
 import { logger } from '../../../shared/logger/logger.service';
+import { Container, resolveService } from '../../../shared/container';
 
 /**
  * Custom error class for authentication failures
@@ -75,12 +76,40 @@ export interface LoginResult {
 }
 
 export class AuthService {
+  private userRepository: UserRepository;
+  private preferencesRepository: UserPreferencesRepository;
+  private passwordService: PasswordService;
+  private jwtService: JwtService;
+
+  /**
+   * Constructor accepting dependencies directly (for testing) or via Container (for production)
+   *
+   * @param containerOrUserRepo - Either a Container instance (production) or UserRepository (testing)
+   * @param preferencesRepository - UserPreferencesRepository (optional, only when passing mocks directly)
+   * @param passwordService - PasswordService (optional, only when passing mocks directly)
+   * @param jwtService - JwtService (optional, only when passing mocks directly)
+   */
   constructor(
-    private userRepository: UserRepository,
-    private preferencesRepository: UserPreferencesRepository,
-    private passwordService: PasswordService,
-    private jwtService: JwtService
-  ) {}
+    containerOrUserRepo: Container | UserRepository,
+    preferencesRepository?: UserPreferencesRepository,
+    passwordService?: PasswordService,
+    jwtService?: JwtService
+  ) {
+    // Check if first argument is a Container or direct dependencies
+    if (containerOrUserRepo instanceof Container) {
+      // Production: use container to resolve dependencies
+      this.userRepository = resolveService<UserRepository>('UserRepository', containerOrUserRepo);
+      this.preferencesRepository = resolveService<UserPreferencesRepository>('UserPreferencesRepository', containerOrUserRepo);
+      this.passwordService = resolveService<PasswordService>('PasswordService', containerOrUserRepo);
+      this.jwtService = resolveService<JwtService>('JwtService', containerOrUserRepo);
+    } else {
+      // Testing: use provided dependencies directly
+      this.userRepository = containerOrUserRepo;
+      this.preferencesRepository = preferencesRepository!;
+      this.passwordService = passwordService!;
+      this.jwtService = jwtService!;
+    }
+  }
 
   /**
    * Register a new user
@@ -128,7 +157,7 @@ export class AuthService {
         lastLogin: user.lastLogin,
       },
       preferences: {
-        defaultActiveDays: preferences.defaultActiveDays,
+        defaultActiveDays: preferences.defaultActiveDays as string[],
         theme: preferences.theme,
         timezone: preferences.timezone,
         enableNotifications: preferences.enableNotifications,
