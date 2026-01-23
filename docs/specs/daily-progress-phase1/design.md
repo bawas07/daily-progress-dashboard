@@ -2,7 +2,7 @@
 
 ## Overview
 
-Daily Progress Phase 1 is a Progressive Web Application (PWA) that implements a daily-first productivity system. The application consists of a Vue.js frontend with TypeScript, a Node.js/Express backend API, and a PostgreSQL database. The system prioritizes offline-first functionality with IndexedDB for local storage and automatic synchronization when online.
+Daily Progress Phase 1 is a Progressive Web Application (PWA) that implements a daily-first productivity system. The application consists of a Vue.js frontend with TypeScript, a Bun/Hono backend API, and a PostgreSQL database. The system focuses on core functionality with a clean, responsive interface and reliable data persistence.
 
 The core architecture follows a modular pattern similar to NestJS with clear separation between modules, controllers, services, and repositories. The design emphasizes dependency injection, single responsibility principle, and testability while supporting the "progress is acknowledged, not judged" philosophy.
 
@@ -43,7 +43,7 @@ graph TB
         COMMIT[Commitment Module]
         TIMELINE[Timeline Module]
         USER[User Module]
-        SYNC[Sync Module]
+        HISTORY[History Module]
     end
     
     subgraph "Module Structure"
@@ -56,7 +56,6 @@ graph TB
     
     subgraph "Shared Layer"
         DATABASE[Database Module]
-        REDIS_MOD[Redis Module]
         JWT_MOD[JWT Module]
         LOGGER[Logger Module]
     end
@@ -66,7 +65,7 @@ graph TB
     APP --> COMMIT
     APP --> TIMELINE
     APP --> USER
-    APP --> SYNC
+    APP --> HISTORY
     
     AUTH --> CONTROLLER
     PROGRESS --> CONTROLLER
@@ -88,31 +87,22 @@ graph TB
 graph TB
     subgraph "Client Layer"
         PWA[Vue 3 PWA]
-        IDB[IndexedDB]
-        SW[Service Worker]
+        BROWSER[Browser Storage]
     end
     
     subgraph "API Layer"
         API[Hono API Server]
         AUTH[JWT Authentication]
-        SYNC[Sync Engine]
     end
     
     subgraph "Data Layer"
         DB[(PostgreSQL Database)]
-        REDIS[(Redis Cache)]
     end
     
     PWA --> API
-    PWA --> IDB
-    SW --> IDB
-    SW --> API
+    PWA --> BROWSER
     API --> AUTH
-    API --> SYNC
     API --> DB
-    API --> REDIS
-    
-    SYNC --> DB
 ```
 
 ### Technology Stack
@@ -123,7 +113,6 @@ graph TB
 - Vue Router for navigation
 - Pinia for state management
 - VueUse for composable utilities
-- IndexedDB via Dexie.js for offline storage
 - Tailwind CSS for styling
 - PWA capabilities with Vite PWA plugin
 
@@ -135,14 +124,12 @@ graph TB
 - JWT for authentication
 - bcrypt for password hashing
 - PostgreSQL database
-- Redis for session storage and caching
 - Winston for logging
 - Zod for validation
 
 **Database:**
 - PostgreSQL 14+ for primary data storage
 - Prisma as ORM with type-safe database access
-- Redis for caching and session management
 - Database migrations with Prisma Migrate
 
 **Infrastructure:**
@@ -190,18 +177,15 @@ src/
 │   │   ├── user.repository.ts
 │   │   ├── user.validator.ts
 │   │   └── user.module.ts
-│   └── sync/
-│       ├── sync.controller.ts
-│       ├── sync.service.ts
-│       ├── sync.validator.ts
-│       └── sync.module.ts
+│   └── history/
+│       ├── history.controller.ts
+│       ├── history.service.ts
+│       ├── history.validator.ts
+│       └── history.module.ts
 ├── shared/
 │   ├── database/
 │   │   ├── database.service.ts
 │   │   └── database.module.ts
-│   ├── redis/
-│   │   ├── redis.service.ts
-│   │   └── redis.module.ts
 │   ├── jwt/
 │   │   ├── jwt.service.ts
 │   │   └── jwt.module.ts
@@ -1016,7 +1000,6 @@ const createPaginatedResponse = <T>(
 - `S005`: Item updated successfully
 - `S006`: Item deleted successfully
 - `S007`: Progress logged successfully
-- `S008`: Sync completed successfully
 
 **Error Codes (E-prefix):**
 - `E001`: Invalid credentials
@@ -1025,8 +1008,7 @@ const createPaginatedResponse = <T>(
 - `E004`: Unauthorized access
 - `E005`: Server error
 - `E006`: Database error
-- `E007`: Sync conflict
-- `E008`: Rate limit exceeded
+- `E007`: Rate limit exceeded
 
 #### Authentication Endpoints
 ```typescript
@@ -1136,29 +1118,6 @@ interface CreateCommitmentLogRequest {
 }
 
 type CreateCommitmentLogResponse = SuccessResponse<CommitmentLog>;
-```
-
-#### Sync Endpoints
-```typescript
-// POST /api/sync
-interface SyncRequest {
-  lastSyncAt: string;
-  changes: SyncChange[];
-}
-
-interface SyncChange {
-  type: 'create' | 'update' | 'delete';
-  entity: 'progress_item' | 'commitment' | 'progress_log' | 'commitment_log';
-  data: any;
-  clientId: string;
-  timestamp: string;
-}
-
-type SyncResponse = SuccessResponse<{
-  serverChanges: SyncChange[];
-  conflicts: SyncConflict[];
-  lastSyncAt: string;
-}>;
 ```
 
 #### Hono Route Implementation Examples
@@ -1573,48 +1532,7 @@ const handleApiError = (error: ApiError): string => {
 };
 ```
 
-#### 2. Offline Error Handling
-```typescript
-interface OfflineAction {
-  id: string;
-  type: string;
-  payload: any;
-  timestamp: string;
-  retryCount: number;
-}
-
-class OfflineQueue {
-  private queue: OfflineAction[] = [];
-  
-  async addAction(action: Omit<OfflineAction, 'id' | 'timestamp' | 'retryCount'>) {
-    const offlineAction: OfflineAction = {
-      ...action,
-      id: generateId(),
-      timestamp: new Date().toISOString(),
-      retryCount: 0
-    };
-    
-    this.queue.push(offlineAction);
-    await this.persistQueue();
-  }
-  
-  async processQueue() {
-    for (const action of this.queue) {
-      try {
-        await this.executeAction(action);
-        this.removeFromQueue(action.id);
-      } catch (error) {
-        action.retryCount++;
-        if (action.retryCount >= 3) {
-          this.markAsFailed(action);
-        }
-      }
-    }
-  }
-}
-```
-
-#### 3. Form Validation
+#### 2. Form Validation
 ```typescript
 interface ValidationRule<T> {
   validate: (value: T) => boolean;

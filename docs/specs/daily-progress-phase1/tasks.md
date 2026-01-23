@@ -54,7 +54,7 @@
   - Change logger meta parameter from any to Record<string, unknown>
   - _Requirements: 1.1_
 
-- [ ] 2. Authentication System (TDD) IN PROGRESS
+- [ ] 2. Authentication System (TDD)
   - Implement user registration and login with JWT authentication
   - Create password hashing and validation
   - Set up authentication middleware for protected routes
@@ -75,7 +75,7 @@
   - Implement login with credential validation and JWT token generation
   - _Requirements: 1.1, 1.2, 1.3_
 
-- [ ] 2.3 JWT Service and Middleware (TDD)
+- [x] 2.3 JWT Service and Middleware (TDD)
   - Write failing tests for JWT token generation and validation
   - Implement JWT service for token creation and verification
   - Write failing tests for authentication middleware
@@ -321,93 +321,67 @@
   - Test all items endpoint with various filters
   - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5_
 
-- [ ] 8. Offline Sync System (TDD)
-  - Implement sync endpoint for offline/online synchronization
-  - Create conflict resolution with last-write-wins strategy
-  - Build sync queue management and processing
-  - Set up proper error handling for sync failures
-  - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5_
-
-- [ ] 8.1 Sync Service (TDD)
-  - Write failing tests for sync change processing
-  - Implement service to process client sync changes
-  - Write failing tests for conflict detection and resolution
-  - Implement last-write-wins conflict resolution strategy
-  - _Requirements: 8.2, 8.3_
-
-- [ ] 8.2 Sync Controller (TDD)
-  - Write failing tests for POST /api/sync endpoint
-  - Implement sync endpoint with change batch processing
-  - Write failing tests for sync response formatting
-  - Implement proper sync response with server changes and conflicts
-  - _Requirements: 8.1, 8.2, 8.3, 8.4_
-
-- [ ] 8.3 Sync Integration Tests
-  - Write integration tests for complete sync scenarios
-  - Test offline changes → online sync → conflict resolution
-  - Test sync failure handling and retry logic
-  - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5_
-
-- [ ] 9. Error Handling and Validation (TDD)
+- [ ] 8. Error Handling and Validation (TDD)
   - Implement comprehensive error handling middleware
   - Create input validation with Zod schemas
   - Build standardized error responses
   - Set up proper logging and monitoring
   - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.5_
 
-- [ ] 9.1 Validation Middleware (TDD)
+- [ ] 8.1 Validation Middleware (TDD)
   - Write failing tests for request validation with Zod
   - Implement validation middleware for all API endpoints
   - Write failing tests for validation error formatting
   - Implement standardized validation error responses
   - _Requirements: 10.1, 10.2_
 
-- [ ] 9.2 Error Handling Middleware (TDD)
+- [ ] 8.2 Error Handling Middleware (TDD)
   - Write failing tests for global error handling
   - Implement error middleware with proper status codes and messages
   - Write failing tests for different error types (validation, auth, server)
   - Implement error categorization and appropriate responses
   - _Requirements: 10.2, 10.3, 10.4_
 
-- [ ] 9.3 Logging and Monitoring (TDD)
+- [ ] 8.3 Logging and Monitoring (TDD)
   - Write failing tests for structured logging
   - Implement Winston logger with different log levels
   - Write failing tests for error tracking and metrics
   - Implement basic monitoring and health check endpoints
   - _Requirements: 10.3, 10.5_
 
-- [ ] 9.4 Error Handling Integration Tests
+- [ ] 8.4 Error Handling Integration Tests
   - Write integration tests for various error scenarios
   - Test validation errors, authentication errors, and server errors
   - Test error response format consistency
   - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.5_
 
-- [ ] 10. Frontend Vue.js Application Setup ✅ PARTIALLY COMPLETE
+- [ ] 9. Frontend Vue.js Application Setup
   - Initialize Vue 3 project with TypeScript and Vite
-  - Set up PWA configuration and offline capabilities
+  - Set up basic PWA configuration for installability
   - Configure routing, state management, and styling
   - Create basic project structure and development environment
-  - _Requirements: 2.1, 8.1_
+  - _Requirements: 2.1_
 
-- [x] 10.1 Frontend Project Initialization
+- [x] 9.1 Frontend Project Initialization
   - Create Vue 3 project with Vite and TypeScript
   - Install dependencies: Vue Router, Pinia, VueUse, Tailwind CSS
-  - Set up PWA configuration with Vite PWA plugin
+  - Set up basic PWA configuration with Vite PWA plugin
   - Configure development environment and build scripts
-  - _Requirements: 2.1, 8.1_
+  - _Requirements: 2.1_
 
-- [x] 10.2 Frontend Architecture Setup
+- [x] 9.2 Frontend Architecture Setup
   - Create modular folder structure for components, composables, and services
   - Set up Vue Router with authentication guards
   - Configure Pinia stores for state management
   - Set up API service layer with standardized response handling
-  - _Requirements: 2.1, 8.1_
+  - _Requirements: 2.1_
 
-- [ ] 10.3 Offline Storage Setup
-  - Configure IndexedDB with Dexie.js for offline data storage
-  - Implement sync queue for offline actions
-  - Set up service worker for PWA functionality
-  - Create offline detection and sync management
+- [ ] 9.3 Frontend Development Tooling
+  - Configure Vitest for unit and component testing
+  - Set up Vue Test Utils for component testing
+  - Configure Playwright for E2E testing
+  - Set up linting and formatting tools
+  - _Requirements: 2.1_
   - _Requirements: 8.1, 8.4, 8.5_
 
 - [ ] 10.4 Frontend Development Tooling
@@ -419,9 +393,9 @@
 
 - [ ] 11. Authentication Frontend (TDD)
   - Implement login and registration forms with validation
-  - Create authentication state management with token refresh
+  - Create authentication state management
   - Build route guards and session handling
-  - Set up token storage, automatic refresh, and revocation
+  - Set up token storage and automatic refresh
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5_
 
 - [ ] 11.1 Authentication Components (TDD)
@@ -677,103 +651,68 @@
   - Test theme switching and persistence
   - _Requirements: 9.1, 9.2, 9.3, 9.4_
 
-- [ ] 18. Offline Functionality and PWA (TDD)
-  - Implement offline data storage and sync queue
-  - Create service worker for PWA capabilities
-  - Build offline detection and user feedback
-  - Set up automatic sync when connection restored
-  - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5_
-
-- [ ] 18.1 Offline Storage (TDD)
-  - Write failing tests for IndexedDB operations
-  - Implement offline storage for all app data using Dexie.js
-  - Write failing tests for sync queue management
-  - Implement queue for offline actions awaiting sync
-  - _Requirements: 8.1, 8.4_
-
-- [ ] 18.2 Sync Management (TDD)
-  - Write failing tests for sync service functionality
-  - Implement automatic sync when connection restored
-  - Write failing tests for conflict resolution handling
-  - Implement client-side conflict resolution with user feedback
-  - _Requirements: 8.2, 8.3, 8.5_
-
-- [ ] 18.3 PWA Configuration (TDD)
-  - Write failing tests for service worker functionality
-  - Implement service worker for offline capabilities
-  - Write failing tests for PWA installation prompts
-  - Implement proper PWA manifest and installation flow
-  - _Requirements: 8.1_
-
-- [ ] 18.4 Offline Integration Tests
-  - Write E2E tests for offline functionality
-  - Test offline → create items → online → sync workflow
-  - Test conflict scenarios and resolution
-  - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5_
-
-- [ ] 19. UI/UX Polish and Accessibility
+- [ ] 18. UI/UX Polish and Accessibility
   - Implement responsive design for all screen sizes
   - Create consistent styling and component library
   - Build accessibility features and ARIA support
   - Set up proper loading states and error handling
   - _Requirements: 2.5, 10.1, 10.2, 10.4_
 
-- [ ] 19.1 Responsive Design (TDD)
+- [ ] 18.1 Responsive Design (TDD)
   - Write failing tests for responsive component behavior
   - Implement mobile-first responsive design for all components
   - Write failing tests for touch interactions
   - Implement proper touch targets and mobile navigation
   - _Requirements: 2.5_
 
-- [ ] 19.2 Component Library (TDD)
+- [ ] 18.2 Component Library (TDD)
   - Write failing tests for reusable UI components
   - Implement consistent button, input, modal, and card components
   - Write failing tests for component variants and states
   - Implement loading, error, and success states for all components
   - _Requirements: 10.1, 10.2_
 
-- [ ] 19.3 Accessibility (TDD)
+- [ ] 18.3 Accessibility (TDD)
   - Write failing tests for ARIA attributes and keyboard navigation
   - Implement proper semantic HTML and ARIA labels
   - Write failing tests for screen reader compatibility
   - Implement keyboard navigation and focus management
   - _Requirements: 10.4_
 
-- [ ] 19.4 UI/UX Integration Tests
+- [ ] 18.4 UI/UX Integration Tests
   - Write E2E tests for responsive behavior across devices
   - Test accessibility features with automated tools
   - Test loading states and error handling scenarios
   - _Requirements: 2.5, 10.1, 10.2, 10.4_
 
-- [ ] 20. Performance Optimization and Deployment
+- [ ] 19. Performance Optimization and Deployment
   - Optimize database queries and API performance
-  - Implement caching strategies for improved response times
   - Set up production deployment with Docker
   - Configure monitoring and health checks
-  - _Requirements: 8.1, 10.3, 10.5_
+  - _Requirements: 10.3, 10.5_
 
-- [ ] 20.1 Backend Performance (TDD)
+- [ ] 19.1 Backend Performance (TDD)
   - Write failing tests for API response time requirements
   - Optimize database queries with proper indexing and query optimization
-  - Write failing tests for caching functionality
-  - Implement Redis caching for frequently accessed data
-  - _Requirements: 8.1, 10.3_
+  - Write failing tests for basic caching functionality
+  - Implement simple caching for frequently accessed data
+  - _Requirements: 10.3_
 
-- [ ] 20.2 Frontend Performance (TDD)
+- [ ] 19.2 Frontend Performance (TDD)
   - Write failing tests for component rendering performance
   - Implement code splitting and lazy loading for routes
   - Write failing tests for bundle size optimization
   - Optimize build configuration and asset loading
-  - _Requirements: 8.1_
+  - _Requirements: 2.1_
 
-- [ ] 20.3 Production Deployment
+- [ ] 19.3 Production Deployment
   - Create Docker containers for backend and frontend
   - Set up production environment configuration
   - Configure reverse proxy and SSL certificates
   - Implement database backup and recovery procedures
-  - _Requirements: 8.1, 10.5_
+  - _Requirements: 10.5_
 
-- [ ] 20.4 Monitoring and Health Checks
+- [ ] 19.4 Monitoring and Health Checks
   - Implement application monitoring and logging
   - Set up health check endpoints for all services
   - Configure error tracking and performance monitoring
