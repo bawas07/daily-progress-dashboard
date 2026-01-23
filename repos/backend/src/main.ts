@@ -1,4 +1,4 @@
-import { app } from './app';
+import { createApp } from './app';
 import { env } from './shared/config/env';
 import { logger as winstonLogger } from './shared/logger/logger.service';
 import { registerServices } from './shared/registry';
@@ -8,6 +8,9 @@ import './shared/config/env';
 
 // Register all services (called again for safety, but idempotent due to container check)
 registerServices();
+
+// Create the app after services are registered
+const app = createApp();
 
 console.log('🚀 Starting Daily Progress Backend...');
 console.log(`📍 Environment: ${env.NODE_ENV}`);
