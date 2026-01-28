@@ -82,7 +82,7 @@
   - Implement middleware to protect routes and extract user context
   - _Requirements: 1.1, 1.4, 1.5_
 
-- [ ] 2.4 Auth Controller and API Endpoints (TDD)
+- [x] 2.4 Auth Controller and API Endpoints (TDD)
   - Write failing tests for registration API endpoint
   - Implement POST /api/auth/register with validation and error handling
   - Write failing tests for login API endpoint
@@ -376,188 +376,187 @@
   - Set up API service layer with standardized response handling
   - _Requirements: 2.1_
 
-- [ ] 9.3 Frontend Development Tooling
+- [x] 9.3 Frontend Development Tooling
   - Configure Vitest for unit and component testing
   - Set up Vue Test Utils for component testing
   - Configure Playwright for E2E testing
   - Set up linting and formatting tools
-  - _Requirements: 2.1_
-  - _Requirements: 8.1, 8.4, 8.5_
+  - _Requirements: 2.1, 8.1, 8.4, 8.5_
 
-- [ ] 10.4 Frontend Development Tooling
-  - Configure Vitest for unit and component testing
-  - Set up Vue Test Utils for component testing
-  - Configure Playwright for E2E testing
-  - Set up linting and formatting tools
+- [ ] 9.4 PWA Configuration
+  - Configure service worker with Vite PWA plugin
+  - Set up app manifest with name, icons, theme colors
+  - Configure offline caching strategy for API calls
+  - Test PWA installability across different browsers
   - _Requirements: 2.1_
 
-- [ ] 11. Authentication Frontend (TDD)
+- [ ] 10. Authentication Frontend (TDD)
   - Implement login and registration forms with validation
   - Create authentication state management
   - Build route guards and session handling
   - Set up token storage and automatic refresh
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5_
 
-- [ ] 11.1 Authentication Components (TDD)
+- [ ] 10.1 Authentication Components (TDD)
   - Write failing tests for LoginForm component
   - Implement login form with email/password validation
   - Write failing tests for RegisterForm component
   - Implement registration form with validation and error handling
   - _Requirements: 1.1, 1.2, 1.3_
 
-- [ ] 11.2 Authentication Store (TDD)
+- [ ] 10.2 Authentication Store (TDD)
   - Write failing tests for auth store actions
   - Implement Pinia store for authentication state management
   - Write failing tests for token storage and retrieval
   - Implement secure token storage with automatic expiration handling
   - _Requirements: 1.1, 1.4, 1.5_
 
-- [ ] 11.3 Token Refresh Service (TDD)
+- [ ] 10.3 Token Refresh Service (TDD)
   - Write failing tests for automatic token refresh logic
   - Implement token refresh service with interceptor
   - Write failing tests for 401 handling and retry flow
   - Implement automatic token refresh on expiration
   - _Requirements: 1.1, 1.4, 1.5_
 
-- [ ] 11.4 Logout and Token Revocation (TDD)
+- [ ] 10.4 Logout and Token Revocation (TDD)
   - Write failing tests for logout functionality
   - Implement logout with server-side token revocation
   - Write failing tests for clearing all tokens
   - Implement proper cleanup on logout (local + server)
   - _Requirements: 1.1, 1.2, 1.3_
 
-- [ ] 11.5 Authentication Guards (TDD)
+- [ ] 10.5 Authentication Guards (TDD)
   - Write failing tests for route protection logic
   - Implement Vue Router guards for protected routes
   - Write failing tests for automatic redirect handling
   - Implement login redirect and session restoration
   - _Requirements: 1.4, 1.5_
 
-- [ ] 11.6 Authentication Integration Tests
+- [ ] 10.6 Authentication Integration Tests
   - Write E2E tests for complete authentication flow
   - Test login → dashboard → logout → login again
   - Test registration → automatic login → dashboard access
   - Test token refresh and session persistence
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5_
 
-- [ ] 12. Dashboard Frontend (TDD)
+- [ ] 11. Dashboard Frontend (TDD)
   - Implement main dashboard with all sections
   - Create Eisenhower Matrix component for progress items
   - Build timeline and commitments sections
   - Set up real-time data updates and refresh logic
   - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5_
 
-- [ ] 12.1 Dashboard Layout (TDD)
+- [ ] 11.1 Dashboard Layout (TDD)
   - Write failing tests for Dashboard component structure
   - Implement main dashboard layout with collapsible sections
   - Write failing tests for responsive design behavior
   - Implement mobile-friendly dashboard with proper spacing
   - _Requirements: 2.1, 2.5_
 
-- [ ] 12.2 Timeline Section (TDD)
+- [ ] 11.2 Timeline Section (TDD)
   - Write failing tests for TimelineSection component
   - Implement timeline events display with chronological ordering
   - Write failing tests for event rendering and formatting
   - Implement event cards with time, duration, and title display
   - _Requirements: 2.2, 6.4_
 
-- [ ] 12.3 Eisenhower Matrix (TDD)
+- [ ] 11.3 Eisenhower Matrix (TDD)
   - Write failing tests for EisenhowerMatrix component
   - Implement four-quadrant layout for progress items
   - Write failing tests for item categorization logic
   - Implement automatic item placement based on importance/urgency
   - _Requirements: 2.3, 3.2_
 
-- [ ] 12.4 Commitments Section (TDD)
+- [ ] 11.4 Commitments Section (TDD)
   - Write failing tests for CommitmentsSection component
   - Implement commitment list with checkbox interactions
   - Write failing tests for completion status handling
   - Implement commitment completion with visual feedback
   - _Requirements: 2.4, 5.4_
 
-- [ ] 12.5 Dashboard Data Management (TDD)
+- [ ] 11.5 Dashboard Data Management (TDD)
   - Write failing tests for useDashboard composable
   - Implement dashboard data fetching and state management
   - Write failing tests for data refresh and error handling
   - Implement automatic refresh and error recovery logic
   - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5_
 
-- [ ] 12.6 Dashboard Integration Tests
+- [ ] 11.6 Dashboard Integration Tests
   - Write E2E tests for complete dashboard functionality
   - Test all sections loading and displaying correct data
   - Test interactions (logging progress, completing commitments)
   - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5_
 
-- [ ] 13. Progress Items Frontend (TDD)
+- [ ] 12. Progress Items Frontend (TDD)
   - Implement progress item creation and editing forms
   - Create progress logging modal with note input
   - Build item detail view with progress history
   - Set up item management (edit, settle) functionality
   - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 4.1, 4.2, 4.3, 4.4, 4.5_
 
-- [ ] 13.1 Progress Item Forms (TDD)
+- [ ] 12.1 Progress Item Forms (TDD)
   - Write failing tests for CreateProgressItemForm component
   - Implement form with title, importance, urgency, and active days
   - Write failing tests for EditProgressItemForm component
   - Implement editing form with pre-filled values and validation
   - _Requirements: 3.1, 3.2, 3.3, 3.4_
 
-- [ ] 13.2 Progress Logging (TDD)
+- [ ] 12.2 Progress Logging (TDD)
   - Write failing tests for LogProgressModal component
   - Implement modal with note input and character counter
   - Write failing tests for progress logging logic
   - Implement progress logging with off-day detection and feedback
   - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5_
 
-- [ ] 13.3 Item Detail View (TDD)
+- [ ] 12.3 Item Detail View (TDD)
   - Write failing tests for ProgressItemDetail component
   - Implement item detail with metadata and progress history
   - Write failing tests for progress history display
   - Implement chronological progress log display with notes
   - _Requirements: 4.5, 7.5_
 
-- [ ] 13.4 Item Management (TDD)
+- [ ] 12.4 Item Management (TDD)
   - Write failing tests for item settling functionality
   - Implement settle confirmation dialog and action
   - Write failing tests for item editing workflow
   - Implement edit → save → update dashboard flow
   - _Requirements: 3.4, 3.5_
 
-- [ ] 13.5 Progress Items Integration Tests
+- [ ] 12.5 Progress Items Integration Tests
   - Write E2E tests for complete progress item lifecycle
   - Test create → log progress → edit → settle workflow
   - Test validation errors and edge cases
   - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 4.1, 4.2, 4.3, 4.4, 4.5_
 
-- [ ] 14. Commitments Frontend (TDD)
+- [ ] 13. Commitments Frontend (TDD)
   - Implement commitment creation and editing forms
   - Create commitment logging with note support
   - Build commitment detail view with completion history
   - Set up commitment management functionality
   - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5_
 
-- [ ] 14.1 Commitment Forms (TDD)
+- [ ] 13.1 Commitment Forms (TDD)
   - Write failing tests for CreateCommitmentForm component
   - Implement form with title and scheduled days selection
   - Write failing tests for form validation and presets
   - Implement day selection presets (weekdays, daily, 3x/week)
   - _Requirements: 5.1, 5.5_
 
-- [ ] 14.2 Commitment Logging (TDD)
+- [ ] 13.2 Commitment Logging (TDD)
   - Write failing tests for LogCommitmentModal component
   - Implement modal for commitment completion with notes
   - Write failing tests for multiple logging per day
   - Implement support for multiple commitment logs with timestamps
   - _Requirements: 5.2, 5.3, 5.4_
 
-- [ ] 14.3 Commitment Detail View (TDD)
+- [ ] 13.3 Commitment Detail View (TDD)
   - Write failing tests for CommitmentDetail component
   - Implement detail view with scheduled days and completion history
   - Write failing tests for completion history display
   - Implement chronological completion log display
   - _Requirements: 5.4, 7.2_
 
-- [ ] 14.4 Commitments Integration Tests
+- [ ] 13.4 Commitments Integration Tests
   - Write E2E tests for commitment lifecycle
   - Test create → multiple logging → view history workflow
   - Test scheduled day filtering and completion status
@@ -590,129 +589,129 @@
   - Test recurrence patterns and date matching
   - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5_
 
-- [ ] 16. History and Analytics Frontend (TDD)
+- [ ] 14. History and Analytics Frontend (TDD)
   - Implement history view with multiple time periods
   - Create progress analytics and summary displays
   - Build all items view for off-day access
   - Set up proper navigation and filtering
   - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5_
 
-- [ ] 16.1 History Navigation (TDD)
+- [ ] 14.1 History Navigation (TDD)
   - Write failing tests for HistoryTabs component
   - Implement tab navigation for Today, Week, Month, All Items
   - Write failing tests for tab switching and data loading
   - Implement proper state management for different time periods
   - _Requirements: 7.1, 7.4_
 
-- [ ] 16.2 History Views (TDD)
+- [ ] 14.2 History Views (TDD)
   - Write failing tests for TodayHistoryView component
   - Implement today's progress and commitment logs display
   - Write failing tests for WeeklyHistoryView and MonthlyHistoryView
   - Implement weekly and monthly summary views with statistics
   - _Requirements: 7.1, 7.2, 7.3_
 
-- [ ] 16.3 All Items View (TDD)
+- [ ] 14.3 All Items View (TDD)
   - Write failing tests for AllItemsView component
   - Implement view showing all active items regardless of active days
   - Write failing tests for off-day progress logging
   - Implement ability to log progress on items during off-days
   - _Requirements: 7.4, 7.5_
 
-- [ ] 16.4 History Integration Tests
+- [ ] 14.4 History Integration Tests
   - Write E2E tests for history navigation and data accuracy
   - Test time period switching and data consistency
   - Test off-day progress logging from All Items view
   - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5_
 
-- [ ] 17. Settings and Preferences Frontend (TDD)
+- [ ] 16. Settings and Preferences Frontend (TDD)
   - Implement user preferences management interface
   - Create theme selection and default settings
   - Build account management functionality
   - Set up data export and account deletion
   - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5_
 
-- [ ] 17.1 Preferences Settings (TDD)
+- [ ] 16.1 Preferences Settings (TDD)
   - Write failing tests for PreferencesForm component
   - Implement default active days selection interface
   - Write failing tests for theme selection functionality
   - Implement theme switching with immediate preview
   - _Requirements: 9.1, 9.2_
 
-- [ ] 17.2 Account Settings (TDD)
+- [ ] 16.2 Account Settings (TDD)
   - Write failing tests for AccountSettings component
   - Implement password change functionality
   - Write failing tests for account information display
   - Implement user profile information management
   - _Requirements: 9.4_
 
-- [ ] 17.3 Settings Integration Tests
+- [ ] 16.3 Settings Integration Tests
   - Write E2E tests for settings management
   - Test preferences changes and their effects on dashboard
   - Test theme switching and persistence
   - _Requirements: 9.1, 9.2, 9.3, 9.4_
 
-- [ ] 18. UI/UX Polish and Accessibility
+- [ ] 17. UI/UX Polish and Accessibility
   - Implement responsive design for all screen sizes
   - Create consistent styling and component library
   - Build accessibility features and ARIA support
   - Set up proper loading states and error handling
   - _Requirements: 2.5, 10.1, 10.2, 10.4_
 
-- [ ] 18.1 Responsive Design (TDD)
+- [ ] 17.1 Responsive Design (TDD)
   - Write failing tests for responsive component behavior
   - Implement mobile-first responsive design for all components
   - Write failing tests for touch interactions
   - Implement proper touch targets and mobile navigation
   - _Requirements: 2.5_
 
-- [ ] 18.2 Component Library (TDD)
+- [ ] 17.2 Component Library (TDD)
   - Write failing tests for reusable UI components
   - Implement consistent button, input, modal, and card components
   - Write failing tests for component variants and states
   - Implement loading, error, and success states for all components
   - _Requirements: 10.1, 10.2_
 
-- [ ] 18.3 Accessibility (TDD)
+- [ ] 17.3 Accessibility (TDD)
   - Write failing tests for ARIA attributes and keyboard navigation
   - Implement proper semantic HTML and ARIA labels
   - Write failing tests for screen reader compatibility
   - Implement keyboard navigation and focus management
   - _Requirements: 10.4_
 
-- [ ] 18.4 UI/UX Integration Tests
+- [ ] 17.4 UI/UX Integration Tests
   - Write E2E tests for responsive behavior across devices
   - Test accessibility features with automated tools
   - Test loading states and error handling scenarios
   - _Requirements: 2.5, 10.1, 10.2, 10.4_
 
-- [ ] 19. Performance Optimization and Deployment
+- [ ] 18. Performance Optimization and Deployment
   - Optimize database queries and API performance
   - Set up production deployment with Docker
   - Configure monitoring and health checks
   - _Requirements: 10.3, 10.5_
 
-- [ ] 19.1 Backend Performance (TDD)
+- [ ] 18.1 Backend Performance (TDD)
   - Write failing tests for API response time requirements
   - Optimize database queries with proper indexing and query optimization
   - Write failing tests for basic caching functionality
   - Implement simple caching for frequently accessed data
   - _Requirements: 10.3_
 
-- [ ] 19.2 Frontend Performance (TDD)
+- [ ] 18.2 Frontend Performance (TDD)
   - Write failing tests for component rendering performance
   - Implement code splitting and lazy loading for routes
   - Write failing tests for bundle size optimization
   - Optimize build configuration and asset loading
   - _Requirements: 2.1_
 
-- [ ] 19.3 Production Deployment
+- [ ] 18.3 Production Deployment
   - Create Docker containers for backend and frontend
   - Set up production environment configuration
   - Configure reverse proxy and SSL certificates
   - Implement database backup and recovery procedures
   - _Requirements: 10.5_
 
-- [ ] 19.4 Monitoring and Health Checks
+- [ ] 18.4 Monitoring and Health Checks
   - Implement application monitoring and logging
   - Set up health check endpoints for all services
   - Configure error tracking and performance monitoring
