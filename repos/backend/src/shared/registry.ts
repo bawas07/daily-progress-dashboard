@@ -15,6 +15,7 @@ import { UserRepository } from '../modules/auth/repositories/user.repository';
 import { UserPreferencesRepository } from '../modules/auth/repositories/user.preferences.repository';
 import { PasswordService } from '../modules/auth/services/password.service';
 import { AuthService } from '../modules/auth/services/auth.service';
+import { UserPreferencesService } from '../modules/user-preferences/services/user.preferences.service';
 // LoggerService is a singleton instance, not a class, so we don't register it
 
 // Track if services have been registered to prevent duplicate registration
@@ -38,6 +39,7 @@ export function registerServices(): void {
 
   // Services with dependencies
   container.register('AuthService', AuthService);
+  container.register('UserPreferencesService', UserPreferencesService);
 
   servicesRegistered = true;
   console.log('Services registered in container');

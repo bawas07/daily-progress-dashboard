@@ -1,147 +1,107 @@
-import { Context, Next } from 'hono';
+import type { Context, Next } from 'hono';
+import { JwtService } from '../jwt/jwt.service';
+import { Container, resolveService } from '../container';
+import { createErrorResponse } from '../response/response.helper';
 
 /**
- * Auth Middleware for JWT verification
+ * Authentication Middleware
  *
- * Extracts and validates Bearer tokens from Authorization header,
- * verifies JWT signatures and expiration, and sets user context on
- * successful authentication.
+ * Validates JWT tokens and attaches user information to the request context.
+ *
+ * Usage:
+ *   app.use('/api/protected', authMiddleware);
+ *
+ * Expected Authorization header format:
+ *   Authorization: Bearer <token>
+ *
+ * On success: Sets c.set('userId', userId) and c.set('userEmail', email)
+ * On failure: Returns 401 with standardized error response
  */
-
-export interface AuthContext {
-  user: { sub: string; email: string } | null;
-  authValid: boolean;
-  authReason?: 'expired' | 'invalid' | 'missing' | 'error';
-}
 
 /**
- * Extract and parse the user from an Authorization header
+ * Creates an authentication middleware instance
+ *
+ * @param container - Dependency injection container (optional, uses global if not provided)
+ * @returns Hono middleware function
  */
-export function extractUserFromToken(authHeader: string | null): {
-  valid: boolean;
-  user?: { sub: string; email: string };
-  reason?: 'missing' | 'invalid_format' | 'expired' | 'invalid' | 'error';
-} {
-  // Check if header is missing or null
-  if (!authHeader) {
-    return { valid: false, reason: 'missing' };
-  }
-
-  // Check Bearer format
-  const bearerMatch = authHeader.match(/^Bearer\s+(.+)$/i);
-  if (!bearerMatch) {
-    return { valid: false, reason: 'invalid_format' };
-  }
-
-  const token = bearerMatch[1];
-
-  // Check if token is empty
-  if (!token || token.trim() === '') {
-    return { valid: false, reason: 'invalid_format' };
-  }
-
-  return { valid: false, reason: 'invalid' };
-}
-
-/**
- * Create the auth middleware function
- * Takes a verify function (for dependency injection in tests)
- */
-export function authMiddleware(verify: (token: string) => { valid: boolean; payload?: { sub: string; email: string }; reason?: string }) {
-  return async (c: Context, next: Next): Promise<void> => {
+export function authMiddleware(container?: Container) {
+  return async (c: Context, next: Next) => {
+    // Extract Authorization header
     const authHeader = c.req.header('Authorization');
 
     // Check if Authorization header exists
     if (!authHeader) {
-      c.json({
-        code: 'E004',
-        message: 'Authorization header is required',
-        data: { details: {} },
-      }, 401);
-      return;
+      return c.json(
+        createErrorResponse('E002', 'Authorization header is required'),
+        401
+      );
     }
 
-    // Check Bearer format
-    const bearerMatch = authHeader.match(/^Bearer\s+(.+)$/i);
-    if (!bearerMatch) {
-      c.json({
-        code: 'E004',
-        message: 'Invalid authorization format. Use: Bearer <token>',
-        data: { details: {} },
-      }, 401);
-      return;
+    // Check if header follows "Bearer <token>" format
+    if (!authHeader.startsWith('Bearer ')) {
+      return c.json(
+        createErrorResponse('E002', 'Invalid authorization format. Use: Bearer <token>'),
+        401
+      );
     }
 
-    const token = bearerMatch[1];
+    // Extract token
+    const token = authHeader.substring(7);
 
     // Check if token is empty
     if (!token || token.trim() === '') {
-      c.json({
-        code: 'E004',
-        message: 'Invalid or expired token',
-        data: { details: {} },
-      }, 401);
-      return;
+      return c.json(
+        createErrorResponse('E002', 'Invalid authorization format. Use: Bearer <token>'),
+        401
+      );
     }
 
-    // Verify the token
-    const result = verify(token);
+    // Verify token
+    const jwtService = resolveService<JwtService>('JwtService', container);
+    const result = jwtService.verify(token);
 
+    // Handle verification failures
     if (!result.valid) {
-      // Handle different error cases
-      let message = 'Invalid or expired token';
-
       if (result.reason === 'expired') {
-        message = 'Token has expired';
-      } else if (result.reason === 'invalid') {
-        message = 'Invalid token';
+        return c.json(
+          createErrorResponse('E002', 'Token has expired'),
+          401
+        );
       }
 
-      c.json({
-        code: 'E004',
-        message,
-        data: { details: {} },
-      }, 401);
-      return;
+      if (result.reason === 'invalid') {
+        return c.json(
+          createErrorResponse('E002', 'Invalid token'),
+          401
+        );
+      }
+
+      // Unexpected error
+      return c.json(
+        createErrorResponse('E002', 'Token verification failed'),
+        401
+      );
     }
 
-    // Token is valid - set user context
-    if (result.payload) {
-      // Map sub to id for downstream handlers (tests expect 'id')
-      c.set('user', {
-        id: result.payload.sub,
-        email: result.payload.email,
-      });
-    }
-    c.set('authValid', true);
+    // Token is valid - attach user info to context
+    const userId = result.payload.sub;
+    const userEmail = result.payload.email;
 
+    c.set('userId', userId);
+    c.set('userEmail', userEmail);
+
+    // Continue to next middleware/handler
     await next();
   };
 }
 
 /**
- * Create auth middleware using the container's JwtService
- * Use this in production code
+ * Type extension for Hono context to include auth data
+ *
+ * Usage in route handlers:
+ *   const userId = c.get('userId'); // string
+ *   const userEmail = c.get('userEmail'); // string
  */
-export function createAuthMiddleware() {
-  const { container } = require('./container');
-  const { JwtService } = require('./jwt/jwt.service');
-
-  // Ensure JwtService is registered
-  if (!container.has('JwtService')) {
-    container.register('JwtService', JwtService);
-  }
-
-  type JwtServiceVerify = (token: string) => { valid: boolean; payload?: { sub: string; email: string }; reason?: string };
-  const jwtService = container.resolve('JwtService') as { verify: JwtServiceVerify };
-
-  return authMiddleware(jwtService.verify.bind(jwtService));
-}
-
-// Extend Hono's ContextVariableMap for type safety
-declare module 'hono' {
-  interface ContextVariableMap {
-    user: { id: string; email: string };
-    authValid: boolean;
-  }
-}
+export type AuthContext = Context & {
+  get: (key: 'userId' | 'userEmail') => string;
+};

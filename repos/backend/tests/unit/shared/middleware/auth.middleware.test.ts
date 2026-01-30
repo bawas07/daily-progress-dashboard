@@ -1,505 +1,336 @@
-import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
-import { createMockJwtService, mockJwtPayload, mockJwtToken } from '../../../setup/mocks/jwt.mock';
-import type { JwtPayload, JwtVerifyResult } from '../../../src/shared/jwt/jwt.service';
+import { describe, it, expect, beforeEach } from 'vitest';
+import { Hono } from 'hono';
+import { authMiddleware } from '../../../../src/shared/middleware/auth.middleware';
+import { JwtService } from '../../../../src/shared/jwt/jwt.service';
+import { Container } from '../../../../src/shared/container';
 
-/**
- * Auth Middleware Tests
- *
- * Tests the JWT authentication middleware that:
- * - Extracts and validates Bearer tokens from Authorization header
- * - Verifies JWT signatures and expiration
- * - Sets user context on successful authentication
- * - Returns 401 for invalid/expired/missing tokens
- */
-
-// Mock Hono context for testing
-interface MockContext {
-  req: {
-    header: (name?: string) => string | undefined;
-    parse: () => { Authorization?: string };
-  };
-  get: (key: string) => unknown;
-  set: (key: string, value: unknown) => void;
-  next: () => Promise<void>;
-  json: (data: unknown, status?: number) => { data: unknown; status: number };
-  status(code: number): MockContext;
-  status: number;
-}
-
-function createMockContext(headers: Record<string, string> = {}): MockContext {
-  let currentStatus = 200;
-  const context: MockContext = {
-    req: {
-      header: (name?: string) => {
-        if (!name) return undefined;
-        return headers[name] || headers[name.toLowerCase()] || headers[name.toUpperCase()] || undefined;
-      },
-      parse: () => ({ Authorization: headers['Authorization'] || headers['authorization'] }),
-    },
-    get: vi.fn().mockReturnValue(undefined),
-    set: vi.fn(),
-    next: vi.fn().mockResolvedValue(undefined),
-    json: vi.fn().mockImplementation((data, status) => {
-      currentStatus = status || 200;
-      context.status = currentStatus;
-      return { data, status: currentStatus };
-    }),
-    status(code: number) {
-      currentStatus = code;
-      this.status = code;
-      return this;
-    },
-    status: 200,
-  };
-  return context;
-}
-
-// Import the middleware function (will be created in the implementation)
-// Using dynamic import to test the middleware
-async function importAuthMiddleware() {
-  const module = await import('../../../../src/shared/middleware/auth.middleware');
-  return module.authMiddleware;
-}
-
-describe('Auth Middleware', () => {
-  let mockJwtService: ReturnType<typeof createMockJwtService>;
-  let mockNext: () => Promise<void>;
-  let mockContext: MockContext;
+describe('authMiddleware', () => {
+  let jwtService: JwtService;
+  let validToken: string;
+  let expiredToken: string;
+  let invalidToken: string;
+  let container: Container;
 
   beforeEach(() => {
-    // Create fresh mock for each test
-    mockJwtService = createMockJwtService();
-    mockNext = vi.fn().mockResolvedValue(undefined);
-    mockContext = createMockContext();
-  });
+    // Create a fresh container for each test
+    container = new Container();
+    jwtService = new JwtService();
+    jwtService.container = container;
+    container.register('JwtService', jwtService);
 
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
-
-  describe('Token Extraction from Authorization Header', () => {
-    it('should extract valid Bearer token from Authorization header', async () => {
-      const authMiddleware = await importAuthMiddleware();
-      
-      mockContext = createMockContext({
-        'Authorization': `Bearer ${mockJwtToken}`,
-      });
-
-      mockJwtService.verify.mockReturnValue({
-        valid: true,
-        payload: { sub: 'user-123', email: 'test@example.com' },
-      });
-
-      await authMiddleware(mockJwtService.verify)(mockContext, mockNext);
-
-      expect(mockJwtService.verify).toHaveBeenCalledWith(mockJwtToken);
+    // Generate test tokens
+    validToken = jwtService.sign({
+      sub: 'user-123',
+      email: 'test@example.com',
     });
 
-    it('should return 401 when Authorization header is missing', async () => {
-      const authMiddleware = await importAuthMiddleware();
-      
-      mockContext = createMockContext({});
-
-      await authMiddleware(mockJwtService.verify)(mockContext, mockNext);
-
-      expect(mockContext.status).toBe(401);
-      expect(mockContext.json).toHaveBeenCalledWith(
-        expect.objectContaining({
-          code: 'E004',
-          message: 'Authorization header is required',
-        }),
-        401
-      );
-      expect(mockNext).not.toHaveBeenCalled();
-    });
-
-    it('should return 401 when Authorization header is not Bearer format', async () => {
-      const authMiddleware = await importAuthMiddleware();
-      
-      mockContext = createMockContext({
-        'Authorization': 'Basic some-token',
-      });
-
-      await authMiddleware(mockJwtService.verify)(mockContext, mockNext);
-
-      expect(mockContext.status).toBe(401);
-      expect(mockContext.json).toHaveBeenCalledWith(
-        expect.objectContaining({
-          code: 'E004',
-          message: 'Invalid authorization format. Use: Bearer <token>',
-        }),
-        401
-      );
-      expect(mockNext).not.toHaveBeenCalled();
-    });
-
-    it('should return 401 when Authorization header is empty Bearer', async () => {
-      const authMiddleware = await importAuthMiddleware();
-      
-      mockContext = createMockContext({
-        'Authorization': 'Bearer',
-      });
-
-      await authMiddleware(mockJwtService.verify)(mockContext, mockNext);
-
-      expect(mockContext.status).toBe(401);
-      expect(mockContext.json).toHaveBeenCalledWith(
-        expect.objectContaining({
-          code: 'E004',
-        }),
-        401
-      );
-      expect(mockNext).not.toHaveBeenCalled();
-    });
-
-    it('should return 401 for malformed token (not a JWT format)', async () => {
-      const authMiddleware = await importAuthMiddleware();
-      
-      mockContext = createMockContext({
-        'Authorization': 'Bearer not-a-valid-jwt',
-      });
-
-      mockJwtService.verify.mockReturnValue({
-        valid: false,
-        reason: 'invalid',
-      });
-
-      await authMiddleware(mockJwtService.verify)(mockContext, mockNext);
-
-      expect(mockContext.status).toBe(401);
-      expect(mockContext.json).toHaveBeenCalledWith(
-        expect.objectContaining({
-          code: 'E004',
-          message: 'Invalid token',
-        }),
-        401
-      );
-      expect(mockNext).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('JWT Verification', () => {
-    it('should allow request with valid token and call next()', async () => {
-      const authMiddleware = await importAuthMiddleware();
-      
-      const validPayload: JwtPayload = {
-        sub: 'user-123',
-        email: 'test@example.com',
-        iat: Math.floor(Date.now() / 1000),
-        exp: Math.floor(Date.now() / 1000) + 86400,
-      };
-
-      mockContext = createMockContext({
-        'Authorization': `Bearer ${mockJwtToken}`,
-      });
-
-      mockJwtService.verify.mockReturnValue({
-        valid: true,
-        payload: validPayload,
-      });
-
-      await authMiddleware(mockJwtService.verify)(mockContext, mockNext);
-
-      expect(mockNext).toHaveBeenCalled();
-      expect(mockContext.status).not.toBe(401);
-    });
-
-    it('should set user context on successful verification', async () => {
-      const authMiddleware = await importAuthMiddleware();
-      
-      const validPayload: JwtPayload = {
-        sub: 'user-123',
-        email: 'test@example.com',
-        iat: Math.floor(Date.now() / 1000),
-        exp: Math.floor(Date.now() / 1000) + 86400,
-      };
-
-      mockContext = createMockContext({
-        'Authorization': `Bearer ${mockJwtToken}`,
-      });
-
-      mockJwtService.verify.mockReturnValue({
-        valid: true,
-        payload: validPayload,
-      });
-
-      await authMiddleware(mockJwtService.verify)(mockContext, mockNext);
-
-      expect(mockContext.set).toHaveBeenCalledWith('user', expect.objectContaining({
-        id: 'user-123',
-        email: 'test@example.com',
-      }));
-    });
-
-    it('should return 401 for expired token', async () => {
-      const authMiddleware = await importAuthMiddleware();
-      
-      mockContext = createMockContext({
-        'Authorization': 'Bearer expired-token',
-      });
-
-      mockJwtService.verify.mockReturnValue({
-        valid: false,
-        reason: 'expired',
-      });
-
-      await authMiddleware(mockJwtService.verify)(mockContext, mockNext);
-
-      expect(mockContext.status).toBe(401);
-      expect(mockContext.json).toHaveBeenCalledWith(
-        expect.objectContaining({
-          code: 'E004',
-          message: 'Token has expired',
-        }),
-        401
-      );
-      expect(mockNext).not.toHaveBeenCalled();
-    });
-
-    it('should return 401 for invalid signature/token', async () => {
-      const authMiddleware = await importAuthMiddleware();
-      
-      mockContext = createMockContext({
-        'Authorization': 'Bearer invalid-signature-token',
-      });
-
-      mockJwtService.verify.mockReturnValue({
-        valid: false,
-        reason: 'invalid',
-      });
-
-      await authMiddleware(mockJwtService.verify)(mockContext, mockNext);
-
-      expect(mockContext.status).toBe(401);
-      expect(mockContext.json).toHaveBeenCalledWith(
-        expect.objectContaining({
-          code: 'E004',
-          message: 'Invalid token',
-        }),
-        401
-      );
-      expect(mockNext).not.toHaveBeenCalled();
-    });
-
-    it('should return 401 on JWT verification error', async () => {
-      const authMiddleware = await importAuthMiddleware();
-      
-      mockContext = createMockContext({
-        'Authorization': 'Bearer malformed-token',
-      });
-
-      mockJwtService.verify.mockReturnValue({
-        valid: false,
-        reason: 'error',
-      });
-
-      await authMiddleware(mockJwtService.verify)(mockContext, mockNext);
-
-      expect(mockContext.status).toBe(401);
-      expect(mockContext.json).toHaveBeenCalledWith(
-        expect.objectContaining({
-          code: 'E004',
-        }),
-        401
-      );
-      expect(mockNext).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('Middleware Behavior', () => {
-    it('should allow request to proceed when token is valid', async () => {
-      const authMiddleware = await importAuthMiddleware();
-      
-      mockContext = createMockContext({
-        'Authorization': `Bearer ${mockJwtToken}`,
-      });
-
-      mockJwtService.verify.mockReturnValue({
-        valid: true,
-        payload: { sub: 'user-123', email: 'test@example.com' },
-      });
-
-      await authMiddleware(mockJwtService.verify)(mockContext, mockNext);
-
-      expect(mockNext).toHaveBeenCalled();
-      expect(mockContext.set).toHaveBeenCalledWith('user', expect.objectContaining({
-        id: 'user-123',
-        email: 'test@example.com',
-      }));
-    });
-
-    it('should return 401 without calling next() for invalid token', async () => {
-      const authMiddleware = await importAuthMiddleware();
-      
-      mockContext = createMockContext({
-        'Authorization': 'Bearer invalid-token',
-      });
-
-      mockJwtService.verify.mockReturnValue({
-        valid: false,
-        reason: 'invalid',
-      });
-
-      await authMiddleware(mockJwtService.verify)(mockContext, mockNext);
-
-      expect(mockNext).not.toHaveBeenCalled();
-    });
-
-    it('should store user payload in context for downstream handlers', async () => {
-      const authMiddleware = await importAuthMiddleware();
-      
-      const expectedPayload: JwtPayload = {
+    // Generate expired token (using a very short expiration)
+    expiredToken = jwtService.signWithExpiry(
+      {
         sub: 'user-456',
-        email: 'john@example.com',
-        iat: Math.floor(Date.now() / 1000),
-        exp: Math.floor(Date.now() / 1000) + 3600,
-      };
+        email: 'expired@example.com',
+      },
+      '0s' // Expires immediately
+    );
 
-      mockContext = createMockContext({
-        'Authorization': 'Bearer valid-token-with-user-456',
+    // Invalid token (malformed JWT)
+    invalidToken = 'invalid.token.here';
+  });
+
+  describe('valid token', () => {
+    it('should attach userId and userEmail to context and proceed', async () => {
+      const app = new Hono();
+
+      app.use('/protected', authMiddleware(container));
+      app.get('/protected', (c) => {
+        const userId = c.get('userId');
+        const userEmail = c.get('userEmail');
+        return c.json({ userId, userEmail });
       });
 
-      mockJwtService.verify.mockReturnValue({
-        valid: true,
-        payload: expectedPayload,
+      const response = await app.request('/protected', {
+        headers: {
+          Authorization: `Bearer ${validToken}`,
+        },
       });
 
-      await authMiddleware(mockJwtService.verify)(mockContext, mockNext);
-
-      expect(mockContext.set).toHaveBeenCalledWith('user', expect.objectContaining({
-        id: 'user-456',
-        email: 'john@example.com',
-      }));
-    });
-
-    it('should use error code E004 for authentication failures', async () => {
-      const authMiddleware = await importAuthMiddleware();
-      
-      // Test with missing header
-      mockContext = createMockContext({});
-
-      await authMiddleware(mockJwtService.verify)(mockContext, mockNext);
-
-      expect(mockContext.json).toHaveBeenCalledWith(
-        expect.objectContaining({
-          code: 'E004',
-        }),
-        401
-      );
+      expect(response.status).toBe(200);
+      const json = await response.json();
+      expect(json.userId).toBe('user-123');
+      expect(json.userEmail).toBe('test@example.com');
     });
   });
 
-  describe('Edge Cases', () => {
-    it('should handle token with different algorithm', async () => {
-      const authMiddleware = await importAuthMiddleware();
-      
-      mockContext = createMockContext({
-        'Authorization': 'Bearer token-with-rs256-algorithm',
-      });
+  describe('missing Authorization header', () => {
+    it('should return 401 when Authorization header is missing', async () => {
+      const app = new Hono();
 
-      mockJwtService.verify.mockReturnValue({
-        valid: false,
-        reason: 'invalid',
-      });
+      app.use('/protected', authMiddleware(container));
+      app.get('/protected', (c) => c.json({ message: 'Should not reach here' }));
 
-      await authMiddleware(mockJwtService.verify)(mockContext, mockNext);
+      const response = await app.request('/protected');
 
-      expect(mockContext.status).toBe(401);
-      expect(mockNext).not.toHaveBeenCalled();
-    });
-
-    it('should handle token with future nbf (not before) claim', async () => {
-      const authMiddleware = await importAuthMiddleware();
-      
-      mockContext = createMockContext({
-        'Authorization': 'Bearer token-with-future-nbf',
-      });
-
-      // JWT with nbf in the future should fail verification
-      mockJwtService.verify.mockReturnValue({
-        valid: false,
-        reason: 'invalid',
-      });
-
-      await authMiddleware(mockJwtService.verify)(mockContext, mockNext);
-
-      expect(mockContext.status).toBe(401);
-      expect(mockNext).not.toHaveBeenCalled();
-    });
-
-    it('should handle extremely long tokens gracefully', async () => {
-      const authMiddleware = await importAuthMiddleware();
-      
-      const longToken = 'a'.repeat(10000);
-      mockContext = createMockContext({
-        'Authorization': `Bearer ${longToken}`,
-      });
-
-      mockJwtService.verify.mockReturnValue({
-        valid: false,
-        reason: 'invalid',
-      });
-
-      await authMiddleware(mockJwtService.verify)(mockContext, mockNext);
-
-      expect(mockContext.status).toBe(401);
-    });
-
-    it('should handle whitespace-only Bearer prefix', async () => {
-      const authMiddleware = await importAuthMiddleware();
-      
-      mockContext = createMockContext({
-        'Authorization': 'Bearer     ',
-      });
-
-      await authMiddleware(mockJwtService.verify)(mockContext, mockNext);
-
-      expect(mockContext.status).toBe(401);
-      expect(mockNext).not.toHaveBeenCalled();
-    });
-
-    it('should be case-insensitive for Authorization header name', async () => {
-      const authMiddleware = await importAuthMiddleware();
-      
-      mockContext = createMockContext({
-        'authorization': `Bearer ${mockJwtToken}`,
-      });
-
-      mockJwtService.verify.mockReturnValue({
-        valid: true,
-        payload: { sub: 'user-123', email: 'test@example.com' },
-      });
-
-      await authMiddleware(mockJwtService.verify)(mockContext, mockNext);
-
-      expect(mockJwtService.verify).toHaveBeenCalledWith(mockJwtToken);
+      expect(response.status).toBe(401);
+      const json = await response.json();
+      expect(json.code).toBe('E002');
+      expect(json.message).toBe('Authorization header is required');
     });
   });
 
-  describe('Race Conditions and Concurrent Requests', () => {
-    it('should handle multiple concurrent requests independently', async () => {
-      const authMiddleware = await importAuthMiddleware();
-      
-      const contexts = [
-        createMockContext({ 'Authorization': 'Bearer token-1' }),
-        createMockContext({ 'Authorization': 'Bearer token-2' }),
-        createMockContext({ 'Authorization': 'Bearer token-3' }),
-      ];
+  describe('invalid token format', () => {
+    it('should return 401 when Authorization header does not start with "Bearer "', async () => {
+      const app = new Hono();
 
-      mockJwtService.verify
-        .mockReturnValueOnce({ valid: true, payload: { sub: 'user-1', email: 'one@example.com' } })
-        .mockReturnValueOnce({ valid: true, payload: { sub: 'user-2', email: 'two@example.com' } })
-        .mockReturnValueOnce({ valid: false, reason: 'invalid' });
+      app.use('/protected', authMiddleware(container));
+      app.get('/protected', (c) => c.json({ message: 'Should not reach here' }));
 
-       const results = await Promise.all(
-        contexts.map(ctx => authMiddleware(mockJwtService.verify)(ctx, ctx.next))
-      );
+      const response = await app.request('/protected', {
+        headers: {
+          Authorization: validToken, // Missing "Bearer " prefix
+        },
+      });
 
-      // First two should have called next(), third should have returned 401
-      expect(contexts[0].next).toHaveBeenCalled();
-      expect(contexts[1].next).toHaveBeenCalled();
-      expect(contexts[2].next).not.toHaveBeenCalled();
-      expect(contexts[2].status).toBe(401);
+      expect(response.status).toBe(401);
+      const json = await response.json();
+      expect(json.code).toBe('E002');
+      expect(json.message).toBe('Invalid authorization format. Use: Bearer <token>');
+    });
+
+    it('should return 401 when token is empty after "Bearer "', async () => {
+      const app = new Hono();
+
+      app.use('/protected', authMiddleware(container));
+      app.get('/protected', (c) => c.json({ message: 'Should not reach here' }));
+
+      const response = await app.request('/protected', {
+        headers: {
+          Authorization: 'Bearer ', // Empty token
+        },
+      });
+
+      expect(response.status).toBe(401);
+      const json = await response.json();
+      expect(json.code).toBe('E002');
+      expect(json.message).toBe('Invalid authorization format. Use: Bearer <token>');
+    });
+
+    it('should return 401 when token is only whitespace', async () => {
+      const app = new Hono();
+
+      app.use('/protected', authMiddleware(container));
+      app.get('/protected', (c) => c.json({ message: 'Should not reach here' }));
+
+      const response = await app.request('/protected', {
+        headers: {
+          Authorization: 'Bearer   ', // Whitespace token
+        },
+      });
+
+      expect(response.status).toBe(401);
+      const json = await response.json();
+      expect(json.code).toBe('E002');
+      expect(json.message).toBe('Invalid authorization format. Use: Bearer <token>');
+    });
+  });
+
+  describe('invalid token', () => {
+    it('should return 401 when token is malformed', async () => {
+      const app = new Hono();
+
+      app.use('/protected', authMiddleware(container));
+      app.get('/protected', (c) => c.json({ message: 'Should not reach here' }));
+
+      const response = await app.request('/protected', {
+        headers: {
+          Authorization: `Bearer ${invalidToken}`,
+        },
+      });
+
+      expect(response.status).toBe(401);
+      const json = await response.json();
+      expect(json.code).toBe('E002');
+      expect(json.message).toBe('Invalid token');
+    });
+
+    it('should return 401 when token has invalid signature', async () => {
+      // Take a valid token and modify it to break signature
+      const tamperedToken = validToken.slice(0, -5) + '12345';
+
+      const app = new Hono();
+
+      app.use('/protected', authMiddleware(container));
+      app.get('/protected', (c) => c.json({ message: 'Should not reach here' }));
+
+      const response = await app.request('/protected', {
+        headers: {
+          Authorization: `Bearer ${tamperedToken}`,
+        },
+      });
+
+      expect(response.status).toBe(401);
+      const json = await response.json();
+      expect(json.code).toBe('E002');
+      expect(json.message).toBe('Invalid token');
+    });
+  });
+
+  describe('expired token', () => {
+    it('should return 401 when token has expired', async () => {
+      const app = new Hono();
+
+      app.use('/protected', authMiddleware(container));
+      app.get('/protected', (c) => c.json({ message: 'Should not reach here' }));
+
+      const response = await app.request('/protected', {
+        headers: {
+          Authorization: `Bearer ${expiredToken}`,
+        },
+      });
+
+      expect(response.status).toBe(401);
+      const json = await response.json();
+      expect(json.code).toBe('E002');
+      expect(json.message).toBe('Token has expired');
+    });
+  });
+
+  describe('edge cases', () => {
+    it('should handle case where Bearer prefix has mixed case', async () => {
+      const app = new Hono();
+
+      app.use('/protected', authMiddleware(container));
+      app.get('/protected', (c) => c.json({ message: 'Should not reach here' }));
+
+      // Test lowercase "bearer"
+      const response1 = await app.request('/protected', {
+        headers: {
+          Authorization: `bearer ${validToken}`,
+        },
+      });
+
+      expect(response1.status).toBe(401);
+      const json1 = await response1.json();
+      expect(json1.message).toBe('Invalid authorization format. Use: Bearer <token>');
+
+      // Test mixed case "BeArEr"
+      const response2 = await app.request('/protected', {
+        headers: {
+          Authorization: `BeArEr ${validToken}`,
+        },
+      });
+
+      expect(response2.status).toBe(401);
+      const json2 = await response2.json();
+      expect(json2.message).toBe('Invalid authorization format. Use: Bearer <token>');
+    });
+
+    it('should handle extra spaces in Bearer prefix', async () => {
+      const app = new Hono();
+
+      app.use('/protected', authMiddleware(container));
+      app.get('/protected', (c) => {
+        const userId = c.get('userId');
+        return c.json({ userId });
+      });
+
+      // Extra space after "Bearer"
+      const response = await app.request('/protected', {
+        headers: {
+          Authorization: `Bearer  ${validToken}`, // Two spaces
+        },
+      });
+
+      // Should still work - token extraction handles leading whitespace
+      expect(response.status).toBe(200);
+      const json = await response.json();
+      expect(json.userId).toBe('user-123');
+    });
+
+    it('should work with different user IDs and emails', async () => {
+      const customToken = jwtService.sign({
+        sub: 'custom-user-789',
+        email: 'custom@test.com',
+      });
+
+      const app = new Hono();
+
+      app.use('/protected', authMiddleware(container));
+      app.get('/protected', (c) => {
+        const userId = c.get('userId');
+        const userEmail = c.get('userEmail');
+        return c.json({ userId, userEmail });
+      });
+
+      const response = await app.request('/protected', {
+        headers: {
+          Authorization: `Bearer ${customToken}`,
+        },
+      });
+
+      expect(response.status).toBe(200);
+      const json = await response.json();
+      expect(json.userId).toBe('custom-user-789');
+      expect(json.userEmail).toBe('custom@test.com');
+    });
+  });
+
+  describe('integration with Hono app', () => {
+    it('should work with multiple middleware', async () => {
+      const app = new Hono();
+
+      // Custom middleware that runs before auth
+      app.use('*', async (c, next) => {
+        c.set('preAuth', 'executed');
+        await next();
+      });
+
+      app.use('/protected', authMiddleware(container));
+
+      // Custom middleware that runs after auth
+      app.use('/protected', async (c, next) => {
+        const userId = c.get('userId');
+        c.set('postAuth', `user-${userId}`);
+        await next();
+      });
+
+      app.get('/protected', (c) => {
+        return c.json({
+          preAuth: c.get('preAuth'),
+          postAuth: c.get('postAuth'),
+          userId: c.get('userId'),
+        });
+      });
+
+      const response = await app.request('/protected', {
+        headers: {
+          Authorization: `Bearer ${validToken}`,
+        },
+      });
+
+      expect(response.status).toBe(200);
+      const json = await response.json();
+      expect(json.preAuth).toBe('executed');
+      expect(json.postAuth).toBe('user-user-123');
+      expect(json.userId).toBe('user-123');
+    });
+
+    it('should not affect unprotected routes', async () => {
+      const app = new Hono();
+
+      app.use('/protected', authMiddleware(container));
+      app.get('/protected', (c) => c.json({ message: 'Protected' }));
+
+      app.get('/public', (c) => c.json({ message: 'Public' }));
+
+      // Public route should work without auth
+      const publicResponse = await app.request('/public');
+      expect(publicResponse.status).toBe(200);
+      const publicJson = await publicResponse.json();
+      expect(publicJson.message).toBe('Public');
+
+      // Protected route should require auth
+      const protectedResponse = await app.request('/protected');
+      expect(protectedResponse.status).toBe(401);
     });
   });
 });

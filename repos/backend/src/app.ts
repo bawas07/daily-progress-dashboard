@@ -6,6 +6,7 @@ import { logger as winstonLogger } from './shared/logger/logger.service';
 import { createSuccessResponse, notFound } from './shared/response/response.helper';
 import { container } from './shared/registry';
 import { AuthController, AuthService } from './modules/auth';
+import { UserPreferencesController, UserPreferencesService } from './modules/user-preferences';
 
 export function createApp() {
   const app = new Hono<{Bindings: typeof env}>();
@@ -18,10 +19,17 @@ export function createApp() {
   const authService = container.resolve<AuthService>('AuthService');
   const authController = new AuthController();
 
+  const userPreferencesService = container.resolve<UserPreferencesService>('UserPreferencesService');
+  const userPreferencesController = new UserPreferencesController();
+
   // Set up auth routes with authService injected
   app.post('/api/auth/login', authController.login(authService));
   app.post('/api/auth/register', authController.register(authService));
   app.get('/api/auth/me', authController.getMe(authService));
+
+  // Set up user preferences routes with userPreferencesService injected
+  app.get('/api/user/preferences', userPreferencesController.getPreferences(container));
+  app.put('/api/user/preferences', userPreferencesController.updatePreferences(container));
 
   // Health check endpoint
   app.get('/health', (c) => {

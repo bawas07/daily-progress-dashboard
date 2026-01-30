@@ -50,3 +50,24 @@ export const registerSchema = z.object({
 
 // Pagination schema export
 export type PaginationInput = z.infer<typeof paginationSchema>;
+
+// Theme validation
+export const themeSchema = z.enum(['auto', 'light', 'dark'], {
+  errorMap: () => ({ message: 'Theme must be one of: auto, light, dark' }),
+});
+
+// Timezone validation
+// Note: For now, we accept any string as timezone. In production, you might want to
+// validate against IANA timezone database using a library like 'date-fns-tz' or 'moment-timezone'
+export const timezoneSchema = z.string().min(1, 'Timezone is required');
+
+// User preferences update schema
+export const updatePreferencesSchema = z.object({
+  theme: themeSchema.optional(),
+  timezone: timezoneSchema.optional(),
+  defaultActiveDays: daysOfWeekSchema.optional(),
+  enableNotifications: z.boolean().optional(),
+});
+
+// Export type for TypeScript usage
+export type UpdatePreferencesInput = z.infer<typeof updatePreferencesSchema>;
