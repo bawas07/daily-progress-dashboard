@@ -63,3 +63,6 @@ export const useDashboardStore = defineStore('dashboard', () => {
     error,
   }
 })
+
+// Export user preferences store
+export { useUserPreferencesStore } from './user-preferences.store'

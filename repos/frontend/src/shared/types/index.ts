@@ -19,7 +19,30 @@ export interface UserPreferences {
   updatedAt: string
 }
 
-// API Response Types
+export type UpdatePreferencesData = Partial<{
+  theme: 'auto' | 'light' | 'dark'
+  timezone: string
+  defaultActiveDays: string[]
+  enableNotifications: boolean
+}>
+
+// Backend API Response Types (matching backend format)
+export interface ApiSuccessResponse<T> {
+  data: T
+  message: string
+  code: `S${string}`
+}
+
+export interface ApiErrorResponse {
+  data: {
+    details?: Record<string, string[]>
+    field?: string
+  }
+  message: string
+  code: `E${string}`
+}
+
+// API Response Types (legacy, for compatibility)
 export interface ApiResponse<T> {
   data: T
 }

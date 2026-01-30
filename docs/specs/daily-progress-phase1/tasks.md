@@ -89,7 +89,7 @@
   - Implement POST /api/auth/login with standardized response format
   - _Requirements: 1.1, 1.2, 1.3, 10.1, 10.2_
 
-- [ ] 2.5 User Preferences Management (TDD)
+- [x] 2.5 User Preferences Management (TDD)
   - Write failing tests for user preferences CRUD operations
   - Implement user preferences repository and service
   - Write failing tests for preferences API endpoints
@@ -383,7 +383,7 @@
   - Set up linting and formatting tools
   - _Requirements: 2.1, 8.1, 8.4, 8.5_
 
-- [ ] 9.4 PWA Configuration
+- [x] 9.4 PWA Configuration
   - Configure service worker with Vite PWA plugin
   - Set up app manifest with name, icons, theme colors
   - Configure offline caching strategy for API calls
