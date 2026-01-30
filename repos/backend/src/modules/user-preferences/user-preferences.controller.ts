@@ -3,7 +3,6 @@ import type { UserPreferencesService, UserPreferencesData, UpdateUserPreferences
 import { createSuccessResponse, createErrorResponse, validationError, serverError } from '../../shared/response/response.helper';
 import { updatePreferencesSchema } from '../../shared/validation/validation.schemas';
 import { Container, resolveService } from '../../shared/container';
-import { authMiddleware } from '../../shared/middleware/auth.middleware';
 
 /**
  * UserPreferencesController handles user preferences HTTP endpoints
@@ -17,14 +16,7 @@ export class UserPreferencesController {
     return async (c: Context): Promise<Response> => {
       try {
         // Get userId from context (set by authMiddleware)
-        const userId = c.get('userId');
-
-        if (!userId) {
-          return c.json(
-            createErrorResponse('E002', 'Unauthorized'),
-            401
-          );
-        }
+        const userId = c.get('userId') as string;
 
         // Resolve service and get preferences
         const service = resolveService<UserPreferencesService>('UserPreferencesService', container);

@@ -7,9 +7,10 @@ import { createSuccessResponse, notFound } from './shared/response/response.help
 import { container } from './shared/registry';
 import { AuthController, AuthService } from './modules/auth';
 import { UserPreferencesController, UserPreferencesService } from './modules/user-preferences';
+import { authMiddleware } from './shared/middleware/auth.middleware';
 
 export function createApp() {
-  const app = new Hono<{Bindings: typeof env}>();
+  const app = new Hono<{ Bindings: typeof env }>();
 
   // Global middleware
   app.use('*', cors());
@@ -19,17 +20,17 @@ export function createApp() {
   const authService = container.resolve<AuthService>('AuthService');
   const authController = new AuthController();
 
-  const userPreferencesService = container.resolve<UserPreferencesService>('UserPreferencesService');
+  container.resolve<UserPreferencesService>('UserPreferencesService');
   const userPreferencesController = new UserPreferencesController();
 
   // Set up auth routes with authService injected
   app.post('/api/auth/login', authController.login(authService));
   app.post('/api/auth/register', authController.register(authService));
-  app.get('/api/auth/me', authController.getMe(authService));
+  app.get('/api/auth/me', authMiddleware(container), authController.getMe(authService));
 
   // Set up user preferences routes with userPreferencesService injected
-  app.get('/api/user/preferences', userPreferencesController.getPreferences(container));
-  app.put('/api/user/preferences', userPreferencesController.updatePreferences(container));
+  app.get('/api/user/preferences', authMiddleware(container), userPreferencesController.getPreferences(container));
+  app.put('/api/user/preferences', authMiddleware(container), userPreferencesController.updatePreferences(container));
 
   // Health check endpoint
   app.get('/health', (c) => {

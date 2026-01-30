@@ -104,50 +104,33 @@ export class AuthController {
    * Get current user handler - returns authenticated user data
    * GET /api/auth/me (protected)
    */
-  getMe(_authService: AuthService) {
+  getMe(authService: AuthService) {
     return async (c: Context): Promise<Response> => {
       try {
-        const authHeader = c.req.header('Authorization');
+        const userId = c.get('userId');
 
-        if (!authHeader) {
+        if (!userId) {
           return c.json(
-            createErrorResponse('E004', 'Authorization header is required'),
+            createErrorResponse('E004', 'Unauthorized'),
             401
           );
         }
 
-        if (!authHeader.startsWith('Bearer ')) {
-          return c.json(
-            createErrorResponse('E004', 'Invalid authorization format. Use: Bearer <token>'),
-            401
-          );
-        }
-
-        const token = authHeader.substring(7);
-
-        if (!token) {
-          return c.json(
-            createErrorResponse('E004', 'Invalid authorization format. Use: Bearer <token>'),
-            401
-          );
-        }
-
-        const user = c.get('user');
-
-        if (!user) {
-          return c.json(
-            createErrorResponse('E004', 'Invalid or expired token'),
-            401
-          );
-        }
+        const result = await authService.getProfile(userId);
 
         return c.json(
           createSuccessResponse('S001', 'User retrieved successfully', {
-            user,
+            user: result.user,
           }),
           200
         );
       } catch (error) {
+        if (error instanceof Error && error.message === 'User not found') {
+          return c.json(
+            createErrorResponse('E004', 'User not found'),
+            404
+          );
+        }
         return c.json(serverError('Internal server error'), 500);
       }
     };

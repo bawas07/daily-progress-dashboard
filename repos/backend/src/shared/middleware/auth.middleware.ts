@@ -24,7 +24,7 @@ import { createErrorResponse } from '../response/response.helper';
  * @param container - Dependency injection container (optional, uses global if not provided)
  * @returns Hono middleware function
  */
-export function authMiddleware(container?: Container) {
+export function authMiddleware(container: Container) {
   return async (c: Context, next: Next) => {
     // Extract Authorization header
     const authHeader = c.req.header('Authorization');
