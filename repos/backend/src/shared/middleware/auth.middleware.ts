@@ -1,6 +1,5 @@
 import type { Context, Next } from 'hono';
 import { JwtService } from '../jwt/jwt.service';
-import { Container, resolveService } from '../container';
 import { createErrorResponse } from '../response/response.helper';
 
 /**
@@ -24,7 +23,7 @@ import { createErrorResponse } from '../response/response.helper';
  * @param container - Dependency injection container (optional, uses global if not provided)
  * @returns Hono middleware function
  */
-export function authMiddleware(container: Container) {
+export function authMiddleware(jwtService: JwtService) {
   return async (c: Context, next: Next) => {
     // Extract Authorization header
     const authHeader = c.req.header('Authorization');
@@ -46,7 +45,7 @@ export function authMiddleware(container: Container) {
     }
 
     // Extract token
-    const token = authHeader.substring(7);
+    const token = authHeader.substring(7).trim();
 
     // Check if token is empty
     if (!token || token.trim() === '') {
@@ -57,7 +56,6 @@ export function authMiddleware(container: Container) {
     }
 
     // Verify token
-    const jwtService = resolveService<JwtService>('JwtService', container);
     const result = jwtService.verify(token);
 
     // Handle verification failures

@@ -41,7 +41,7 @@ describe('authMiddleware', () => {
     it('should attach userId and userEmail to context and proceed', async () => {
       const app = new Hono();
 
-      app.use('/protected', authMiddleware(container));
+      app.use('/protected', authMiddleware(jwtService));
       app.get('/protected', (c) => {
         const userId = c.get('userId');
         const userEmail = c.get('userEmail');
@@ -65,7 +65,7 @@ describe('authMiddleware', () => {
     it('should return 401 when Authorization header is missing', async () => {
       const app = new Hono();
 
-      app.use('/protected', authMiddleware(container));
+      app.use('/protected', authMiddleware(jwtService));
       app.get('/protected', (c) => c.json({ message: 'Should not reach here' }));
 
       const response = await app.request('/protected');
@@ -81,7 +81,7 @@ describe('authMiddleware', () => {
     it('should return 401 when Authorization header does not start with "Bearer "', async () => {
       const app = new Hono();
 
-      app.use('/protected', authMiddleware(container));
+      app.use('/protected', authMiddleware(jwtService));
       app.get('/protected', (c) => c.json({ message: 'Should not reach here' }));
 
       const response = await app.request('/protected', {
@@ -99,7 +99,7 @@ describe('authMiddleware', () => {
     it('should return 401 when token is empty after "Bearer "', async () => {
       const app = new Hono();
 
-      app.use('/protected', authMiddleware(container));
+      app.use('/protected', authMiddleware(jwtService));
       app.get('/protected', (c) => c.json({ message: 'Should not reach here' }));
 
       const response = await app.request('/protected', {
@@ -117,7 +117,7 @@ describe('authMiddleware', () => {
     it('should return 401 when token is only whitespace', async () => {
       const app = new Hono();
 
-      app.use('/protected', authMiddleware(container));
+      app.use('/protected', authMiddleware(jwtService));
       app.get('/protected', (c) => c.json({ message: 'Should not reach here' }));
 
       const response = await app.request('/protected', {
@@ -137,7 +137,7 @@ describe('authMiddleware', () => {
     it('should return 401 when token is malformed', async () => {
       const app = new Hono();
 
-      app.use('/protected', authMiddleware(container));
+      app.use('/protected', authMiddleware(jwtService));
       app.get('/protected', (c) => c.json({ message: 'Should not reach here' }));
 
       const response = await app.request('/protected', {
@@ -158,7 +158,7 @@ describe('authMiddleware', () => {
 
       const app = new Hono();
 
-      app.use('/protected', authMiddleware(container));
+      app.use('/protected', authMiddleware(jwtService));
       app.get('/protected', (c) => c.json({ message: 'Should not reach here' }));
 
       const response = await app.request('/protected', {
@@ -178,7 +178,7 @@ describe('authMiddleware', () => {
     it('should return 401 when token has expired', async () => {
       const app = new Hono();
 
-      app.use('/protected', authMiddleware(container));
+      app.use('/protected', authMiddleware(jwtService));
       app.get('/protected', (c) => c.json({ message: 'Should not reach here' }));
 
       const response = await app.request('/protected', {
@@ -198,7 +198,7 @@ describe('authMiddleware', () => {
     it('should handle case where Bearer prefix has mixed case', async () => {
       const app = new Hono();
 
-      app.use('/protected', authMiddleware(container));
+      app.use('/protected', authMiddleware(jwtService));
       app.get('/protected', (c) => c.json({ message: 'Should not reach here' }));
 
       // Test lowercase "bearer"
@@ -227,7 +227,7 @@ describe('authMiddleware', () => {
     it('should handle extra spaces in Bearer prefix', async () => {
       const app = new Hono();
 
-      app.use('/protected', authMiddleware(container));
+      app.use('/protected', authMiddleware(jwtService));
       app.get('/protected', (c) => {
         const userId = c.get('userId');
         return c.json({ userId });
@@ -254,7 +254,7 @@ describe('authMiddleware', () => {
 
       const app = new Hono();
 
-      app.use('/protected', authMiddleware(container));
+      app.use('/protected', authMiddleware(jwtService));
       app.get('/protected', (c) => {
         const userId = c.get('userId');
         const userEmail = c.get('userEmail');
@@ -284,7 +284,7 @@ describe('authMiddleware', () => {
         await next();
       });
 
-      app.use('/protected', authMiddleware(container));
+      app.use('/protected', authMiddleware(jwtService));
 
       // Custom middleware that runs after auth
       app.use('/protected', async (c, next) => {
@@ -317,7 +317,7 @@ describe('authMiddleware', () => {
     it('should not affect unprotected routes', async () => {
       const app = new Hono();
 
-      app.use('/protected', authMiddleware(container));
+      app.use('/protected', authMiddleware(jwtService));
       app.get('/protected', (c) => c.json({ message: 'Protected' }));
 
       app.get('/public', (c) => c.json({ message: 'Public' }));

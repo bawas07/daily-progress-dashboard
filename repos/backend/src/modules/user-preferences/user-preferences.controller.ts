@@ -2,25 +2,30 @@ import type { Context } from 'hono';
 import type { UserPreferencesService, UserPreferencesData, UpdateUserPreferencesData } from './services/user.preferences.service';
 import { createSuccessResponse, createErrorResponse, validationError, serverError } from '../../shared/response/response.helper';
 import { updatePreferencesSchema } from '../../shared/validation/validation.schemas';
-import { Container, resolveService } from '../../shared/container';
+
 
 /**
  * UserPreferencesController handles user preferences HTTP endpoints
  */
 export class UserPreferencesController {
+  private userPreferencesService: UserPreferencesService;
+
+  constructor(userPreferencesService: UserPreferencesService) {
+    this.userPreferencesService = userPreferencesService;
+  }
+
   /**
    * GET /api/user/preferences - Get user preferences
    * Protected by auth middleware
    */
-  getPreferences(container: Container) {
+  getPreferences() {
     return async (c: Context): Promise<Response> => {
       try {
         // Get userId from context (set by authMiddleware)
         const userId = c.get('userId') as string;
 
         // Resolve service and get preferences
-        const service = resolveService<UserPreferencesService>('UserPreferencesService', container);
-        const preferences = await service.getPreferences(userId);
+        const preferences = await this.userPreferencesService.getPreferences(userId);
 
         return c.json(
           createSuccessResponse('S001', 'Preferences retrieved successfully', preferences),
@@ -37,7 +42,7 @@ export class UserPreferencesController {
    * PUT /api/user/preferences - Update user preferences
    * Protected by auth middleware
    */
-  updatePreferences(container: Container) {
+  updatePreferences() {
     return async (c: Context): Promise<Response> => {
       try {
         // Get userId from context (set by authMiddleware)
@@ -65,9 +70,8 @@ export class UserPreferencesController {
         }
 
         // Resolve service and update preferences
-        const service = resolveService<UserPreferencesService>('UserPreferencesService', container);
         // Zod already validated the type, no need for type assertion
-        const updatedPreferences = await service.updatePreferences(
+        const updatedPreferences = await this.userPreferencesService.updatePreferences(
           userId,
           validationResult.data
         );
@@ -93,4 +97,4 @@ export class UserPreferencesController {
 }
 
 // Export singleton instance for convenience
-export const userPreferencesController = new UserPreferencesController();
+

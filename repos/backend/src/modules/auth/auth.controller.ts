@@ -7,11 +7,17 @@ import { loginSchema, registerSchema } from '../../shared/validation/validation.
  * Auth Controller handles authentication-related HTTP endpoints
  */
 export class AuthController {
+  private authService: AuthService;
+
+  constructor(authService: AuthService) {
+    this.authService = authService;
+  }
+
   /**
    * Login handler - authenticates user and returns JWT token
    * POST /api/auth/login
    */
-  login(authService: AuthService) {
+  login() {
     return async (c: Context): Promise<Response> => {
       try {
         const body = await c.req.json();
@@ -32,7 +38,7 @@ export class AuthController {
           password: validationResult.data.password,
         };
 
-        const result: LoginResult = await authService.login(loginData);
+        const result: LoginResult = await this.authService.login(loginData);
 
         return c.json(
           createSuccessResponse('S001', 'Login successful', {
@@ -57,7 +63,7 @@ export class AuthController {
    * Register handler - creates new user with default preferences
    * POST /api/auth/register
    */
-  register(authService: AuthService) {
+  register() {
     return async (c: Context): Promise<Response> => {
       try {
         const body = await c.req.json();
@@ -79,7 +85,7 @@ export class AuthController {
           password: validationResult.data.password,
         };
 
-        const result: AuthResult = await authService.register(registerData);
+        const result: AuthResult = await this.authService.register(registerData);
 
         return c.json(
           createSuccessResponse('S002', 'Registration successful', {
@@ -104,7 +110,7 @@ export class AuthController {
    * Get current user handler - returns authenticated user data
    * GET /api/auth/me (protected)
    */
-  getMe(authService: AuthService) {
+  getMe() {
     return async (c: Context): Promise<Response> => {
       try {
         const userId = c.get('userId');
@@ -116,7 +122,7 @@ export class AuthController {
           );
         }
 
-        const result = await authService.getProfile(userId);
+        const result = await this.authService.getProfile(userId);
 
         return c.json(
           createSuccessResponse('S001', 'User retrieved successfully', {
@@ -139,4 +145,4 @@ export class AuthController {
 }
 
 // Export singleton instance for convenience
-export const authController = new AuthController();
+

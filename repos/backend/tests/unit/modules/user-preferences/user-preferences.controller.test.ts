@@ -1,9 +1,8 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { Hono } from 'hono';
-import { userPreferencesController, UserPreferencesController } from '../../../../src/modules/user-preferences/user-preferences.controller';
+import { UserPreferencesController } from '../../../../src/modules/user-preferences/user-preferences.controller';
 import { UserPreferencesService } from '../../../../src/modules/user-preferences/services/user.preferences.service';
 import { UserPreferencesRepository } from '../../../../src/modules/auth/repositories/user.preferences.repository';
-import { Container } from '../../../../src/shared/container';
 import { authMiddleware } from '../../../../src/shared/middleware/auth.middleware';
 import { JwtService } from '../../../../src/shared/jwt/jwt.service';
 
@@ -11,23 +10,18 @@ import { JwtService } from '../../../../src/shared/jwt/jwt.service';
 vi.mock('../../../../src/modules/auth/repositories/user.preferences.repository');
 
 describe('UserPreferencesController', () => {
-  let container: Container;
   let jwtService: JwtService;
   let validToken: string;
   let userPreferencesService: UserPreferencesService;
   let mockRepository: UserPreferencesRepository;
+  let controller: UserPreferencesController;
 
   beforeEach(() => {
     // Clear all mocks
     vi.clearAllMocks();
 
-    // Create a fresh container for each test
-    container = new Container();
-
     // Setup JWT service
     jwtService = new JwtService();
-    jwtService.container = container;
-    container.register('JwtService', JwtService);
 
     // Generate valid token
     validToken = jwtService.sign({
@@ -42,13 +36,11 @@ describe('UserPreferencesController', () => {
       update: vi.fn(),
     } as unknown as UserPreferencesRepository;
 
-    // Register the mock repository in container
-    container.register('UserPreferencesRepository', class {
-      constructor() { return mockRepository; }
-    });
+    // Create service with mock repository (constructor injection)
+    userPreferencesService = new UserPreferencesService(mockRepository);
 
-    // Register the service
-    container.register('UserPreferencesService', UserPreferencesService);
+    // Create controller with service (constructor injection)
+    controller = new UserPreferencesController(userPreferencesService);
   });
 
   describe('GET /api/user/preferences', () => {
@@ -64,8 +56,8 @@ describe('UserPreferencesController', () => {
         enableNotifications: true,
       });
 
-      app.use('/api/user/preferences', authMiddleware(container));
-      app.get('/api/user/preferences', userPreferencesController.getPreferences(container));
+      app.use('/api/user/preferences', authMiddleware(jwtService));
+      app.get('/api/user/preferences', controller.getPreferences());
 
       const response = await app.request('/api/user/preferences', {
         headers: {
@@ -98,8 +90,8 @@ describe('UserPreferencesController', () => {
         enableNotifications: false,
       });
 
-      app.use('/api/user/preferences', authMiddleware(container));
-      app.get('/api/user/preferences', userPreferencesController.getPreferences(container));
+      app.use('/api/user/preferences', authMiddleware(jwtService));
+      app.get('/api/user/preferences', controller.getPreferences());
 
       const response = await app.request('/api/user/preferences', {
         headers: {
@@ -117,8 +109,8 @@ describe('UserPreferencesController', () => {
     it('should return 401 when no token provided', async () => {
       const app = new Hono();
 
-      app.use('/api/user/preferences', authMiddleware(container));
-      app.get('/api/user/preferences', userPreferencesController.getPreferences(container));
+      app.use('/api/user/preferences', authMiddleware(jwtService));
+      app.get('/api/user/preferences', controller.getPreferences());
 
       const response = await app.request('/api/user/preferences');
 
@@ -131,8 +123,8 @@ describe('UserPreferencesController', () => {
     it('should return 401 when invalid token provided', async () => {
       const app = new Hono();
 
-      app.use('/api/user/preferences', authMiddleware(container));
-      app.get('/api/user/preferences', userPreferencesController.getPreferences(container));
+      app.use('/api/user/preferences', authMiddleware(jwtService));
+      app.get('/api/user/preferences', controller.getPreferences());
 
       const response = await app.request('/api/user/preferences', {
         headers: {
@@ -151,8 +143,8 @@ describe('UserPreferencesController', () => {
       // Setup mock to throw error
       (mockRepository.findByUserId as any).mockRejectedValue(new Error('Database error'));
 
-      app.use('/api/user/preferences', authMiddleware(container));
-      app.get('/api/user/preferences', userPreferencesController.getPreferences(container));
+      app.use('/api/user/preferences', authMiddleware(jwtService));
+      app.get('/api/user/preferences', controller.getPreferences());
 
       const response = await app.request('/api/user/preferences', {
         headers: {
@@ -183,8 +175,8 @@ describe('UserPreferencesController', () => {
         ...updatedData,
       });
 
-      app.use('/api/user/preferences', authMiddleware(container));
-      app.put('/api/user/preferences', userPreferencesController.updatePreferences(container));
+      app.use('/api/user/preferences', authMiddleware(jwtService));
+      app.put('/api/user/preferences', controller.updatePreferences());
 
       const response = await app.request('/api/user/preferences', {
         method: 'PUT',
@@ -219,8 +211,8 @@ describe('UserPreferencesController', () => {
       // Setup mock to return updated preferences
       (mockRepository.update as any).mockResolvedValue(updatedData);
 
-      app.use('/api/user/preferences', authMiddleware(container));
-      app.put('/api/user/preferences', userPreferencesController.updatePreferences(container));
+      app.use('/api/user/preferences', authMiddleware(jwtService));
+      app.put('/api/user/preferences', controller.updatePreferences());
 
       const response = await app.request('/api/user/preferences', {
         method: 'PUT',
@@ -244,8 +236,8 @@ describe('UserPreferencesController', () => {
         theme: 'invalid-theme',
       };
 
-      app.use('/api/user/preferences', authMiddleware(container));
-      app.put('/api/user/preferences', userPreferencesController.updatePreferences(container));
+      app.use('/api/user/preferences', authMiddleware(jwtService));
+      app.put('/api/user/preferences', controller.updatePreferences());
 
       const response = await app.request('/api/user/preferences', {
         method: 'PUT',
@@ -269,8 +261,8 @@ describe('UserPreferencesController', () => {
         defaultActiveDays: [],
       };
 
-      app.use('/api/user/preferences', authMiddleware(container));
-      app.put('/api/user/preferences', userPreferencesController.updatePreferences(container));
+      app.use('/api/user/preferences', authMiddleware(jwtService));
+      app.put('/api/user/preferences', controller.updatePreferences());
 
       const response = await app.request('/api/user/preferences', {
         method: 'PUT',
@@ -294,8 +286,8 @@ describe('UserPreferencesController', () => {
         defaultActiveDays: ['mon', 'tue', 'invalid-day'],
       };
 
-      app.use('/api/user/preferences', authMiddleware(container));
-      app.put('/api/user/preferences', userPreferencesController.updatePreferences(container));
+      app.use('/api/user/preferences', authMiddleware(jwtService));
+      app.put('/api/user/preferences', controller.updatePreferences());
 
       const response = await app.request('/api/user/preferences', {
         method: 'PUT',
@@ -319,8 +311,8 @@ describe('UserPreferencesController', () => {
         timezone: 'Invalid/Timezone',
       };
 
-      app.use('/api/user/preferences', authMiddleware(container));
-      app.put('/api/user/preferences', userPreferencesController.updatePreferences(container));
+      app.use('/api/user/preferences', authMiddleware(jwtService));
+      app.put('/api/user/preferences', controller.updatePreferences());
 
       const response = await app.request('/api/user/preferences', {
         method: 'PUT',
@@ -344,8 +336,8 @@ describe('UserPreferencesController', () => {
         timezone: '',
       };
 
-      app.use('/api/user/preferences', authMiddleware(container));
-      app.put('/api/user/preferences', userPreferencesController.updatePreferences(container));
+      app.use('/api/user/preferences', authMiddleware(jwtService));
+      app.put('/api/user/preferences', controller.updatePreferences());
 
       const response = await app.request('/api/user/preferences', {
         method: 'PUT',
@@ -365,8 +357,8 @@ describe('UserPreferencesController', () => {
     it('should return 401 when no token provided', async () => {
       const app = new Hono();
 
-      app.use('/api/user/preferences', authMiddleware(container));
-      app.put('/api/user/preferences', userPreferencesController.updatePreferences(container));
+      app.use('/api/user/preferences', authMiddleware(jwtService));
+      app.put('/api/user/preferences', controller.updatePreferences());
 
       const response = await app.request('/api/user/preferences', {
         method: 'PUT',
@@ -387,8 +379,8 @@ describe('UserPreferencesController', () => {
       // Setup mock to throw unexpected error
       (mockRepository.findByUserId as any).mockRejectedValue(new Error('Unexpected error'));
 
-      app.use('/api/user/preferences', authMiddleware(container));
-      app.put('/api/user/preferences', userPreferencesController.updatePreferences(container));
+      app.use('/api/user/preferences', authMiddleware(jwtService));
+      app.put('/api/user/preferences', controller.updatePreferences());
 
       const response = await app.request('/api/user/preferences', {
         method: 'PUT',
@@ -421,8 +413,8 @@ describe('UserPreferencesController', () => {
         ...validData,
       });
 
-      app.use('/api/user/preferences', authMiddleware(container));
-      app.put('/api/user/preferences', userPreferencesController.updatePreferences(container));
+      app.use('/api/user/preferences', authMiddleware(jwtService));
+      app.put('/api/user/preferences', controller.updatePreferences());
 
       const response = await app.request('/api/user/preferences', {
         method: 'PUT',
@@ -445,8 +437,8 @@ describe('UserPreferencesController', () => {
         enableNotifications: 'true', // Should be boolean
       };
 
-      app.use('/api/user/preferences', authMiddleware(container));
-      app.put('/api/user/preferences', userPreferencesController.updatePreferences(container));
+      app.use('/api/user/preferences', authMiddleware(jwtService));
+      app.put('/api/user/preferences', controller.updatePreferences());
 
       const response = await app.request('/api/user/preferences', {
         method: 'PUT',
