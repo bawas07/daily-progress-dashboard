@@ -5,10 +5,7 @@ import { env } from './shared/config/env';
 import { logger as winstonLogger } from './shared/logger/logger.service';
 import { createSuccessResponse, notFound } from './shared/response/response.helper';
 import { container } from './shared/registry';
-import { AuthController, AuthService } from './modules/auth';
-import { UserPreferencesController, UserPreferencesService } from './modules/user-preferences';
-import { authMiddleware } from './shared/middleware/auth.middleware';
-import { JwtService } from './modules/auth/services/jwt.service';
+import { registerRoutes } from './routes';
 
 export function createApp() {
   const app = new Hono<{ Bindings: typeof env }>();
@@ -17,22 +14,8 @@ export function createApp() {
   app.use('*', cors());
   app.use('*', logger());
 
-  // Resolve services from container (services must be registered before calling this)
-  const authService = container.resolve<AuthService>('AuthService');
-  const jwtService = container.resolve<JwtService>('JwtService');
-  const authController = new AuthController(authService);
-
-  const userPreferencesService = container.resolve<UserPreferencesService>('UserPreferencesService');
-  const userPreferencesController = new UserPreferencesController(userPreferencesService);
-
-  // Set up auth routes with authService injected
-  app.post('/api/auth/login', authController.login());
-  app.post('/api/auth/register', authController.register());
-  app.get('/api/auth/me', authMiddleware(jwtService), authController.getMe());
-
-  // Set up user preferences routes with userPreferencesService injected
-  app.get('/api/user/preferences', authMiddleware(jwtService), userPreferencesController.getPreferences());
-  app.put('/api/user/preferences', authMiddleware(jwtService), userPreferencesController.updatePreferences());
+  // Register all application routes
+  registerRoutes(app, container);
 
   // Health check endpoint
   app.get('/health', (c) => {
