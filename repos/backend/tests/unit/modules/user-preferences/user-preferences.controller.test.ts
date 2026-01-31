@@ -377,7 +377,7 @@ describe('UserPreferencesController', () => {
       const app = new Hono();
 
       // Setup mock to throw unexpected error
-      (mockRepository.findByUserId as any).mockRejectedValue(new Error('Unexpected error'));
+      (mockRepository.update as any).mockRejectedValue(new Error('Unexpected error'));
 
       app.use('/api/user/preferences', authMiddleware(jwtService));
       app.put('/api/user/preferences', controller.updatePreferences());
