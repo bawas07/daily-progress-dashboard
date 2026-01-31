@@ -96,13 +96,13 @@
   - Implement GET/PUT /api/user/preferences endpoints
   - _Requirements: 9.1, 9.2, 9.3, 9.4_
 
-- [ ] 2.6 Authentication Integration Tests
+- [x] 2.6 Authentication Integration Tests
   - Write integration tests for complete auth flow
   - Test registration → login → protected route access
   - Test error scenarios and edge cases
   - _Requirements: 1.1, 1.2, 1.3, 10.1, 10.2_
 
-- [ ] 2.7 JWT Refresh Token Implementation
+- [x] 2.7 JWT Refresh Token Implementation
   - Create RefreshToken model in Prisma schema
   - Implement RefreshToken repository (create, validate, revoke)
   - Write failing tests for refresh token generation and validation
