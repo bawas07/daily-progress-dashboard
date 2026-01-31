@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
-import type { LoginData, RegisterData, AuthResult, LoginResult } from '../../../src/modules/auth/services/auth.service';
+import type { LoginData, RegisterData, AuthResult, LoginResult, AuthService } from '../../../src/modules/auth/services/auth.service';
 import type { User, UserPreferences } from '@prisma/client';
 import type { Context } from 'hono';
 
@@ -12,7 +12,7 @@ interface MockAuthService {
 
 interface MockContext {
   req: {
-    json: () => Promise<Record<string, unknown>>;
+    json: () => Promise<unknown>;
     header: (name: string) => string | undefined;
   };
   get: (key: string) => unknown;
@@ -22,7 +22,7 @@ interface MockContext {
   _setStatus: (status: number) => void;
 }
 
-function createMockContext(body: Record<string, unknown> | null = null, headers: Record<string, string> = {}): MockContext & { _setStatus: (status: number) => void } {
+function createMockContext<T = unknown>(body: T | null = null, headers: Record<string, string> = {}): MockContext & { _setStatus: (status: number) => void } {
   let status = 200;
   return {
     req: {
@@ -70,6 +70,13 @@ describe('Auth Controller', () => {
     updatedAt: new Date('2024-01-01T00:00:00Z'),
   };
 
+  const mockAuthResultPreferences = {
+    defaultActiveDays: ['mon', 'tue', 'wed', 'thu', 'fri'],
+    theme: 'auto',
+    timezone: 'UTC',
+    enableNotifications: true,
+  };
+
   beforeEach(() => {
     // Reset mocks
     mockAuthService = {
@@ -110,8 +117,8 @@ describe('Auth Controller', () => {
       mockContext = createMockContext(loginData);
       mockAuthService.login.mockResolvedValue(loginResult);
 
-      const authController = new AuthController(mockAuthService as any);
-      await authController.login()(mockContext);
+      const authController = new AuthController(mockAuthService as unknown as AuthService);
+      await authController.login()(mockContext as unknown as Context);
 
       expect(mockContext.status).toBe(200);
       expect(mockContext.json).toHaveBeenCalledWith(
@@ -141,8 +148,8 @@ describe('Auth Controller', () => {
 
       mockContext = createMockContext(loginData);
 
-      const authController = new AuthController(mockAuthService as any);
-      await authController.login()(mockContext);
+      const authController = new AuthController(mockAuthService as unknown as AuthService);
+      await authController.login()(mockContext as unknown as Context);
 
       expect(mockContext.status).toBe(400);
       expect(mockContext.json).toHaveBeenCalledWith(
@@ -171,8 +178,8 @@ describe('Auth Controller', () => {
 
       mockContext = createMockContext(loginData);
 
-      const authController = new AuthController(mockAuthService as any);
-      await authController.login()(mockContext);
+      const authController = new AuthController(mockAuthService as unknown as AuthService);
+      await authController.login()(mockContext as unknown as Context);
 
       expect(mockContext.status).toBe(400);
       expect(mockContext.json).toHaveBeenCalledWith(
@@ -194,8 +201,8 @@ describe('Auth Controller', () => {
 
       mockContext = createMockContext(loginData);
 
-      const authController = new AuthController(mockAuthService as any);
-      await authController.login()(mockContext);
+      const authController = new AuthController(mockAuthService as unknown as AuthService);
+      await authController.login()(mockContext as unknown as Context);
 
       expect(mockContext.status).toBe(400);
       expect(mockContext.json).toHaveBeenCalledWith(
@@ -219,8 +226,8 @@ describe('Auth Controller', () => {
       mockContext = createMockContext(loginData);
       mockAuthService.login.mockRejectedValue(new Error('Invalid email or password'));
 
-      const authController = new AuthController(mockAuthService as any);
-      await authController.login()(mockContext);
+      const authController = new AuthController(mockAuthService as unknown as AuthService);
+      await authController.login()(mockContext as unknown as Context);
 
       expect(mockContext.status).toBe(401);
       expect(mockContext.json).toHaveBeenCalledWith(
@@ -244,8 +251,8 @@ describe('Auth Controller', () => {
       mockContext = createMockContext(loginData);
       mockAuthService.login.mockRejectedValue(new Error('Invalid email or password'));
 
-      const authController = new AuthController(mockAuthService as any);
-      await authController.login()(mockContext);
+      const authController = new AuthController(mockAuthService as unknown as AuthService);
+      await authController.login()(mockContext as unknown as Context);
 
       expect(mockContext.status).toBe(401);
       expect(mockContext.json).toHaveBeenCalledWith(
@@ -281,8 +288,8 @@ describe('Auth Controller', () => {
       mockContext = createMockContext(loginData);
       mockAuthService.login.mockResolvedValue(loginResult);
 
-      const authController = new AuthController(mockAuthService as any);
-      await authController.login()(mockContext);
+      const authController = new AuthController(mockAuthService as unknown as AuthService);
+      await authController.login()(mockContext as unknown as Context);
 
       expect(mockAuthService.login).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -297,8 +304,8 @@ describe('Auth Controller', () => {
 
       mockContext = createMockContext({});
 
-      const authController = new AuthController(mockAuthService as any);
-      await authController.login()(mockContext);
+      const authController = new AuthController(mockAuthService as unknown as AuthService);
+      await authController.login()(mockContext as unknown as Context);
 
       expect(mockContext.status).toBe(400);
       expect(mockAuthService.login).not.toHaveBeenCalled();
@@ -330,8 +337,8 @@ describe('Auth Controller', () => {
       mockContext = createMockContext(loginData);
       mockAuthService.login.mockResolvedValue(loginResult);
 
-      const authController = new AuthController(mockAuthService as any);
-      await authController.login()(mockContext);
+      const authController = new AuthController(mockAuthService as unknown as AuthService);
+      await authController.login()(mockContext as unknown as Context);
 
       expect(mockContext.status).toBe(200);
       expect(mockAuthService.login).toHaveBeenCalledWith({
@@ -372,8 +379,8 @@ describe('Auth Controller', () => {
       mockContext = createMockContext(registerData);
       mockAuthService.register.mockResolvedValue(authResult);
 
-      const authController = new AuthController(mockAuthService as any);
-      await authController.register()(mockContext);
+      const authController = new AuthController(mockAuthService as unknown as AuthService);
+      await authController.register()(mockContext as unknown as Context);
 
       expect(mockContext.status).toBe(201);
       expect(mockContext.json).toHaveBeenCalledWith(
@@ -407,8 +414,8 @@ describe('Auth Controller', () => {
 
       mockContext = createMockContext(registerData);
 
-      const authController = new AuthController(mockAuthService as any);
-      await authController.register()(mockContext);
+      const authController = new AuthController(mockAuthService as unknown as AuthService);
+      await authController.register()(mockContext as unknown as Context);
 
       expect(mockContext.status).toBe(400);
       expect(mockContext.json).toHaveBeenCalledWith(
@@ -436,8 +443,8 @@ describe('Auth Controller', () => {
 
       mockContext = createMockContext(registerData);
 
-      const authController = new AuthController(mockAuthService as any);
-      await authController.register()(mockContext);
+      const authController = new AuthController(mockAuthService as unknown as AuthService);
+      await authController.register()(mockContext as unknown as Context);
 
       expect(mockContext.status).toBe(400);
       expect(mockContext.json).toHaveBeenCalledWith(
@@ -464,8 +471,8 @@ describe('Auth Controller', () => {
 
       mockContext = createMockContext(registerData);
 
-      const authController = new AuthController(mockAuthService as any);
-      await authController.register()(mockContext);
+      const authController = new AuthController(mockAuthService as unknown as AuthService);
+      await authController.register()(mockContext as unknown as Context);
 
       expect(mockContext.status).toBe(400);
       expect(mockContext.json).toHaveBeenCalledWith(
@@ -487,8 +494,8 @@ describe('Auth Controller', () => {
 
       mockContext = createMockContext(registerData);
 
-      const authController = new AuthController(mockAuthService as any);
-      await authController.register()(mockContext);
+      const authController = new AuthController(mockAuthService as unknown as AuthService);
+      await authController.register()(mockContext as unknown as Context);
 
       expect(mockContext.status).toBe(400);
       expect(mockContext.json).toHaveBeenCalledWith(
@@ -515,8 +522,8 @@ describe('Auth Controller', () => {
 
       mockContext = createMockContext(registerData);
 
-      const authController = new AuthController(mockAuthService as any);
-      await authController.register()(mockContext);
+      const authController = new AuthController(mockAuthService as unknown as AuthService);
+      await authController.register()(mockContext as unknown as Context);
 
       expect(mockContext.status).toBe(400);
       expect(mockContext.json).toHaveBeenCalledWith(
@@ -543,8 +550,8 @@ describe('Auth Controller', () => {
 
       mockContext = createMockContext(registerData);
 
-      const authController = new AuthController(mockAuthService as any);
-      await authController.register()(mockContext);
+      const authController = new AuthController(mockAuthService as unknown as AuthService);
+      await authController.register()(mockContext as unknown as Context);
 
       expect(mockContext.status).toBe(400);
       expect(mockContext.json).toHaveBeenCalledWith(
@@ -572,8 +579,8 @@ describe('Auth Controller', () => {
       mockContext = createMockContext(registerData);
       mockAuthService.register.mockRejectedValue(new Error('Email already registered'));
 
-      const authController = new AuthController(mockAuthService as any);
-      await authController.register()(mockContext);
+      const authController = new AuthController(mockAuthService as unknown as AuthService);
+      await authController.register()(mockContext as unknown as Context);
 
       expect(mockContext.status).toBe(400);
       expect(mockContext.json).toHaveBeenCalledWith(
@@ -614,8 +621,8 @@ describe('Auth Controller', () => {
       mockContext = createMockContext(registerData);
       mockAuthService.register.mockResolvedValue(authResult);
 
-      const authController = new AuthController(mockAuthService as any);
-      await authController.register()(mockContext);
+      const authController = new AuthController(mockAuthService as unknown as AuthService);
+      await authController.register()(mockContext as unknown as Context);
 
       expect(mockAuthService.register).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -629,8 +636,8 @@ describe('Auth Controller', () => {
 
       mockContext = createMockContext({});
 
-      const authController = new AuthController(mockAuthService as any);
-      await authController.register()(mockContext);
+      const authController = new AuthController(mockAuthService as unknown as AuthService);
+      await authController.register()(mockContext as unknown as Context);
 
       expect(mockContext.status).toBe(400);
       expect(mockAuthService.register).not.toHaveBeenCalled();
@@ -645,8 +652,8 @@ describe('Auth Controller', () => {
       mockContext = createMockContext(null, {});
       mockContext.get = vi.fn().mockReturnValue(undefined);
 
-      const authController = new AuthController(mockAuthService as any);
-      await authController.getMe()(mockContext);
+      const authController = new AuthController(mockAuthService as unknown as AuthService);
+      await authController.getMe()(mockContext as unknown as Context);
 
       expect(mockContext.status).toBe(401);
       expect(mockContext.json).toHaveBeenCalledWith(
@@ -687,8 +694,8 @@ describe('Auth Controller', () => {
 
       mockAuthService.getProfile.mockResolvedValue(userPayload);
 
-      const authController = new AuthController(mockAuthService as any);
-      await authController.getMe()(mockContext);
+      const authController = new AuthController(mockAuthService as unknown as AuthService);
+      await authController.getMe()(mockContext as unknown as Context);
 
       expect(mockContext.status).toBe(200);
       expect(mockContext.json).toHaveBeenCalledWith(
@@ -734,8 +741,8 @@ describe('Auth Controller', () => {
 
       mockAuthService.getProfile.mockResolvedValue(authenticatedUser);
 
-      const authController = new AuthController(mockAuthService as any);
-      await authController.getMe()(mockContext);
+      const authController = new AuthController(mockAuthService as unknown as AuthService);
+      await authController.getMe()(mockContext as unknown as Context);
 
       expect(mockContext.json).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -764,8 +771,8 @@ describe('Auth Controller', () => {
       mockContext = createMockContext(loginData);
       mockAuthService.login.mockRejectedValue(new Error('Unexpected database error'));
 
-      const authController = new AuthController(mockAuthService as any);
-      await authController.login()(mockContext);
+      const authController = new AuthController(mockAuthService as unknown as AuthService);
+      await authController.login()(mockContext as unknown as Context);
 
       expect(mockContext.status).toBe(500);
       expect(mockContext.json).toHaveBeenCalledWith(
@@ -788,8 +795,8 @@ describe('Auth Controller', () => {
 
       mockContext = createMockContext(invalidData);
 
-      const authController = new AuthController(mockAuthService as any);
-      await authController.login()(mockContext);
+      const authController = new AuthController(mockAuthService as unknown as AuthService);
+      await authController.login()(mockContext as unknown as Context);
 
       expect(mockContext.status).toBe(400);
     });
@@ -820,14 +827,14 @@ describe('Auth Controller', () => {
       mockContext = createMockContext(loginData);
       mockAuthService.login.mockResolvedValue(loginResult);
 
-      const authController = new AuthController(mockAuthService as any);
-      await authController.login()(mockContext);
+      const authController = new AuthController(mockAuthService as unknown as AuthService);
+      await authController.login()(mockContext as unknown as Context);
 
       // Verify service was called
       expect(mockAuthService.login).toHaveBeenCalledTimes(1);
 
       // Verify response structure
-      const responseCall = (mockContext.json as any).mock.calls[0];
+      const responseCall = (mockContext.json as unknown as { mock: { calls: any[][] } }).mock.calls[0];
       const responseBody = responseCall[0];
 
       expect(responseBody.code).toBe('S001');
@@ -867,14 +874,14 @@ describe('Auth Controller', () => {
       mockContext = createMockContext(registerData);
       mockAuthService.register.mockResolvedValue(authResult);
 
-      const authController = new AuthController(mockAuthService as any);
-      await authController.register()(mockContext);
+      const authController = new AuthController(mockAuthService as unknown as AuthService);
+      await authController.register()(mockContext as unknown as Context);
 
       // Verify service was called
       expect(mockAuthService.register).toHaveBeenCalledTimes(1);
 
       // Verify response
-      const responseCall = (mockContext.json as any).mock.calls[0];
+      const responseCall = (mockContext.json as unknown as { mock: { calls: any[][] } }).mock.calls[0];
       const responseBody = responseCall[0];
 
       expect(responseBody.code).toBe('S002');
@@ -897,8 +904,8 @@ describe('Auth Controller', () => {
 
       mockContext = createMockContext(registerData);
 
-      const authController = new AuthController(mockAuthService as any);
-      await authController.register()(mockContext);
+      const authController = new AuthController(mockAuthService as unknown as AuthService);
+      await authController.register()(mockContext as unknown as Context);
 
       // Should fail validation due to name being too long
       expect(mockContext.status).toBe(400);
@@ -923,14 +930,14 @@ describe('Auth Controller', () => {
           updatedAt: new Date(),
           lastLogin: null,
         },
-        preferences: mockPreferences,
+        preferences: mockAuthResultPreferences,
       };
 
       mockContext = createMockContext(registerData);
       mockAuthService.register.mockResolvedValue(authResult);
 
-      const authController = new AuthController(mockAuthService as any);
-      await authController.register()(mockContext);
+      const authController = new AuthController(mockAuthService as unknown as AuthService);
+      await authController.register()(mockContext as unknown as Context);
 
       expect(mockContext.status).toBe(201);
       expect(mockAuthService.register).toHaveBeenCalledWith(
@@ -959,14 +966,14 @@ describe('Auth Controller', () => {
           updatedAt: new Date(),
           lastLogin: null,
         },
-        preferences: mockPreferences,
+        preferences: mockAuthResultPreferences,
       };
 
       mockContext = createMockContext(registerData);
       mockAuthService.register.mockResolvedValue(authResult);
 
-      const authController = new AuthController(mockAuthService as any);
-      await authController.register()(mockContext);
+      const authController = new AuthController(mockAuthService as unknown as AuthService);
+      await authController.register()(mockContext as unknown as Context);
 
       expect(mockContext.status).toBe(201);
     });
@@ -991,14 +998,14 @@ describe('Auth Controller', () => {
           updatedAt: new Date(),
           lastLogin: null,
         },
-        preferences: mockPreferences,
+        preferences: mockAuthResultPreferences,
       };
 
       mockContext = createMockContext(registerData);
       mockAuthService.register.mockResolvedValue(authResult);
 
-      const authController = new AuthController(mockAuthService as any);
-      await authController.register()(mockContext);
+      const authController = new AuthController(mockAuthService as unknown as AuthService);
+      await authController.register()(mockContext as unknown as Context);
 
       // Should pass password length validation
       expect(mockContext.status).toBe(201);
@@ -1034,11 +1041,11 @@ describe('Auth Controller', () => {
         createMockContext({ ...loginData }),
       ];
 
-      const authController = new AuthController(mockAuthService as any);
+      const authController = new AuthController(mockAuthService as unknown as AuthService);
 
       // Execute concurrently
       await Promise.all(
-        contexts.map(ctx => authController.login()(ctx))
+        contexts.map(ctx => authController.login()(ctx as unknown as Context))
       );
 
       // All should succeed
