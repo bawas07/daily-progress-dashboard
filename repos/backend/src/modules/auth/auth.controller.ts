@@ -107,6 +107,78 @@ export class AuthController {
   }
 
   /**
+   * Refresh token handler - rotates refresh token and issues new access token
+   * POST /api/auth/refresh
+   */
+  refresh() {
+    return async (c: Context): Promise<Response> => {
+      try {
+        const body = await c.req.json();
+
+        if (!body.refreshToken || typeof body.refreshToken !== 'string') {
+          return c.json(
+            createErrorResponse('E001', 'Validation failed', {
+              refreshToken: ['Required string']
+            }),
+            400
+          );
+        }
+
+        const result = await this.authService.refreshToken(body.refreshToken);
+
+        return c.json(
+          createSuccessResponse('S001', 'Token refreshed', result),
+          200
+        );
+      } catch (error) {
+        if (error instanceof Error && error.message === 'Invalid refresh token') {
+          return c.json(
+            createErrorResponse('E001', 'Invalid refresh token'),
+            401
+          );
+        }
+        if (error instanceof Error && error.message === 'User not found') {
+          return c.json(
+            createErrorResponse('E004', 'User not found'),
+            404
+          );
+        }
+        return c.json(serverError('Internal server error'), 500);
+      }
+    };
+  }
+
+  /**
+   * Revoke token handler - logs user out by invalidating refresh token
+   * POST /api/auth/revoke
+   */
+  revoke() {
+    return async (c: Context): Promise<Response> => {
+      try {
+        const body = await c.req.json();
+
+        if (!body.refreshToken || typeof body.refreshToken !== 'string') {
+          return c.json(
+            createErrorResponse('E001', 'Validation failed', {
+              refreshToken: ['Required string']
+            }),
+            400
+          );
+        }
+
+        await this.authService.revokeToken(body.refreshToken);
+
+        return c.json(
+          createSuccessResponse('S001', 'Token revoked successfully', {}),
+          200
+        );
+      } catch (error) {
+        return c.json(serverError('Internal server error'), 500);
+      }
+    };
+  }
+
+  /**
    * Get current user handler - returns authenticated user data
    * GET /api/auth/me (protected)
    */

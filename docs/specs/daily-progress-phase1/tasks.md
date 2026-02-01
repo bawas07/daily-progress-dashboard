@@ -54,7 +54,7 @@
   - Change logger meta parameter from any to Record<string, unknown>
   - _Requirements: 1.1_
 
-- [ ] 2. Authentication System (TDD)
+- [x] 2. Authentication System (TDD)
   - Implement user registration and login with JWT authentication
   - Create password hashing and validation
   - Set up authentication middleware for protected routes
@@ -109,11 +109,11 @@
   - Implement token rotation for security
   - _Requirements: 1.1, 9.1_
 
-- [ ] 2.8 Refresh Token Endpoints (TDD)
-  - Write failing tests for POST /api/auth/refresh endpoint
-  - Implement refresh endpoint to exchange token for new access token
-  - Write failing tests for POST /api/auth/revoke endpoint
-  - Implement logout with refresh token revocation
+- [x] 2.8 Refresh Token Endpoints (TDD)
+  - [x] Write failing tests for POST /api/auth/refresh endpoint
+  - [x] Implement refresh endpoint to exchange token for new access token
+  - [x] Write failing tests for POST /api/auth/revoke endpoint
+  - [x] Implement logout with refresh token revocation
   - _Requirements: 1.1, 1.2, 1.3_
 
 - [ ] 3. Progress Items Module (TDD)

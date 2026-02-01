@@ -1,6 +1,7 @@
 import { UserRepository } from '../repositories/user.repository';
 import { UserPreferencesRepository } from '../repositories/user.preferences.repository';
 import { PasswordService } from './password.service';
+import { RefreshTokenService } from './refresh-token.service';
 import { JwtService } from '../../../shared/jwt/jwt.service';
 import { logger } from '../../../shared/logger/logger.service';
 import { Container, resolveService } from '../../../shared/container';
@@ -73,6 +74,7 @@ export interface LoginResult {
     lastLogin: Date;
   };
   token: string;
+  refreshToken: string;
 }
 
 export class AuthService {
@@ -80,6 +82,7 @@ export class AuthService {
   private preferencesRepository: UserPreferencesRepository;
   private passwordService: PasswordService;
   private jwtService: JwtService;
+  private refreshTokenService: RefreshTokenService;
 
   /**
    * Constructor accepting dependencies directly (for testing) or via Container (for production)
@@ -93,7 +96,8 @@ export class AuthService {
     containerOrUserRepo: Container | UserRepository,
     preferencesRepository?: UserPreferencesRepository,
     passwordService?: PasswordService,
-    jwtService?: JwtService
+    jwtService?: JwtService,
+    refreshTokenService?: RefreshTokenService
   ) {
     // Check if first argument is a Container or direct dependencies
     if (containerOrUserRepo instanceof Container) {
@@ -102,12 +106,14 @@ export class AuthService {
       this.preferencesRepository = resolveService<UserPreferencesRepository>('UserPreferencesRepository', containerOrUserRepo);
       this.passwordService = resolveService<PasswordService>('PasswordService', containerOrUserRepo);
       this.jwtService = resolveService<JwtService>('JwtService', containerOrUserRepo);
+      this.refreshTokenService = resolveService<RefreshTokenService>('RefreshTokenService', containerOrUserRepo);
     } else {
       // Testing: use provided dependencies directly
       this.userRepository = containerOrUserRepo;
       this.preferencesRepository = preferencesRepository!;
       this.passwordService = passwordService!;
       this.jwtService = jwtService!;
+      this.refreshTokenService = refreshTokenService!;
     }
   }
 
@@ -195,6 +201,9 @@ export class AuthService {
       email: user.email,
     });
 
+    // Generate Refresh Token
+    const refreshToken = await this.refreshTokenService.generateRefreshToken(user.id);
+
     logger.info('User logged in successfully', { userId: user.id });
 
     return {
@@ -207,7 +216,45 @@ export class AuthService {
         lastLogin: updatedUser.lastLogin!,
       },
       token,
+      refreshToken,
     };
+  }
+
+  /**
+   * Refresh access token using refresh token
+   */
+  async refreshToken(token: string): Promise<{ token: string; refreshToken: string }> {
+    // Validate first to get user ID
+    const tokenRecord = await this.refreshTokenService.validateRefreshToken(token);
+    if (!tokenRecord) {
+      throw new AuthenticationError('Invalid refresh token');
+    }
+
+    const user = await this.userRepository.findById(tokenRecord.userId);
+    if (!user) {
+      throw new AuthenticationError('User not found');
+    }
+
+    // Now rotate (token verification happens inside too)
+    const newRefreshToken = await this.refreshTokenService.rotateRefreshToken(token);
+
+    // Create new access token
+    const newAccessToken = this.jwtService.sign({
+      sub: user.id,
+      email: user.email,
+    });
+
+    return {
+      token: newAccessToken,
+      refreshToken: newRefreshToken,
+    };
+  }
+
+  /**
+   * Revoke refresh token (Logout)
+   */
+  async revokeToken(token: string): Promise<void> {
+    await this.refreshTokenService.revokeRefreshToken(token);
   }
 
   /**

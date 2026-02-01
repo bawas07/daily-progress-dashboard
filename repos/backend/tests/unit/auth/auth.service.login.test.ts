@@ -3,7 +3,8 @@ import { AuthService, LoginData, AuthenticationError } from '../../../src/module
 import { UserRepository } from '../../../src/modules/auth/repositories/user.repository';
 import { UserPreferencesRepository } from '../../../src/modules/auth/repositories/user.preferences.repository';
 import { PasswordService } from '../../../src/modules/auth/services/password.service';
-import { JwtService } from '../../../shared/jwt/jwt.service';
+import { RefreshTokenService } from '../../../src/modules/auth/services/refresh-token.service';
+import { JwtService } from '../../../src/shared/jwt/jwt.service';
 import { User, UserPreferences } from '@prisma/client';
 
 interface MockUserRepository {
@@ -21,6 +22,7 @@ describe('AuthService - Login', () => {
   let mockPreferencesRepository: MockPreferencesRepository;
   let mockPasswordService: PasswordService;
   let mockJwtService: JwtService;
+  let mockRefreshTokenService: RefreshTokenService;
   let authService: AuthService;
 
   const mockUser: User = {
@@ -63,12 +65,19 @@ describe('AuthService - Login', () => {
       verify: vi.fn(),
       decode: vi.fn(),
     } as unknown as JwtService;
+    mockRefreshTokenService = {
+      generateRefreshToken: vi.fn().mockResolvedValue('refresh-token-123'),
+      rotateRefreshToken: vi.fn(),
+      revokeRefreshToken: vi.fn(),
+      validateRefreshToken: vi.fn(),
+    } as unknown as RefreshTokenService;
 
     authService = new AuthService(
       mockUserRepository as unknown as UserRepository,
       mockPreferencesRepository as unknown as UserPreferencesRepository,
       mockPasswordService,
-      mockJwtService
+      mockJwtService,
+      mockRefreshTokenService
     );
   });
 
@@ -93,6 +102,10 @@ describe('AuthService - Login', () => {
       expect(result.user.name).toBe('Test User');
       expect(result.token).toBeDefined();
       expect(result.token.length).toBeGreaterThan(0);
+      expect(result.refreshToken).toBeDefined();
+      expect(result.refreshToken).toBe('refresh-token-123');
+      expect(result.refreshToken).toBeDefined();
+      expect(result.refreshToken).toBe('refresh-token-123');
     });
 
     it('should generate JWT token', async () => {

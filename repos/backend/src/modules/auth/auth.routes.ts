@@ -8,6 +8,8 @@ export function createAuthRoutes(authController: AuthController, jwtService: Jwt
 
     app.post('/login', authController.login());
     app.post('/register', authController.register());
+    app.post('/refresh', authController.refresh());
+    app.post('/revoke', authController.revoke());
     app.get('/me', authMiddleware(jwtService), authController.getMe());
 
     return app;

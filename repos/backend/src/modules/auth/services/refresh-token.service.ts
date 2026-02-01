@@ -55,4 +55,12 @@ export class RefreshTokenService {
     private hashToken(token: string): string {
         return crypto.createHash('sha256').update(token).digest('hex');
     }
+
+    async revokeRefreshToken(token: string): Promise<void> {
+        const tokenRecord = await this.validateRefreshToken(token);
+
+        if (tokenRecord) {
+            await this.repository.delete(tokenRecord.id);
+        }
+    }
 }

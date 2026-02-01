@@ -3,6 +3,7 @@ import { AuthService, RegisterData, ValidationError, DuplicateEmailError } from 
 import { UserRepository } from '../../../src/modules/auth/repositories/user.repository';
 import { UserPreferencesRepository } from '../../../src/modules/auth/repositories/user.preferences.repository';
 import { PasswordService } from '../../../src/modules/auth/services/password.service';
+import { RefreshTokenService } from '../../../src/modules/auth/services/refresh-token.service';
 import { JwtService } from '../../../shared/jwt/jwt.service';
 import { User, UserPreferences } from '@prisma/client';
 
@@ -20,6 +21,7 @@ describe('AuthService - Registration', () => {
   let mockPreferencesRepository: MockPreferencesRepository;
   let mockPasswordService: PasswordService;
   let mockJwtService: JwtService;
+  let mockRefreshTokenService: RefreshTokenService;
   let authService: AuthService;
 
   const mockCreatedUser: User = {
@@ -61,12 +63,19 @@ describe('AuthService - Registration', () => {
       verify: vi.fn(),
       decode: vi.fn(),
     } as unknown as JwtService;
+    mockRefreshTokenService = {
+      generateRefreshToken: vi.fn(),
+      rotateRefreshToken: vi.fn(),
+      revokeRefreshToken: vi.fn(),
+      validateRefreshToken: vi.fn(),
+    } as unknown as RefreshTokenService;
 
     authService = new AuthService(
       mockUserRepository as unknown as UserRepository,
       mockPreferencesRepository as unknown as UserPreferencesRepository,
       mockPasswordService,
-      mockJwtService
+      mockJwtService,
+      mockRefreshTokenService
     );
   });
 
