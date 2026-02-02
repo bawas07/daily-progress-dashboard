@@ -40,6 +40,16 @@ const validate = () => {
       return false
   }
   
+  if (!/[A-Z]/.test(password.value)) {
+      validationError.value = 'Password must contain at least one uppercase letter'
+      return false
+  }
+  
+  if (!/[0-9]/.test(password.value)) {
+      validationError.value = 'Password must contain at least one number'
+      return false
+  }
+  
   return true
 }
 

@@ -30,10 +30,18 @@ describe('RegisterForm', () => {
         await form.trigger('submit.prevent')
         expect(wrapper.text()).toContain('Password is required')
 
-        // Check password complexity (if implemented, simplified for now to just length)
-        await wrapper.find('input[id="password"]').setValue('123')
+        // Check password complexity
+        await wrapper.find('input[id="password"]').setValue('12345678')
         await form.trigger('submit.prevent')
-        expect(wrapper.text()).toContain('Password must be at least 8 characters')
+        expect(wrapper.text()).toContain('Password must contain at least one uppercase letter')
+
+        await wrapper.find('input[id="password"]').setValue('password')
+        await form.trigger('submit.prevent')
+        expect(wrapper.text()).toContain('Password must contain at least one uppercase letter')
+
+        await wrapper.find('input[id="password"]').setValue('Password')
+        await form.trigger('submit.prevent')
+        expect(wrapper.text()).toContain('Password must contain at least one number')
     })
 
     it('emits submit event with valid data', async () => {
