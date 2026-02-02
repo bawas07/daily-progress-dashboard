@@ -397,11 +397,11 @@
   - Set up token storage and automatic refresh
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5_
 
-- [ ] 10.1 Authentication Components (TDD)
-  - Write failing tests for LoginForm component
-  - Implement login form with email/password validation
-  - Write failing tests for RegisterForm component
-  - Implement registration form with validation and error handling
+- [x] 10.1 Authentication Components (TDD)
+  - [x] Write failing tests for LoginForm component
+  - [x] Implement login form with email/password validation
+  - [x] Write failing tests for RegisterForm component
+  - [x] Implement registration form with validation and error handling
   - _Requirements: 1.1, 1.2, 1.3_
 
 - [ ] 10.2 Authentication Store (TDD)
