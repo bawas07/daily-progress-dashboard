@@ -42,25 +42,32 @@ Object.defineProperty(window, 'scrollTo', {
   value: vi.fn(),
 })
 
-// Mock localStorage
-const localStorageMock = {
-  getItem: vi.fn(),
-  setItem: vi.fn(),
-  removeItem: vi.fn(),
-  clear: vi.fn(),
+// Mock localStorage with actual storage behavior
+const createStorageMock = () => {
+  let store: Record<string, string> = {}
+
+  return {
+    getItem: vi.fn((key: string) => store[key] || null),
+    setItem: vi.fn((key: string, value: string) => {
+      store[key] = value
+    }),
+    removeItem: vi.fn((key: string) => {
+      delete store[key]
+    }),
+    clear: vi.fn(() => {
+      store = {}
+    }),
+  }
 }
+
+const localStorageMock = createStorageMock()
 Object.defineProperty(window, 'localStorage', {
   writable: true,
   value: localStorageMock,
 })
 
-// Mock sessionStorage
-const sessionStorageMock = {
-  getItem: vi.fn(),
-  setItem: vi.fn(),
-  removeItem: vi.fn(),
-  clear: vi.fn(),
-}
+// Mock sessionStorage with actual storage behavior
+const sessionStorageMock = createStorageMock()
 Object.defineProperty(window, 'sessionStorage', {
   writable: true,
   value: sessionStorageMock,
