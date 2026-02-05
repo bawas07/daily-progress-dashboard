@@ -404,18 +404,18 @@
   - [x] Implement registration form with validation and error handling
   - _Requirements: 1.1, 1.2, 1.3_
 
-- [ ] 10.2 Authentication Store (TDD)
-  - Write failing tests for auth store actions
-  - Implement Pinia store for authentication state management
-  - Write failing tests for token storage and retrieval
-  - Implement secure token storage with automatic expiration handling
+- [x] 10.2 Authentication Store (TDD)
+  - [x] Write failing tests for auth store actions
+  - [x] Implement Pinia store for authentication state management
+  - [x] Write failing tests for token storage and retrieval
+  - [x] Implement secure token storage with automatic expiration handling
   - _Requirements: 1.1, 1.4, 1.5_
 
-- [ ] 10.3 Token Refresh Service (TDD)
-  - Write failing tests for automatic token refresh logic
-  - Implement token refresh service with interceptor
-  - Write failing tests for 401 handling and retry flow
-  - Implement automatic token refresh on expiration
+- [x] 10.3 Token Refresh Service (TDD)
+  - [x] Write failing tests for automatic token refresh logic
+  - [x] Implement token refresh service with interceptor
+  - [x] Write failing tests for 401 handling and retry flow
+  - [x] Implement automatic token refresh on expiration
   - _Requirements: 1.1, 1.4, 1.5_
 
 - [ ] 10.4 Logout and Token Revocation (TDD)

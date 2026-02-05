@@ -1,10 +1,8 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { useApiClient, transformApiError } from '@/shared/api'
+import { AUTH_TOKEN_KEY, REFRESH_TOKEN_KEY } from '@/shared/constants'
 import type { User, LoginRequest, RegisterRequest, ApiSuccessResponse, UserPreferences } from '@/shared/types'
-
-const AUTH_TOKEN_KEY = 'auth_token'
-const REFRESH_TOKEN_KEY = 'refresh_token'
 
 export const useAuthStore = defineStore('auth', () => {
     // Create API client once at store level

@@ -1,5 +1,12 @@
-import axios, { type AxiosInstance, type AxiosError } from 'axios'
+import axios, { type AxiosInstance, type AxiosError, type InternalAxiosRequestConfig } from 'axios'
 import type { ApiError } from '@/shared/types'
+import { AUTH_TOKEN_KEY, REFRESH_TOKEN_KEY } from '@/shared/constants'
+import { refreshAccessToken } from '@/shared/services/token-refresh.service'
+
+// Extend the config type to include our retry flag
+interface ExtendedAxiosRequestConfig extends InternalAxiosRequestConfig {
+  _retry?: boolean
+}
 
 /**
  * Create and configure axios instance for API calls
@@ -16,7 +23,7 @@ export function createApiClient(): AxiosInstance {
   client.interceptors.request.use(
     (config) => {
       // Get token from localStorage
-      const token = localStorage.getItem('auth_token')
+      const token = localStorage.getItem(AUTH_TOKEN_KEY)
       if (token) {
         config.headers.Authorization = `Bearer ${token}`
       }
@@ -27,17 +34,38 @@ export function createApiClient(): AxiosInstance {
     }
   )
 
-  // Response interceptor to handle common errors
+  // Response interceptor to handle errors
   client.interceptors.response.use(
     (response) => response,
-    (error: AxiosError) => {
+    async (error: AxiosError) => {
+      const originalRequest = error.config as ExtendedAxiosRequestConfig | undefined
+
       // Handle 401 Unauthorized - token expired or invalid
-      if (error.response?.status === 401) {
-        // Clear token and redirect to login
-        localStorage.removeItem('auth_token')
-        if (window.location.pathname !== '/login') {
-          window.location.href = '/login'
+      if (error.response?.status === 401 && originalRequest) {
+        // Don't attempt refresh if:
+        // 1. Already on login/register page
+        // 2. Already tried to retry this request
+        const isAuthPage = window.location.pathname.match(/\/(login|register)/)
+        if (isAuthPage || originalRequest._retry) {
+          return Promise.reject(error)
         }
+
+        // Mark this request as retried to prevent infinite loops
+        originalRequest._retry = true
+
+        // Attempt to refresh the token
+        const newAccessToken = await refreshAccessToken()
+
+        if (newAccessToken) {
+          // Update the authorization header and retry
+          originalRequest.headers.Authorization = `Bearer ${newAccessToken}`
+          return client(originalRequest)
+        }
+
+        // Refresh failed - clear tokens and redirect to login
+        localStorage.removeItem(AUTH_TOKEN_KEY)
+        localStorage.removeItem(REFRESH_TOKEN_KEY)
+        window.location.href = '/login'
       }
 
       return Promise.reject(error)
