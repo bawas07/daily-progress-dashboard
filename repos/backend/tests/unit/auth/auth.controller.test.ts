@@ -112,6 +112,7 @@ describe('Auth Controller', () => {
           lastLogin: mockUser.lastLogin!,
         },
         token: 'valid-jwt-token',
+        refreshToken: 'valid-refresh-token',
       };
 
       mockContext = createMockContext(loginData);
@@ -129,6 +130,7 @@ describe('Auth Controller', () => {
               email: 'test@example.com',
             }),
             token: 'valid-jwt-token',
+            refreshToken: 'valid-refresh-token',
           }),
           code: 'S001',
           message: 'Login successful',
@@ -283,6 +285,7 @@ describe('Auth Controller', () => {
           lastLogin: mockUser.lastLogin!,
         },
         token: 'valid-jwt-token',
+        refreshToken: 'valid-refresh-token',
       };
 
       mockContext = createMockContext(loginData);
@@ -332,6 +335,7 @@ describe('Auth Controller', () => {
           lastLogin: mockUser.lastLogin!,
         },
         token: 'valid-jwt-token',
+        refreshToken: 'valid-refresh-token',
       };
 
       mockContext = createMockContext(loginData);
@@ -822,6 +826,7 @@ describe('Auth Controller', () => {
           lastLogin: mockUser.lastLogin!,
         },
         token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyLTEyMyIsImVtYWlsIjoidGVzdEBleGFtcGxlLmNvbSJ9.mock-signature',
+        refreshToken: 'valid-refresh-token',
       };
 
       mockContext = createMockContext(loginData);
@@ -1030,6 +1035,7 @@ describe('Auth Controller', () => {
           lastLogin: mockUser.lastLogin!,
         },
         token: 'valid-jwt-token',
+        refreshToken: 'valid-refresh-token',
       };
 
       mockAuthService.login.mockResolvedValue(loginResult);

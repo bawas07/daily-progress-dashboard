@@ -44,6 +44,7 @@ export class AuthController {
           createSuccessResponse('S001', 'Login successful', {
             user: result.user,
             token: result.token,
+            refreshToken: result.refreshToken,
           }),
           200
         );
