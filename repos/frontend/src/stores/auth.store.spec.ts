@@ -115,22 +115,56 @@ describe('Auth Store', () => {
         expect(store.isAuthenticated).toBe(false);
     });
 
-    it('logout action clears state and removes token', () => {
+    it('logout calls revoke endpoint and clears state', async () => {
         const store = useAuthStore();
         store.token = 'existing-token';
         store.refreshToken = 'existing-refresh-token';
-        store.user = { id: '1', email: 'test@example.com', name: 'Test' };
+        store.user = { id: '1', email: 'test@example.com', name: 'Test', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z', lastLogin: null };
         localStorage.setItem('auth_token', 'existing-token');
         localStorage.setItem('refresh_token', 'existing-refresh-token');
+        mockPost.mockResolvedValue({ data: { code: 'S001', message: 'Token revoked' } });
 
-        store.logout();
+        await store.logout();
 
+        expect(mockPost).toHaveBeenCalledWith('/auth/revoke', {
+            refreshToken: 'existing-refresh-token'
+        });
         expect(store.user).toBeNull();
         expect(store.token).toBeNull();
         expect(store.refreshToken).toBeNull();
         expect(store.isAuthenticated).toBe(false);
         expect(localStorage.getItem('auth_token')).toBeFalsy();
         expect(localStorage.getItem('refresh_token')).toBeFalsy();
+    });
+
+    it('logout clears state even if revoke fails', async () => {
+        const store = useAuthStore();
+        store.token = 'existing-token';
+        store.refreshToken = 'existing-refresh-token';
+        store.user = { id: '1', email: 'test@example.com', name: 'Test', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z', lastLogin: null };
+        localStorage.setItem('auth_token', 'existing-token');
+        localStorage.setItem('refresh_token', 'existing-refresh-token');
+        mockPost.mockRejectedValue(new Error('Network error'));
+
+        await store.logout();
+
+        expect(store.user).toBeNull();
+        expect(store.token).toBeNull();
+        expect(store.refreshToken).toBeNull();
+        expect(localStorage.getItem('auth_token')).toBeFalsy();
+    });
+
+    it('logout skips revoke call when no refresh token exists', async () => {
+        const store = useAuthStore();
+        store.token = 'existing-token';
+        store.refreshToken = null;
+        store.user = { id: '1', email: 'test@example.com', name: 'Test', createdAt: '2024-01-01T00:00:00Z', updatedAt: '2024-01-01T00:00:00Z', lastLogin: null };
+
+        await store.logout();
+
+        expect(mockPost).not.toHaveBeenCalled();
+        expect(store.user).toBeNull();
+        expect(store.token).toBeNull();
     });
 
     it('initialize action restores token from local storage', () => {

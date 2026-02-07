@@ -418,18 +418,18 @@
   - [x] Implement automatic token refresh on expiration
   - _Requirements: 1.1, 1.4, 1.5_
 
-- [ ] 10.4 Logout and Token Revocation (TDD)
-  - Write failing tests for logout functionality
-  - Implement logout with server-side token revocation
-  - Write failing tests for clearing all tokens
-  - Implement proper cleanup on logout (local + server)
+- [x] 10.4 Logout and Token Revocation (TDD)
+  - [x] Write failing tests for logout functionality
+  - [x] Implement logout with server-side token revocation
+  - [x] Write failing tests for clearing all tokens
+  - [x] Implement proper cleanup on logout (local + server)
   - _Requirements: 1.1, 1.2, 1.3_
 
-- [ ] 10.5 Authentication Guards (TDD)
-  - Write failing tests for route protection logic
-  - Implement Vue Router guards for protected routes
-  - Write failing tests for automatic redirect handling
-  - Implement login redirect and session restoration
+- [x] 10.5 Authentication Guards (TDD)
+  - [x] Write failing tests for route protection logic
+  - [x] Implement Vue Router guards for protected routes
+  - [x] Write failing tests for automatic redirect handling
+  - [x] Implement login redirect and session restoration
   - _Requirements: 1.4, 1.5_
 
 - [ ] 10.6 Authentication Integration Tests

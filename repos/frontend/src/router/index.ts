@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
-import { useAuthStore } from '@/shared/stores'
+import { authGuard } from './guards/auth.guard'
 
 // Lazy-loaded route components
 const LoginView = () => import('@/features/auth/views/LoginView.vue')
@@ -74,17 +74,7 @@ const router = createRouter({
 })
 
 // Navigation guard
-router.beforeEach((to, _from, next) => {
-  const authStore = useAuthStore()
-  // initialize() already called in main.ts
-
-  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
-    next({ name: 'login', query: { redirect: to.fullPath } })
-  } else if ((to.name === 'login' || to.name === 'register') && authStore.isAuthenticated) {
-    next({ name: 'dashboard' })
-  } else {
-    next()
-  }
-})
+router.beforeEach(authGuard)
 
 export default router
+

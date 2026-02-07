@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { useApiClient, transformApiError } from '@/shared/api'
 import { AUTH_TOKEN_KEY, REFRESH_TOKEN_KEY } from '@/shared/constants'
+import { API_ENDPOINTS } from '@/shared/services/endpoints'
 import type { User, LoginRequest, RegisterRequest, ApiSuccessResponse, UserPreferences } from '@/shared/types'
 
 export const useAuthStore = defineStore('auth', () => {
@@ -67,7 +68,20 @@ export const useAuthStore = defineStore('auth', () => {
         }
     }
 
-    function logout() {
+    async function logout() {
+        // Try to revoke token on server, but always clear local state
+        try {
+            if (refreshToken.value) {
+                await apiClient.post(API_ENDPOINTS.AUTH.REVOKE, {
+                    refreshToken: refreshToken.value
+                })
+            }
+        } catch {
+            // Server revocation failed - still proceed with local cleanup
+            console.warn('Failed to revoke token on server')
+        }
+
+        // Always clear local state
         user.value = null
         token.value = null
         refreshToken.value = null
