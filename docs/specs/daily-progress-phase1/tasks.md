@@ -432,12 +432,18 @@
   - [x] Implement login redirect and session restoration
   - _Requirements: 1.4, 1.5_
 
-- [ ] 10.6 Authentication Integration Tests
-  - Write E2E tests for complete authentication flow
-  - Test login → dashboard → logout → login again
-  - Test registration → automatic login → dashboard access
-  - Test token refresh and session persistence
+- [x] 10.6 Authentication Integration Tests
+  - [x] Write E2E tests for complete authentication flow
+  - [x] Test login → dashboard → logout → login again
+  - [x] Test registration → automatic login → dashboard access
+  - [x] Test token refresh and session persistence
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5_
+
+- [ ] 10.7 Codebase Hygiene & Technical Debt
+  - Configure ESLint with proper configuration file
+  - Fix sync-queue and useOffline unit tests (test environment issues)
+  - Resolve TypeScript errors in test files (vue-tsc)
+  - _Requirements: 8.1, 8.4, 8.5_
 
 - [ ] 11. Dashboard Frontend (TDD)
   - Implement main dashboard with all sections

@@ -4,6 +4,6 @@
  * Centralized exports for all API clients
  */
 
-export { UserPreferencesApi, userPreferencesApi } from './user-preferences.api'
+export { userPreferencesApi } from './user-preferences.api'
 export { createApiClient, apiClient, transformApiError } from './axios.config'
 export { useApiClient } from './client'

@@ -31,14 +31,22 @@ describe('RegisterForm', () => {
         expect(wrapper.text()).toContain('Password is required')
 
         // Check password complexity
+        // Check password complexity - length
+        await wrapper.find('input[id="password"]').setValue('123')
+        await form.trigger('submit.prevent')
+        expect(wrapper.text()).toContain('Password must be at least 8 characters')
+
+        // Check password complexity - lowercase
         await wrapper.find('input[id="password"]').setValue('12345678')
         await form.trigger('submit.prevent')
-        expect(wrapper.text()).toContain('Password must contain at least one uppercase letter')
+        expect(wrapper.text()).toContain('Password must contain at least one lowercase letter')
 
+        // Check password complexity - uppercase
         await wrapper.find('input[id="password"]').setValue('password')
         await form.trigger('submit.prevent')
         expect(wrapper.text()).toContain('Password must contain at least one uppercase letter')
 
+        // Check password complexity - number
         await wrapper.find('input[id="password"]').setValue('Password')
         await form.trigger('submit.prevent')
         expect(wrapper.text()).toContain('Password must contain at least one number')

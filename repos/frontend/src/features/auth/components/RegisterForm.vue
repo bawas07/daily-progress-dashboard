@@ -6,7 +6,7 @@ interface Props {
   error?: string | null
 }
 
-const props = defineProps<Props>()
+defineProps<Props>()
 
 const emit = defineEmits<{
   (e: 'submit', payload: { name: string; email: string; password: string }): void
@@ -40,6 +40,11 @@ const validate = () => {
       return false
   }
   
+  if (!/[a-z]/.test(password.value)) {
+      validationError.value = 'Password must contain at least one lowercase letter'
+      return false
+  }
+
   if (!/[A-Z]/.test(password.value)) {
       validationError.value = 'Password must contain at least one uppercase letter'
       return false
