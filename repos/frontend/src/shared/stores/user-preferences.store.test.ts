@@ -2,7 +2,8 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
 import { useUserPreferencesStore } from './user-preferences.store'
 import * as api from '@/shared/api/user-preferences.api'
-import type { UserPreferences, UpdatePreferencesData } from '@/shared/types'
+import type { UserPreferences } from '@/shared/types'
+import { getStorage, setStorage, removeStorage } from '@/shared/utils'
 
 // Mock the API
 vi.mock('@/shared/api/user-preferences.api', () => ({
@@ -19,7 +20,7 @@ vi.mock('@/shared/utils', () => ({
   removeStorage: vi.fn(),
 }))
 
-const mockPreferences: UserPreferences = {
+const initialMockPreferences: UserPreferences = {
   id: '123',
   userId: 'user-1',
   theme: 'dark',
@@ -32,12 +33,16 @@ const mockPreferences: UserPreferences = {
 
 describe('useUserPreferencesStore', () => {
   let store: ReturnType<typeof useUserPreferencesStore>
+  let mockPreferences: UserPreferences
 
   beforeEach(() => {
     // Create fresh pinia instance
     setActivePinia(createPinia())
     store = useUserPreferencesStore()
-    
+
+    // Reset mock data
+    mockPreferences = { ...initialMockPreferences }
+
     // Clear all mocks
     vi.clearAllMocks()
   })
@@ -59,10 +64,10 @@ describe('useUserPreferencesStore', () => {
   })
 
   describe('initializeFromStorage', () => {
-    const { getStorage } = vi.mocked(require('@/shared/utils'))
+    // getStorage is already imported and mocked
 
     it('should load preferences from localStorage', () => {
-      getStorage.mockReturnValue(mockPreferences)
+      vi.mocked(getStorage).mockReturnValue(mockPreferences)
 
       const result = store.initializeFromStorage()
 
@@ -72,7 +77,7 @@ describe('useUserPreferencesStore', () => {
     })
 
     it('should return false when no preferences in storage', () => {
-      getStorage.mockReturnValue(null)
+      vi.mocked(getStorage).mockReturnValue(null)
 
       const result = store.initializeFromStorage()
 
@@ -81,7 +86,7 @@ describe('useUserPreferencesStore', () => {
     })
 
     it('should update getters after loading from storage', () => {
-      getStorage.mockReturnValue(mockPreferences)
+      vi.mocked(getStorage).mockReturnValue(mockPreferences)
 
       store.initializeFromStorage()
 
@@ -94,8 +99,8 @@ describe('useUserPreferencesStore', () => {
   })
 
   describe('fetchPreferences', () => {
-    const { getPreferences } = vi.mocked(api)
-    const { setStorage } = vi.mocked(require('@/shared/utils'))
+    const { getPreferences } = vi.mocked(api.userPreferencesApi)
+    // setStorage is already imported and mocked
 
     it('should fetch preferences from API successfully', async () => {
       getPreferences.mockResolvedValue(mockPreferences)
@@ -136,8 +141,8 @@ describe('useUserPreferencesStore', () => {
   })
 
   describe('updatePreferences', () => {
-    const { updatePreferences } = vi.mocked(api)
-    const { setStorage } = vi.mocked(require('@/shared/utils'))
+    const { updatePreferences } = vi.mocked(api.userPreferencesApi)
+    // setStorage is already imported and mocked
 
     it('should update preferences successfully', async () => {
       const updatedPrefs = { ...mockPreferences, theme: 'light' as const }
@@ -174,7 +179,7 @@ describe('useUserPreferencesStore', () => {
   })
 
   describe('setTheme', () => {
-    const { setStorage } = vi.mocked(require('@/shared/utils'))
+    // setStorage is imported and mocked
 
     it('should set theme when preferences exist', () => {
       store.preferences = mockPreferences
@@ -206,7 +211,7 @@ describe('useUserPreferencesStore', () => {
   })
 
   describe('clearPreferences', () => {
-    const { removeStorage } = vi.mocked(require('@/shared/utils'))
+    // removeStorage is imported and mocked
 
     it('should clear preferences and storage', () => {
       store.preferences = mockPreferences

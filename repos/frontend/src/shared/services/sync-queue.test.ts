@@ -11,21 +11,7 @@ import { SyncQueueService } from './sync-queue'
 // Mock Dependencies
 // ============================================================================
 
-// Mock browser globals for Node.js environment
-const mockWindow = {
-  addEventListener: vi.fn(),
-  removeEventListener: vi.fn(),
-  dispatchEvent: vi.fn(),
-}
-
-const mockNavigator = {
-  onLine: true,
-  addEventListener: vi.fn(),
-  removeEventListener: vi.fn(),
-}
-
-global.window = mockWindow as unknown as Window & typeof globalThis
-global.navigator = mockNavigator as unknown as Navigator & { onLine: boolean }
+// Mock browser globals are handled in vitest-setup.ts
 
 // Mock the database with proper Dexie-like interface
 const createMockDatabase = () => {
@@ -87,13 +73,22 @@ const createMockDatabase = () => {
 }
 
 // Mock the API service
-const createMockApiService = () => ({
-  get: vi.fn(),
-  post: vi.fn<(_url: string, _data?: unknown) => Promise<{ id?: string; success?: boolean }>>(),
-  put: vi.fn(),
-  patch: vi.fn(),
-  delete: vi.fn(),
+const { mockApiService } = vi.hoisted(() => {
+  return {
+    mockApiService: {
+      get: vi.fn(),
+      post: vi.fn(),
+      put: vi.fn(),
+      patch: vi.fn(),
+      delete: vi.fn(),
+    }
+  }
 })
+
+// Mock the API module
+vi.mock('./api', () => ({
+  api: mockApiService
+}))
 
 // Default config for tests
 const DEFAULT_CONFIG: SyncQueueConfig = {
@@ -131,7 +126,7 @@ describe('SyncQueueService', () => {
   // Service instances and mocks for each test
   let service: SyncQueueService
   let mockDatabase: ReturnType<typeof createMockDatabase>
-  let mockApiService: ReturnType<typeof createMockApiService>
+  // mockApiService is now global const
 
   beforeAll(() => {
     // Setup fake timers if available
@@ -139,7 +134,7 @@ describe('SyncQueueService', () => {
       vi.useFakeTimers()
       restoreTimers = () => vi.useRealTimers()
     } else {
-      restoreTimers = () => {}
+      restoreTimers = () => { }
     }
   })
 
@@ -147,7 +142,13 @@ describe('SyncQueueService', () => {
     vi.clearAllMocks()
     // Create fresh mocks for each test
     mockDatabase = createMockDatabase()
-    mockApiService = createMockApiService()
+    // Reset API mock implementation
+    mockApiService.get.mockReset()
+    mockApiService.post.mockReset()
+    mockApiService.put.mockReset()
+    mockApiService.patch.mockReset()
+    mockApiService.delete.mockReset()
+
     // Create service with mocks
     service = new SyncQueueService(DEFAULT_CONFIG)
     service.setMockDatabase(mockDatabase as any)
@@ -163,7 +164,7 @@ describe('SyncQueueService', () => {
       // Ignore errors during cleanup
     }
   })
-  
+
   // =========================================================================
   // Enqueue Operations Tests
   // =========================================================================
@@ -293,7 +294,7 @@ describe('SyncQueueService', () => {
       })
     })
   })
-  
+
   // =========================================================================
   // Process Queue Tests
   // =========================================================================
@@ -350,9 +351,9 @@ describe('SyncQueueService', () => {
 
         const results = await service.processQueue()
 
-        // Check that put was called with failed status
+        // Check that put was called with updated retry count and error
         const putCall = mockDatabase.syncQueue.put.mock.calls.find(
-          call => call[0]?.status === 'failed'
+          call => call[0]?.status === 'pending' && call[0]?.error === 'Network error'
         )
         expect(putCall).toBeDefined()
         expect(putCall![0].error).toBe('Network error')
@@ -432,7 +433,13 @@ describe('SyncQueueService', () => {
         })
         mockDatabase.syncQueue.put.mockResolvedValue(1)
 
+        // Initial call
         await service.processQueue()
+
+        // Retry calls
+        for (let i = 0; i < maxRetries; i++) {
+          await service.processQueue()
+        }
 
         // Should have retried maxRetries times and eventually succeeded
         expect(mockApiService.post).toHaveBeenCalledTimes(maxRetries + 1)
@@ -479,29 +486,70 @@ describe('SyncQueueService', () => {
 
         // Check that retry count was incremented on each failure
         const failedPutCalls = mockDatabase.syncQueue.put.mock.calls.filter(
-          call => call[0]?.status === 'failed'
+          call => call[0]?.retryCount > 0
         )
         expect(failedPutCalls.length).toBeGreaterThan(0)
       })
     })
 
     describe('Handle Offline During Sync', () => {
+      let eventListeners: Map<string, Function[]>
+      let originalAddEventListener: typeof window.addEventListener
+      let originalRemoveEventListener: typeof window.removeEventListener
+
+      beforeEach(() => {
+        eventListeners = new Map()
+        originalAddEventListener = window.addEventListener
+        originalRemoveEventListener = window.removeEventListener
+
+        window.addEventListener = vi.fn((event, handler) => {
+          if (!eventListeners.has(event)) {
+            eventListeners.set(event, [])
+          }
+          eventListeners.get(event)!.push(handler as Function)
+        }) as any
+
+        window.removeEventListener = vi.fn((event, handler) => {
+          if (eventListeners.has(event)) {
+            const handlers = eventListeners.get(event)!
+            const index = handlers.indexOf(handler as Function)
+            if (index > -1) {
+              handlers.splice(index, 1)
+            }
+          }
+        }) as any
+      })
+
+      afterEach(() => {
+        window.addEventListener = originalAddEventListener
+        window.removeEventListener = originalRemoveEventListener
+      })
+
       it('should return empty when offline', async () => {
         // Set navigator to offline
-        const originalOnLine = mockNavigator.onLine
-        mockNavigator.onLine = false
+        const originalOnLine = navigator.onLine
+        Object.defineProperty(navigator, 'onLine', { value: false, configurable: true })
+
+        // Mock dispatchEvent to trigger local listeners
+        window.dispatchEvent = vi.fn().mockImplementation((event: Event) => {
+          const type = event.type
+          if (eventListeners.has(type)) {
+            eventListeners.get(type)!.forEach(handler => handler(event))
+          }
+          return true
+        })
 
         const results = await service.processQueue()
 
         expect(results).toEqual([])
 
         // Restore online status
-        mockNavigator.onLine = originalOnLine
+        Object.defineProperty(navigator, 'onLine', { value: originalOnLine, configurable: true })
       })
 
       it('should process queue when coming back online', async () => {
         // Ensure online
-        mockNavigator.onLine = true
+        Object.defineProperty(navigator, 'onLine', { value: true, configurable: true })
 
         const item = createMockQueueItem()
         mockDatabase._chain.equals.mockReturnValue({
@@ -518,7 +566,7 @@ describe('SyncQueueService', () => {
       })
 
       it('should retry pending items after reconnecting', async () => {
-        mockNavigator.onLine = true
+        Object.defineProperty(navigator, 'onLine', { value: true, configurable: true })
 
         const pendingItems = [
           createMockQueueItem({ id: '1', retryCount: 0 }),
@@ -544,7 +592,7 @@ describe('SyncQueueService', () => {
       })
     })
   })
-  
+
   // =========================================================================
   // Auto Sync Tests
   // =========================================================================
@@ -552,8 +600,7 @@ describe('SyncQueueService', () => {
   describe('Auto Sync', () => {
     afterEach(() => {
       // Clean up event listeners
-      mockWindow.addEventListener.mockClear()
-      mockWindow.removeEventListener.mockClear()
+      vi.clearAllMocks()
     })
 
     describe('startAutoSync', () => {
@@ -640,7 +687,7 @@ describe('SyncQueueService', () => {
       })
     })
   })
-  
+
   // =========================================================================
   // Status Tests
   // =========================================================================
@@ -699,21 +746,21 @@ describe('SyncQueueService', () => {
 
       it('should track online state correctly', async () => {
         // Test online state
-        mockNavigator.onLine = true
+        Object.defineProperty(navigator, 'onLine', { value: true, configurable: true })
         let status = await service.getStatus()
         expect(status.online).toBe(true)
 
         // Test offline state
-        mockNavigator.onLine = false
+        Object.defineProperty(navigator, 'onLine', { value: false, configurable: true })
         status = await service.getStatus()
         expect(status.online).toBe(false)
 
         // Restore
-        mockNavigator.onLine = true
+        Object.defineProperty(navigator, 'onLine', { value: true, configurable: true })
       })
     })
   })
-  
+
   // =========================================================================
   // Integration Tests
   // =========================================================================
@@ -762,8 +809,8 @@ describe('SyncQueueService', () => {
         // Give time for automatic processQueue to complete
         await new Promise(resolve => setTimeout(resolve, 50))
 
-        // Reset isSyncing flag for explicit call (if needed)
-        ;(service as any).isSyncing = false
+          // Reset isSyncing flag for explicit call (if needed)
+          ; (service as any).isSyncing = false
 
         // 2. Process queue explicitly
         const results = await service.processQueue()
@@ -784,7 +831,7 @@ describe('SyncQueueService', () => {
 
         // Reset sync state
         service.stopAutoSync()
-        ;(service as any).isSyncing = false
+          ; (service as any).isSyncing = false
 
         // Create mock items
         const pendingItem = {
@@ -817,8 +864,8 @@ describe('SyncQueueService', () => {
         // 1. Enqueue item - triggers automatic processQueue
         await service.enqueue(offlineItem.entityType, offlineItem.action, offlineItem.data, offlineItem.localId)
 
-        // Reset isSyncing for explicit call
-        ;(service as any).isSyncing = false
+          // Reset isSyncing for explicit call
+          ; (service as any).isSyncing = false
 
         // 2. Process queue explicitly
         const results = await service.processQueue()

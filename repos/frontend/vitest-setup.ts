@@ -77,6 +77,7 @@ Object.defineProperty(window, 'sessionStorage', {
 const initialOnlineStatus = true
 Object.defineProperty(navigator, 'onLine', {
   writable: true,
+  configurable: true,
   value: initialOnlineStatus,
 })
 
@@ -109,8 +110,8 @@ Object.defineProperty(window, 'removeEventListener', {
 export function simulateEvent(event: string, data?: unknown): void {
   const listeners = eventListeners.get(event)
   if (listeners) {
-    const event = new CustomEvent(event, { detail: data })
-    listeners.forEach((handler) => handler(event))
+    const customEvent = new CustomEvent(event, { detail: data })
+    listeners.forEach((handler) => handler(customEvent))
   }
 }
 

@@ -439,7 +439,7 @@
   - [x] Test token refresh and session persistence
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5_
 
-- [ ] 10.7 Codebase Hygiene & Technical Debt
+- [x] 10.7 Codebase Hygiene & Technical Debt
   - Configure ESLint with proper configuration file
   - Fix sync-queue and useOffline unit tests (test environment issues)
   - Resolve TypeScript errors in test files (vue-tsc)

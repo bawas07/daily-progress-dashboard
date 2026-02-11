@@ -106,7 +106,7 @@ describe('axios.config - 401 Interceptor', () => {
             expect(window.location.href).toBe('/login')
 
             // Restore
-            window.location = originalLocation
+            window.location = originalLocation as any as any
         })
 
         it('should not attempt refresh for non-401 errors', async () => {
@@ -148,7 +148,7 @@ describe('axios.config - 401 Interceptor', () => {
             expect(mockRefreshAccessToken).not.toHaveBeenCalled()
 
             // Restore
-            window.location = originalLocation
+            window.location = originalLocation as any
         })
 
         it('should not retry if request was already retried', async () => {
