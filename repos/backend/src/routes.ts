@@ -4,6 +4,9 @@ import { UserPreferencesController, UserPreferencesService } from './modules/use
 import { JwtService } from './shared/jwt/jwt.service';
 import { createAuthRoutes } from './modules/auth/auth.routes';
 import { createUserPreferencesRoutes } from './modules/user-preferences/user-preferences.routes';
+import { ProgressItemsController } from './modules/progress-items/progress-items.controller';
+import { ProgressItemService } from './modules/progress-items/services/progress-item.service';
+import { createProgressItemsRoutes } from './modules/progress-items/progress-items.routes';
 import { Container } from './shared/container';
 import { env } from './shared/config/env';
 
@@ -12,14 +15,19 @@ export function registerRoutes(app: Hono<{ Bindings: typeof env }>, container: C
     const authService = container.resolve<AuthService>('AuthService');
     const jwtService = container.resolve<JwtService>('JwtService');
     const userPreferencesService = container.resolve<UserPreferencesService>('UserPreferencesService');
+    const progressItemService = container.resolve<ProgressItemService>('ProgressItemService');
 
     // Initialize Controllers
     const authController = new AuthController(authService);
     const userPreferencesController = new UserPreferencesController(userPreferencesService);
+    const progressItemsController = new ProgressItemsController(progressItemService);
 
     // Mount auth routes
     app.route('/api/auth', createAuthRoutes(authController, jwtService));
 
     // Mount user preferences routes
     app.route('/api/user/preferences', createUserPreferencesRoutes(userPreferencesController, jwtService));
+
+    // Mount progress items routes
+    app.route('/api/progress-items', createProgressItemsRoutes(progressItemsController, jwtService));
 }

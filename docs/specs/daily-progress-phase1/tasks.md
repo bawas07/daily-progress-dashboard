@@ -116,59 +116,59 @@
   - [x] Implement logout with refresh token revocation
   - _Requirements: 1.1, 1.2, 1.3_
 
-- [ ] 3. Progress Items Module (TDD)
-  - Implement Progress Items with Eisenhower Matrix categorization
-  - Create progress logging with notes and off-day tracking
-  - Build CRUD operations with proper validation
-  - Set up pagination and filtering for dashboard display
+- [x] 3. Progress Items Module (TDD)
+  - [x] Implement Progress Items with Eisenhower Matrix categorization
+  - [x] Create progress logging with notes and off-day tracking
+  - [x] Build CRUD operations with proper validation
+  - [x] Set up pagination and filtering for dashboard display
   - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 4.1, 4.2, 4.3, 4.4, 4.5_
 
-- [ ] 3.1 Progress Item Model and Repository (TDD)
-  - Write failing tests for Progress Item repository operations
-  - Implement repository with create, read, update, settle operations
-  - Write failing tests for active day filtering logic
-  - Implement methods to find items by user and active days
+- [x] 3.1 Progress Item Model and Repository (TDD)
+  - [x] Write failing tests for Progress Item repository operations
+  - [x] Implement repository with create, read, update, settle operations
+  - [x] Write failing tests for active day filtering logic
+  - [x] Implement methods to find items by user and active days
   - _Requirements: 3.1, 3.2, 3.5_
 
-- [ ] 3.2 Progress Log Repository (TDD)
-  - Write failing tests for Progress Log CRUD operations
-  - Implement progress log repository with timestamp and note handling
-  - Write failing tests for off-day detection logic
-  - Implement off-day tracking based on item's active days
+- [x] 3.2 Progress Log Repository (TDD)
+  - [x] Write failing tests for Progress Log CRUD operations
+  - [x] Implement progress log repository with timestamp and note handling
+  - [x] Write failing tests for off-day detection logic
+  - [x] Implement off-day tracking based on item's active days
   - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5_
 
-- [ ] 3.3 Progress Item Service (TDD)
-  - Write failing tests for progress item creation with validation
-  - Implement service to create items with Eisenhower Matrix classification
-  - Write failing tests for progress logging business logic
-  - Implement progress logging with note validation and off-day detection
+- [x] 3.3 Progress Item Service (TDD)
+  - [x] Write failing tests for progress item creation with validation
+  - [x] Implement service to create items with Eisenhower Matrix classification
+  - [x] Write failing tests for progress logging business logic
+  - [x] Implement progress logging with note validation and off-day detection
   - _Requirements: 3.1, 3.2, 3.3, 3.4, 4.1, 4.2, 4.4_
 
-- [ ] 3.4 Progress Item Controller (TDD)
-  - Write failing tests for GET /api/progress-items with pagination
-  - Implement paginated progress items endpoint with filtering
-  - Write failing tests for POST /api/progress-items with validation
-  - Implement progress item creation endpoint with error handling
+- [x] 3.4 Progress Item Controller (TDD)
+  - [x] Write failing tests for GET /api/progress-items with pagination
+  - [x] Implement paginated progress items endpoint with filtering
+  - [x] Write failing tests for POST /api/progress-items with validation
+  - [x] Implement progress item creation endpoint with error handling
   - _Requirements: 3.1, 3.2, 3.3, 10.1, 10.2_
 
-- [ ] 3.5 Progress Logging Endpoints (TDD)
-  - Write failing tests for POST /api/progress-items/:id/logs
-  - Implement progress logging endpoint with note validation
-  - Write failing tests for GET /api/progress-items/:id/logs
-  - Implement progress history retrieval with pagination
+- [x] 3.5 Progress Logging Endpoints (TDD)
+  - [x] Write failing tests for POST /api/progress-items/:id/logs
+  - [x] Implement progress logging endpoint with note validation
+  - [x] Write failing tests for GET /api/progress-items/:id/logs
+  - [x] Implement progress history retrieval with pagination
   - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 7.1, 7.2_
 
-- [ ] 3.6 Progress Item Management (TDD)
-  - Write failing tests for PUT /api/progress-items/:id (edit)
-  - Implement progress item editing with matrix re-classification
-  - Write failing tests for PUT /api/progress-items/:id/settle
-  - Implement item settling with status change to 'settled'
+- [x] 3.6 Progress Item Management (TDD)
+  - [x] Write failing tests for PUT /api/progress-items/:id (edit)
+  - [x] Implement progress item editing with matrix re-classification
+  - [x] Write failing tests for PUT /api/progress-items/:id/settle
+  - [x] Implement item settling with status change to 'settled'
   - _Requirements: 3.4, 3.5, 10.4_
 
-- [ ] 3.7 Progress Items Integration Tests
-  - Write integration tests for complete progress item lifecycle
-  - Test creation → logging → editing → settling flow
-  - Test pagination, filtering, and error scenarios
+- [x] 3.7 Progress Items Integration Tests
+  - [x] Write integration tests for complete progress item lifecycle
+  - [x] Test creation → logging → editing → settling flow
+  - [x] Test pagination, filtering, and error scenarios
   - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 4.1, 4.2, 4.3, 4.4, 4.5_
 
 - [ ] 4. Commitments Module (TDD)
@@ -390,7 +390,7 @@
   - Test PWA installability across different browsers
   - _Requirements: 2.1_
 
-- [ ] 10. Authentication Frontend (TDD)
+- [x] 10. Authentication Frontend (TDD)
   - Implement login and registration forms with validation
   - Create authentication state management
   - Build route guards and session handling
