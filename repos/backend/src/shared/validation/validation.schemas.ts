@@ -87,3 +87,24 @@ export const logCommitmentSchema = z.object({
 
 export type CreateCommitmentInput = z.infer<typeof createCommitmentSchema>;
 export type LogCommitmentInput = z.infer<typeof logCommitmentSchema>;
+
+// Timeline Event schemas
+// Note: These schemas are permissive to allow service-level validation
+export const createTimelineEventSchema = z.object({
+  title: z.string().min(1, 'Title is required').max(200, 'Title must be less than 200 characters'),
+  startTime: z.string().min(1, 'Start time is required'),
+  durationMinutes: z.number().optional(),
+  recurrencePattern: z.string().optional(),
+  daysOfWeek: z.array(z.string()).optional(),
+});
+
+export const updateTimelineEventSchema = z.object({
+  title: z.string().min(1).max(200).optional(),
+  startTime: z.string().optional(),
+  durationMinutes: z.number().optional(),
+  recurrencePattern: z.string().optional(),
+  daysOfWeek: z.array(z.string()).optional(),
+});
+
+export type CreateTimelineEventInput = z.infer<typeof createTimelineEventSchema>;
+export type UpdateTimelineEventInput = z.infer<typeof updateTimelineEventSchema>;

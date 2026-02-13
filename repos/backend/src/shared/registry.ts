@@ -24,6 +24,8 @@ import { ProgressItemService } from '../modules/progress-items/services/progress
 import { CommitmentRepository } from '../modules/commitment/repositories/commitment.repository';
 import { CommitmentLogRepository } from '../modules/commitment/repositories/commitment-log.repository';
 import { CommitmentService } from '../modules/commitment/services/commitment.service';
+import { TimelineEventRepository } from '../modules/timeline-events/repositories/timeline-event.repository';
+import { TimelineEventService } from '../modules/timeline-events/services/timeline-event.service';
 // LoggerService is a singleton instance, not a class, so we don't register it
 
 // Track if services have been registered to prevent duplicate registration
@@ -49,6 +51,7 @@ export function registerServices(): void {
   container.register('ProgressLogRepository', ProgressLogRepository);
   container.register('CommitmentRepository', CommitmentRepository);
   container.register('CommitmentLogRepository', CommitmentLogRepository);
+  container.register('TimelineEventRepository', TimelineEventRepository);
 
   // Services with dependencies
   container.register('AuthService', AuthService);
@@ -56,6 +59,7 @@ export function registerServices(): void {
   container.register('RefreshTokenService', RefreshTokenService);
   container.register('ProgressItemService', ProgressItemService);
   container.register('CommitmentService', CommitmentService);
+  container.register('TimelineEventService', TimelineEventService);
 
   servicesRegistered = true;
   console.log('Services registered in container');
