@@ -89,6 +89,7 @@ model CommitmentLog {
   id           String   @id @default(cuid())
   commitmentId String   @map("commitment_id")
   completedAt  DateTime @map("completed_at")
+  note         String?
   createdAt    DateTime @default(now()) @map("created_at")
 
   commitment Commitment @relation(fields: [commitmentId], references: [id], onDelete: Cascade)

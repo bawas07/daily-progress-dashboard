@@ -21,6 +21,9 @@ import { RefreshTokenService } from '../modules/auth/services/refresh-token.serv
 import { ProgressItemRepository } from '../modules/progress-items/repositories/progress-item.repository';
 import { ProgressLogRepository } from '../modules/progress-items/repositories/progress-log.repository';
 import { ProgressItemService } from '../modules/progress-items/services/progress-item.service';
+import { CommitmentRepository } from '../modules/commitment/repositories/commitment.repository';
+import { CommitmentLogRepository } from '../modules/commitment/repositories/commitment-log.repository';
+import { CommitmentService } from '../modules/commitment/services/commitment.service';
 // LoggerService is a singleton instance, not a class, so we don't register it
 
 // Track if services have been registered to prevent duplicate registration
@@ -44,12 +47,15 @@ export function registerServices(): void {
   container.register('RefreshTokenRepository', RefreshTokenRepository);
   container.register('ProgressItemRepository', ProgressItemRepository);
   container.register('ProgressLogRepository', ProgressLogRepository);
+  container.register('CommitmentRepository', CommitmentRepository);
+  container.register('CommitmentLogRepository', CommitmentLogRepository);
 
   // Services with dependencies
   container.register('AuthService', AuthService);
   container.register('UserPreferencesService', UserPreferencesService);
   container.register('RefreshTokenService', RefreshTokenService);
   container.register('ProgressItemService', ProgressItemService);
+  container.register('CommitmentService', CommitmentService);
 
   servicesRegistered = true;
   console.log('Services registered in container');

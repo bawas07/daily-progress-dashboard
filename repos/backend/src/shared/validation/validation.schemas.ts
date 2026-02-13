@@ -71,3 +71,19 @@ export const updatePreferencesSchema = z.object({
 
 // Export type for TypeScript usage
 export type UpdatePreferencesInput = z.infer<typeof updatePreferencesSchema>;
+
+
+// Commitment schemas
+export const createCommitmentSchema = z.object({
+  title: z.string().min(1, 'Title is required').max(200, 'Title must be less than 200 characters'),
+  scheduledDays: z.array(z.enum(['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']))
+    .min(1, 'At least one scheduled day is required')
+    .max(7, 'Cannot schedule more than 7 days'),
+});
+
+export const logCommitmentSchema = z.object({
+  note: z.string().max(500, 'Note must be less than 500 characters').optional(),
+});
+
+export type CreateCommitmentInput = z.infer<typeof createCommitmentSchema>;
+export type LogCommitmentInput = z.infer<typeof logCommitmentSchema>;

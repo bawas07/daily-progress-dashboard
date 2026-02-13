@@ -171,52 +171,52 @@
   - [x] Test pagination, filtering, and error scenarios
   - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 4.1, 4.2, 4.3, 4.4, 4.5_
 
-- [ ] 4. Commitments Module (TDD)
-  - Implement recurring commitments with scheduled days
-  - Create commitment logging with multiple entries per day
-  - Build commitment management with CRUD operations
-  - Set up commitment completion tracking and history
+- [x] 4. Commitments Module (TDD)
+  - [x] Implement recurring commitments with scheduled days
+  - [x] Create commitment logging with multiple entries per day
+  - [x] Build commitment management with CRUD operations
+  - [x] Set up commitment completion tracking and history
   - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5_
 
-- [ ] 4.1 Commitment Model and Repository (TDD)
-  - Write failing tests for Commitment repository operations
-  - Implement repository with create, read, update, delete operations
-  - Write failing tests for scheduled day filtering logic
-  - Implement methods to find commitments by user and scheduled days
+- [x] 4.1 Commitment Model and Repository (TDD)
+  - [x] Write failing tests for Commitment repository operations
+  - [x] Implement repository with create, read, update, delete operations
+  - [x] Write failing tests for scheduled day filtering logic
+  - [x] Implement methods to find commitments by user and scheduled days
   - _Requirements: 5.1, 5.5_
 
-- [ ] 4.2 Commitment Log Repository (TDD)
-  - Write failing tests for Commitment Log CRUD operations
-  - Implement commitment log repository with timestamp and note handling
-  - Write failing tests for multiple logs per day functionality
-  - Implement support for multiple commitment completions per day
+- [x] 4.2 Commitment Log Repository (TDD)
+  - [x] Write failing tests for Commitment Log CRUD operations
+  - [x] Implement commitment log repository with timestamp and note handling
+  - [x] Write failing tests for multiple logs per day functionality
+  - [x] Implement support for multiple commitment completions per day
   - _Requirements: 5.2, 5.3, 5.4_
 
-- [ ] 4.3 Commitment Service (TDD)
-  - Write failing tests for commitment creation with validation
-  - Implement service to create commitments with scheduled days
-  - Write failing tests for commitment logging business logic
-  - Implement commitment logging with note support and multiple entries
+- [x] 4.3 Commitment Service (TDD)
+  - [x] Write failing tests for commitment creation with validation
+  - [x] Implement service to create commitments with scheduled days
+  - [x] Write failing tests for commitment logging business logic
+  - [x] Implement commitment logging with note support and multiple entries
   - _Requirements: 5.1, 5.2, 5.3, 5.4_
 
-- [ ] 4.4 Commitment Controller (TDD)
-  - Write failing tests for GET /api/commitments
-  - Implement commitments retrieval endpoint with today's completion status
-  - Write failing tests for POST /api/commitments with validation
-  - Implement commitment creation endpoint with error handling
+- [x] 4.4 Commitment Controller (TDD)
+  - [x] Write failing tests for GET /api/commitments
+  - [x] Implement commitments retrieval endpoint with today's completion status
+  - [x] Write failing tests for POST /api/commitments with validation
+  - [x] Implement commitment creation endpoint with error handling
   - _Requirements: 5.1, 5.5, 10.1, 10.2_
 
-- [ ] 4.5 Commitment Logging Endpoints (TDD)
-  - Write failing tests for POST /api/commitments/:id/logs
-  - Implement commitment logging endpoint with note validation
-  - Write failing tests for GET /api/commitments/:id/logs
-  - Implement commitment history retrieval with date filtering
+- [x] 4.5 Commitment Logging Endpoints (TDD)
+  - [x] Write failing tests for POST /api/commitments/:id/logs
+  - [x] Implement commitment logging endpoint with note validation
+  - [x] Write failing tests for GET /api/commitments/:id/logs
+  - [x] Implement commitment history retrieval with date filtering
   - _Requirements: 5.2, 5.3, 5.4, 7.1, 7.2_
 
-- [ ] 4.6 Commitments Integration Tests
-  - Write integration tests for complete commitment lifecycle
-  - Test creation → multiple logging → deletion flow
-  - Test scheduled day filtering and completion status
+- [x] 4.6 Commitments Integration Tests
+  - [x] Write integration tests for complete commitment lifecycle
+  - [x] Test creation → multiple logging → deletion flow
+  - [x] Test scheduled day filtering and completion status
   - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5_
 
 - [ ] 5. Timeline Events Module (TDD)
