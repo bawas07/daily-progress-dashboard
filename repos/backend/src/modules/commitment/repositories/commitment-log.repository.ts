@@ -33,11 +33,10 @@ export class CommitmentLogRepository {
     }
 
     async countByCommitmentIdAndDate(commitmentId: string, date: Date): Promise<number> {
-        const startOfDay = new Date(date);
-        startOfDay.setHours(0, 0, 0, 0);
-
-        const endOfDay = new Date(date);
-        endOfDay.setHours(23, 59, 59, 999);
+        // Create date boundaries in UTC to avoid timezone issues
+        const dateStr = date.toISOString().split('T')[0]; // Get YYYY-MM-DD in UTC
+        const startOfDay = new Date(`${dateStr}T00:00:00.000Z`);
+        const endOfDay = new Date(`${dateStr}T23:59:59.999Z`);
 
         return this.prisma.commitmentLog.count({
             where: {

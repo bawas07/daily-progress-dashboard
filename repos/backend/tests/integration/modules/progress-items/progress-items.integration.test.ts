@@ -14,6 +14,11 @@ import { ProgressLogRepository } from '../../../../src/modules/progress-items/re
 import { ProgressItemService } from '../../../../src/modules/progress-items/services/progress-item.service';
 import { RefreshTokenRepository } from '../../../../src/modules/auth/repositories/refresh-token.repository';
 import { RefreshTokenService } from '../../../../src/modules/auth/services/refresh-token.service';
+import { CommitmentRepository } from '../../../../src/modules/commitment/repositories/commitment.repository';
+import { CommitmentLogRepository } from '../../../../src/modules/commitment/repositories/commitment-log.repository';
+import { CommitmentService } from '../../../../src/modules/commitment/services/commitment.service';
+import { TimelineEventRepository } from '../../../../src/modules/timeline-events/repositories/timeline-event.repository';
+import { TimelineEventService } from '../../../../src/modules/timeline-events/services/timeline-event.service';
 
 // Mock DatabaseService
 class MockDatabaseService {
@@ -82,6 +87,15 @@ describe('Progress Items Integration Tests', () => {
         container.register('ProgressItemRepository', ProgressItemRepository);
         container.register('ProgressLogRepository', ProgressLogRepository);
         container.register('ProgressItemService', ProgressItemService);
+
+        // Commitment Module (needed for routes.ts)
+        container.register('CommitmentRepository', CommitmentRepository);
+        container.register('CommitmentLogRepository', CommitmentLogRepository);
+        container.register('CommitmentService', CommitmentService);
+
+        // Timeline Events Module (needed for routes.ts)
+        container.register('TimelineEventRepository', TimelineEventRepository);
+        container.register('TimelineEventService', TimelineEventService);
 
         // 4. Create app
         app = createApp();

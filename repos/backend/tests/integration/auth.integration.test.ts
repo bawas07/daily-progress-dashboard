@@ -9,6 +9,16 @@ import { AuthService } from '../../src/modules/auth/services/auth.service';
 import { UserPreferencesService } from '../../src/modules/user-preferences/services/user.preferences.service';
 import { UserRepository } from '../../src/modules/auth/repositories/user.repository';
 import { UserPreferencesRepository } from '../../src/modules/auth/repositories/user.preferences.repository';
+import { RefreshTokenRepository } from '../../src/modules/auth/repositories/refresh-token.repository';
+import { RefreshTokenService } from '../../src/modules/auth/services/refresh-token.service';
+import { ProgressItemRepository } from '../../src/modules/progress-items/repositories/progress-item.repository';
+import { ProgressLogRepository } from '../../src/modules/progress-items/repositories/progress-log.repository';
+import { ProgressItemService } from '../../src/modules/progress-items/services/progress-item.service';
+import { CommitmentRepository } from '../../src/modules/commitment/repositories/commitment.repository';
+import { CommitmentLogRepository } from '../../src/modules/commitment/repositories/commitment-log.repository';
+import { CommitmentService } from '../../src/modules/commitment/services/commitment.service';
+import { TimelineEventRepository } from '../../src/modules/timeline-events/repositories/timeline-event.repository';
+import { TimelineEventService } from '../../src/modules/timeline-events/services/timeline-event.service';
 
 // Mock DatabaseService
 class MockDatabaseService {
@@ -65,8 +75,20 @@ describe('Authentication Integration Tests', () => {
         container.register('PasswordService', PasswordService);
         container.register('UserRepository', UserRepository);
         container.register('UserPreferencesRepository', UserPreferencesRepository);
+        container.register('RefreshTokenRepository', RefreshTokenRepository);
         container.register('AuthService', AuthService);
         container.register('UserPreferencesService', UserPreferencesService);
+        container.register('RefreshTokenService', RefreshTokenService);
+
+        // Other services needed by routes.ts
+        container.register('ProgressItemRepository', ProgressItemRepository);
+        container.register('ProgressLogRepository', ProgressLogRepository);
+        container.register('ProgressItemService', ProgressItemService);
+        container.register('CommitmentRepository', CommitmentRepository);
+        container.register('CommitmentLogRepository', CommitmentLogRepository);
+        container.register('CommitmentService', CommitmentService);
+        container.register('TimelineEventRepository', TimelineEventRepository);
+        container.register('TimelineEventService', TimelineEventService);
 
         // 4. Create app
         app = createApp();

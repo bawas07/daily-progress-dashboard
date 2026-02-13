@@ -126,12 +126,13 @@ export class TimelineEventRepository {
             return event.daysOfWeek.map((d: string) => d.toLowerCase()).includes(dayName);
         }
 
-        // One-time event - check if date matches startTime
+        // One-time event - check if date matches startTime (using UTC dates)
         const eventDate = new Date(event.startTime);
+        // Use UTC methods to compare dates in UTC timezone
         return (
-            eventDate.getFullYear() === date.getFullYear() &&
-            eventDate.getMonth() === date.getMonth() &&
-            eventDate.getDate() === date.getDate()
+            eventDate.getUTCFullYear() === date.getUTCFullYear() &&
+            eventDate.getUTCMonth() === date.getUTCMonth() &&
+            eventDate.getUTCDate() === date.getUTCDate()
         );
     }
 }
