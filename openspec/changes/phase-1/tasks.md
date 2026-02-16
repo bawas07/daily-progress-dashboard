@@ -80,14 +80,14 @@
   - [x] Implement endpoint to get all active items regardless of active days
   - [x] Write integration tests for history endpoints
 
-- [ ] 2.4 Error Handling and Validation (TDD)
-  - [ ] Write failing tests for request validation with Zod
-  - [ ] Implement validation middleware for all API endpoints
-  - [ ] Implement standardized validation error responses
-  - [ ] Write failing tests for global error handling
-  - [ ] Implement error middleware with proper status codes and messages
-  - [ ] Implement error categorization and appropriate responses
-  - [ ] Write integration tests for various error scenarios
+- [x] 2.4 Error Handling and Validation (TDD)
+  - [x] Write failing tests for request validation with Zod
+  - [x] Implement validation middleware for all API endpoints
+  - [x] Implement standardized validation error responses
+  - [x] Write failing tests for global error handling
+  - [x] Implement error middleware with proper status codes and messages
+  - [x] Implement error categorization and appropriate responses
+  - [x] Write integration tests for various error scenarios
 
 ## 3. Remaining Frontend Work
 
