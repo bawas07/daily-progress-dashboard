@@ -1,0 +1,23 @@
+{
+  "name": "daily-progress-dashboard",
+  "version": "1.0.0",
+  "description": "Daily Progress PWA - Monorepo",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd repos/backend && npm run dev",
+    "dev:frontend": "cd repos/frontend && npm run dev",
+    "build": "npm run build:backend && npm run build:frontend",
+    "build:backend": "cd repos/backend && npm run build",
+    "build:frontend": "cd repos/frontend && npm run build",
+    "test": "npm run test:backend && npm run test:frontend",
+    "test:backend": "cd repos/backend && npm run test",
+    "test:frontend": "cd repos/frontend && npm run test",
+    "lint": "npm run lint:backend && npm run lint:frontend",
+    "lint:backend": "cd repos/backend && npm run lint",
+    "lint:frontend": "cd repos/frontend && npm run lint"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
