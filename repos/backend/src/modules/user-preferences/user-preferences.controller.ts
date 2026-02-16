@@ -1,7 +1,6 @@
 import type { Context } from 'hono';
 import type { UserPreferencesService, UserPreferencesData, UpdateUserPreferencesData } from './services/user.preferences.service';
-import { createSuccessResponse, createErrorResponse, validationError, serverError } from '../../shared/response/response.helper';
-import { updatePreferencesSchema } from '../../shared/validation/validation.schemas';
+import { createSuccessResponse, createErrorResponse, serverError } from '../../shared/response/response.helper';
 
 
 /**
@@ -32,8 +31,7 @@ export class UserPreferencesController {
           200
         );
       } catch (error) {
-        console.error('Error getting preferences:', error);
-        return c.json(serverError('Internal server error'), 500);
+        throw error; // Let global error handler handle it
       }
     };
   }
@@ -55,25 +53,16 @@ export class UserPreferencesController {
           );
         }
 
-        // Parse request body
-        const body = await c.req.json();
-
-        // Validate request body
-        const validationResult = updatePreferencesSchema.safeParse(body);
-        if (!validationResult.success) {
-          const errors: Record<string, string[]> = {};
-          const fieldErrors = validationResult.error.flatten().fieldErrors;
-          for (const [key, value] of Object.entries(fieldErrors)) {
-            errors[key] = Array.isArray(value) ? value : [];
-          }
-          return c.json(validationError(errors), 400);
+        // Get validated data from middleware, or parse body for backward compatibility
+        let body = c.get('validatedData') as UpdateUserPreferencesData;
+        if (!body) {
+          body = await c.req.json();
         }
 
         // Resolve service and update preferences
-        // Zod already validated the type, no need for type assertion
         const updatedPreferences = await this.userPreferencesService.updatePreferences(
           userId,
-          validationResult.data
+          body
         );
 
         return c.json(
@@ -89,8 +78,7 @@ export class UserPreferencesController {
           );
         }
 
-        console.error('Error updating preferences:', error);
-        return c.json(serverError('Internal server error'), 500);
+        throw error; // Let global error handler handle it
       }
     };
   }
