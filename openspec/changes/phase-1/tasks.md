@@ -68,17 +68,17 @@
   - [x] Implement proper response structure with all dashboard sections
   - [x] Optimize database queries with proper indexing
 
-- [ ] 2.3 History API (TDD)
-  - [ ] Write failing tests for daily history aggregation
-  - [ ] Implement service to get progress logs and commitment logs by date
-  - [ ] Write failing tests for weekly/monthly history calculations
-  - [ ] Implement time period filtering and summary statistics
-  - [ ] Write failing tests for History Controller
-  - [ ] Implement GET /api/history/today endpoint
-  - [ ] Implement GET /api/history/week and /api/history/month
-  - [ ] Write failing tests for GET /api/items/all endpoint
-  - [ ] Implement endpoint to get all active items regardless of active days
-  - [ ] Write integration tests for history endpoints
+- [x] 2.3 History API (TDD)
+  - [x] Write failing tests for daily history aggregation
+  - [x] Implement service to get progress logs and commitment logs by date
+  - [x] Write failing tests for weekly/monthly history calculations
+  - [x] Implement time period filtering and summary statistics
+  - [x] Write failing tests for History Controller
+  - [x] Implement GET /api/history/today endpoint
+  - [x] Implement GET /api/history/week and /api/history/month
+  - [x] Write failing tests for GET /api/items/all endpoint
+  - [x] Implement endpoint to get all active items regardless of active days
+  - [x] Write integration tests for history endpoints
 
 - [ ] 2.4 Error Handling and Validation (TDD)
   - [ ] Write failing tests for request validation with Zod
