@@ -108,3 +108,56 @@ export const updateTimelineEventSchema = z.object({
 
 export type CreateTimelineEventInput = z.infer<typeof createTimelineEventSchema>;
 export type UpdateTimelineEventInput = z.infer<typeof updateTimelineEventSchema>;
+
+// Progress Item schemas
+export const importanceSchema = z.enum(['high', 'low'], {
+  errorMap: () => ({ message: 'Importance must be either high or low' }),
+});
+
+export const urgencySchema = z.enum(['high', 'low'], {
+  errorMap: () => ({ message: 'Urgency must be either high or low' }),
+});
+
+export const createProgressItemSchema = z.object({
+  title: z.string().min(1, 'Title is required').max(200, 'Title must be less than 200 characters'),
+  importance: importanceSchema,
+  urgency: urgencySchema,
+  activeDays: daysOfWeekSchema.optional(),
+  deadline: z.string().datetime().optional(),
+  notes: z.string().max(1000, 'Notes must be less than 1000 characters').optional(),
+});
+
+export const updateProgressItemSchema = z.object({
+  title: z.string().min(1).max(200).optional(),
+  importance: importanceSchema.optional(),
+  urgency: urgencySchema.optional(),
+  activeDays: daysOfWeekSchema.optional(),
+  deadline: z.string().datetime().optional(),
+  status: z.enum(['active', 'settled']).optional(),
+  notes: z.string().max(1000).optional(),
+});
+
+export const logProgressSchema = z.object({
+  note: z.string().max(1000, 'Note must be less than 1000 characters').optional(),
+  isOffDay: z.boolean().optional(),
+});
+
+export type CreateProgressItemInput = z.infer<typeof createProgressItemSchema>;
+export type UpdateProgressItemInput = z.infer<typeof updateProgressItemSchema>;
+export type LogProgressInput = z.infer<typeof logProgressSchema>;
+
+// Refresh token schema
+export const refreshTokenSchema = z.object({
+  refreshToken: z.string().min(1, 'Refresh token is required'),
+});
+
+// Dashboard query schema
+export const dashboardQuerySchema = z.object({
+  date: z.string().datetime().optional(),
+});
+
+// History query schema
+export const historyQuerySchema = z.object({
+  startDate: z.string().datetime().optional(),
+  endDate: z.string().datetime().optional(),
+});
