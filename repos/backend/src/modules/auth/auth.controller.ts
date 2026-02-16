@@ -1,7 +1,6 @@
 import type { Context } from 'hono';
 import type { AuthService, LoginData, RegisterData, LoginResult, AuthResult } from './services/auth.service';
-import { createSuccessResponse, createErrorResponse, validationError, serverError } from '../../shared/response/response.helper';
-import { loginSchema, registerSchema } from '../../shared/validation/validation.schemas';
+import { createSuccessResponse, createErrorResponse, serverError } from '../../shared/response/response.helper';
 
 /**
  * Auth Controller handles authentication-related HTTP endpoints
@@ -20,22 +19,15 @@ export class AuthController {
   login() {
     return async (c: Context): Promise<Response> => {
       try {
-        const body = await c.req.json();
-
-        // Validate request body
-        const validationResult = loginSchema.safeParse(body);
-        if (!validationResult.success) {
-          const errors: Record<string, string[]> = {};
-          const fieldErrors = validationResult.error.flatten().fieldErrors;
-          for (const [key, value] of Object.entries(fieldErrors)) {
-            errors[key] = Array.isArray(value) ? value : [];
-          }
-          return c.json(validationError(errors), 400);
+        // Get validated data from middleware, or parse body for backward compatibility
+        let body = c.get('validatedData') as { email: string; password: string };
+        if (!body) {
+          body = await c.req.json();
         }
 
         const loginData: LoginData = {
-          email: validationResult.data.email.toLowerCase().trim(),
-          password: validationResult.data.password,
+          email: body.email.toLowerCase().trim(),
+          password: body.password,
         };
 
         const result: LoginResult = await this.authService.login(loginData);
@@ -55,7 +47,7 @@ export class AuthController {
             401
           );
         }
-        return c.json(serverError('Internal server error'), 500);
+        throw error; // Let global error handler handle it
       }
     };
   }
@@ -67,23 +59,16 @@ export class AuthController {
   register() {
     return async (c: Context): Promise<Response> => {
       try {
-        const body = await c.req.json();
-
-        // Validate request body
-        const validationResult = registerSchema.safeParse(body);
-        if (!validationResult.success) {
-          const errors: Record<string, string[]> = {};
-          const fieldErrors = validationResult.error.flatten().fieldErrors;
-          for (const [key, value] of Object.entries(fieldErrors)) {
-            errors[key] = Array.isArray(value) ? value : [];
-          }
-          return c.json(validationError(errors), 400);
+        // Get validated data from middleware, or parse body for backward compatibility
+        let body = c.get('validatedData') as { name: string; email: string; password: string };
+        if (!body) {
+          body = await c.req.json();
         }
 
         const registerData: RegisterData = {
-          name: validationResult.data.name,
-          email: validationResult.data.email.toLowerCase().trim(),
-          password: validationResult.data.password,
+          name: body.name,
+          email: body.email.toLowerCase().trim(),
+          password: body.password,
         };
 
         const result: AuthResult = await this.authService.register(registerData);
@@ -102,7 +87,7 @@ export class AuthController {
             400
           );
         }
-        return c.json(serverError('Internal server error'), 500);
+        throw error; // Let global error handler handle it
       }
     };
   }
@@ -114,15 +99,10 @@ export class AuthController {
   refresh() {
     return async (c: Context): Promise<Response> => {
       try {
-        const body = await c.req.json();
-
-        if (!body.refreshToken || typeof body.refreshToken !== 'string') {
-          return c.json(
-            createErrorResponse('E001', 'Validation failed', {
-              refreshToken: ['Required string']
-            }),
-            400
-          );
+        // Get validated data from middleware, or parse body for backward compatibility
+        let body = c.get('validatedData') as { refreshToken: string };
+        if (!body) {
+          body = await c.req.json();
         }
 
         const result = await this.authService.refreshToken(body.refreshToken);
@@ -144,7 +124,7 @@ export class AuthController {
             404
           );
         }
-        return c.json(serverError('Internal server error'), 500);
+        throw error; // Let global error handler handle it
       }
     };
   }
@@ -156,15 +136,10 @@ export class AuthController {
   revoke() {
     return async (c: Context): Promise<Response> => {
       try {
-        const body = await c.req.json();
-
-        if (!body.refreshToken || typeof body.refreshToken !== 'string') {
-          return c.json(
-            createErrorResponse('E001', 'Validation failed', {
-              refreshToken: ['Required string']
-            }),
-            400
-          );
+        // Get validated data from middleware, or parse body for backward compatibility
+        let body = c.get('validatedData') as { refreshToken: string };
+        if (!body) {
+          body = await c.req.json();
         }
 
         await this.authService.revokeToken(body.refreshToken);
@@ -174,7 +149,7 @@ export class AuthController {
           200
         );
       } catch (error) {
-        return c.json(serverError('Internal server error'), 500);
+        throw error; // Let global error handler handle it
       }
     };
   }
@@ -210,7 +185,7 @@ export class AuthController {
             404
           );
         }
-        return c.json(serverError('Internal server error'), 500);
+        throw error; // Let global error handler handle it
       }
     };
   }
