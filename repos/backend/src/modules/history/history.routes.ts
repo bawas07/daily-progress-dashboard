@@ -3,15 +3,16 @@ import { HistoryController } from './history.controller';
 import { authMiddleware } from '../../shared/middleware/auth.middleware';
 import { HistoryService } from './history.service';
 import { container } from '../../shared/registry';
+import { JwtService } from '../../shared/jwt/jwt.service';
 
-export function createHistoryRoutes(): Hono {
+export function createHistoryRoutes(jwtService: JwtService): Hono {
     const app = new Hono();
 
     const historyService = new HistoryService(container);
     const historyController = new HistoryController(historyService);
 
     // All routes require authentication
-    app.use('/*', authMiddleware);
+    app.use('/*', authMiddleware(jwtService));
 
     // Today's history
     app.get('/today', historyController.getTodayHistory());
@@ -25,14 +26,14 @@ export function createHistoryRoutes(): Hono {
     return app;
 }
 
-export function createItemsRoutes(): Hono {
+export function createItemsRoutes(jwtService: JwtService): Hono {
     const app = new Hono();
 
     const historyService = new HistoryService(container);
     const historyController = new HistoryController(historyService);
 
     // All routes require authentication
-    app.use('/*', authMiddleware);
+    app.use('/*', authMiddleware(jwtService));
 
     // All active items
     app.get('/all', historyController.getAllActiveItems());

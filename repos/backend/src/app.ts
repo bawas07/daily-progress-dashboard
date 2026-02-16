@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
+import { secureHeaders } from 'hono/secure-headers';
 import { env } from './shared/config/env';
 import { logger as winstonLogger } from './shared/logger/logger.service';
 import { createSuccessResponse, notFound } from './shared/response/response.helper';
@@ -12,7 +13,19 @@ export function createApp() {
   const app = new Hono<{ Bindings: typeof env }>();
 
   // Global middleware
-  app.use('*', cors());
+  const origins = env.ALLOWED_ORIGINS === '*'
+    ? '*'
+    : env.ALLOWED_ORIGINS.split(',').map(o => o.trim());
+
+  app.use('*', cors({
+    origin: origins,
+    allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowHeaders: ['Content-Type', 'Authorization'],
+    exposeHeaders: ['Content-Length'],
+    maxAge: 600,
+    credentials: true,
+  }));
+  app.use('*', secureHeaders());
   app.use('*', logger());
 
   // Register all application routes

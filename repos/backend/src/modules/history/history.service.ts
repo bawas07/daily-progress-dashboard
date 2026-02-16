@@ -241,13 +241,10 @@ export class HistoryService {
      */
     async getAllActiveItems(userId: string, date?: string) {
         // Fetch all active progress items (no activeDay filter)
-        const progressItemsResult = await this.progressItemRepository.findAll(userId, {
+        const activeProgressItems = await this.progressItemRepository.findAll(userId, {
             skip: 0,
             take: 1000, // Large number to get all items
         });
-
-        // Filter only active status items
-        const activeProgressItems = progressItemsResult.items.filter((item: any) => item.status === 'active');
 
         // Fetch all commitments
         const commitments = await this.commitmentRepository.findByUserId(userId) ?? [];
@@ -256,14 +253,14 @@ export class HistoryService {
         const enrichedProgressItems = await Promise.all(
             activeProgressItems.map(async (item: any) => {
                 // Get most recent log
-                const logs = await this.progressLogRepository.findByItemId(item.id, { skip: 0, take: 1 });
+                const logs = await this.progressLogRepository.findByItemId(item.id, { skip: 0, take: 1 }) ?? [];
                 const lastProgressAt = logs.length > 0 ? logs[0].loggedAt : null;
 
                 // Check if active today
                 let isActiveToday = false;
                 if (date) {
                     const dayOfWeek = this.getDayOfWeek(date);
-                    const activeDays = item.activeDays as string[];
+                    const activeDays = (item.activeDays as string[]) || [];
                     isActiveToday = activeDays.includes(dayOfWeek);
                 }
 

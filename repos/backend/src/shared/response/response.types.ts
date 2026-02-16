@@ -52,6 +52,7 @@ export const ResponseCodes = {
   AUTH_ERROR: 'E002',
   NOT_FOUND: 'E003',
   SERVER_ERROR: 'E004',
+  RATE_LIMIT_ERROR: 'E429',
 } as const;
 
 export type ResponseCode = typeof ResponseCodes[keyof typeof ResponseCodes];

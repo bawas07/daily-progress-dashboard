@@ -279,9 +279,9 @@ describe('HistoryService', () => {
         it('should return all active progress items without activeDay filter', async () => {
             const userId = 'user-123';
 
-            mockProgressItemRepository.findAll.mockResolvedValue({ items: [mockProgressItem], total: 1 });
+            mockProgressItemRepository.findAll.mockResolvedValue([mockProgressItem]);
             mockCommitmentRepository.findByUserId.mockResolvedValue([mockCommitment]);
-            mockProgressLogRepository.findByItemId.mockResolvedValue({ items: [], total: 0 });
+            mockProgressLogRepository.findByItemId.mockResolvedValue([]);
 
             const result = await historyService.getAllActiveItems(userId);
 
@@ -299,7 +299,7 @@ describe('HistoryService', () => {
                 loggedAt: new Date('2024-01-15T10:00:00Z'),
             };
 
-            mockProgressItemRepository.findAll.mockResolvedValue({ items: [mockProgressItem], total: 1 });
+            mockProgressItemRepository.findAll.mockResolvedValue([mockProgressItem]);
             mockCommitmentRepository.findByUserId.mockResolvedValue([mockCommitment]);
             mockProgressLogRepository.findByItemId.mockResolvedValue([recentLog]);
 
@@ -312,9 +312,9 @@ describe('HistoryService', () => {
         it('should show "No progress yet" for items with no logs', async () => {
             const userId = 'user-123';
 
-            mockProgressItemRepository.findAll.mockResolvedValue({ items: [mockProgressItem], total: 1 });
+            mockProgressItemRepository.findAll.mockResolvedValue([mockProgressItem]);
             mockCommitmentRepository.findByUserId.mockResolvedValue([mockCommitment]);
-            mockProgressLogRepository.findByItemId.mockResolvedValue({ items: [], total: 0 });
+            mockProgressLogRepository.findByItemId.mockResolvedValue([]);
 
             const result = await historyService.getAllActiveItems(userId);
 
@@ -326,9 +326,9 @@ describe('HistoryService', () => {
             const userId = 'user-123';
             const date = '2024-01-15'; // Monday
 
-            mockProgressItemRepository.findAll.mockResolvedValue({ items: [mockProgressItem], total: 1 });
+            mockProgressItemRepository.findAll.mockResolvedValue([mockProgressItem]);
             mockCommitmentRepository.findByUserId.mockResolvedValue([mockCommitment]);
-            mockProgressLogRepository.findByItemId.mockResolvedValue({ items: [], total: 0 });
+            mockProgressLogRepository.findByItemId.mockResolvedValue([]);
 
             const result = await historyService.getAllActiveItems(userId, date);
 
@@ -340,9 +340,9 @@ describe('HistoryService', () => {
             const userId = 'user-123';
             const date = '2024-01-16'; // Tuesday
 
-            mockProgressItemRepository.findAll.mockResolvedValue({ items: [mockProgressItem], total: 1 });
+            mockProgressItemRepository.findAll.mockResolvedValue([mockProgressItem]);
             mockCommitmentRepository.findByUserId.mockResolvedValue([mockCommitment]);
-            mockProgressLogRepository.findByItemId.mockResolvedValue({ items: [], total: 0 });
+            mockProgressLogRepository.findByItemId.mockResolvedValue([]);
 
             const result = await historyService.getAllActiveItems(userId, date);
 
@@ -354,9 +354,9 @@ describe('HistoryService', () => {
             const userId = 'user-123';
             const date = '2024-01-15'; // Monday
 
-            mockProgressItemRepository.findAll.mockResolvedValue({ items: [mockProgressItem], total: 1 });
+            mockProgressItemRepository.findAll.mockResolvedValue([mockProgressItem]);
             mockCommitmentRepository.findByUserId.mockResolvedValue([mockCommitment]);
-            mockProgressLogRepository.findByItemId.mockResolvedValue({ items: [], total: 0 });
+            mockProgressLogRepository.findByItemId.mockResolvedValue([]);
 
             const result = await historyService.getAllActiveItems(userId, date);
 
@@ -367,7 +367,7 @@ describe('HistoryService', () => {
         it('should return empty arrays when no items exist', async () => {
             const userId = 'user-123';
 
-            mockProgressItemRepository.findAll.mockResolvedValue({ items: [], total: 0 });
+            mockProgressItemRepository.findAll.mockResolvedValue([]);
             mockCommitmentRepository.findByUserId.mockResolvedValue([]);
 
             const result = await historyService.getAllActiveItems(userId);
