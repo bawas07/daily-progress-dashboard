@@ -3,14 +3,9 @@ import { TimelineEventService } from './services/timeline-event.service';
 import {
     createSuccessResponse,
     createErrorResponse,
-    validationError,
     serverError,
     notFound
 } from '../../shared/response/response.helper';
-import {
-    createTimelineEventSchema,
-    updateTimelineEventSchema,
-} from '../../shared/validation/validation.schemas';
 import { ResponseCodes } from '../../shared/response/response.types';
 
 export class TimelineEventController {
@@ -64,7 +59,7 @@ export class TimelineEventController {
                         400
                     );
                 }
-                return c.json(serverError('Internal server error'), 500);
+                throw error; // Let global error handler handle it
             }
         };
     }
@@ -94,7 +89,7 @@ export class TimelineEventController {
 
                 return c.json(createSuccessResponse('S001', 'Timeline event retrieved', event));
             } catch (error) {
-                return c.json(serverError('Internal server error'), 500);
+                throw error; // Let global error handler handle it
             }
         };
     }
@@ -115,19 +110,13 @@ export class TimelineEventController {
                     );
                 }
 
-                const body = await c.req.json();
-
-                const validation = createTimelineEventSchema.safeParse(body);
-                if (!validation.success) {
-                    const errors: Record<string, string[]> = {};
-                    const fieldErrors = validation.error.flatten().fieldErrors;
-                    for (const [key, value] of Object.entries(fieldErrors)) {
-                        errors[key] = Array.isArray(value) ? value : [];
-                    }
-                    return c.json(validationError(errors), 400);
+                // Get validated data from middleware, or parse body for backward compatibility
+                let body = c.get('validatedData');
+                if (!body) {
+                    body = await c.req.json();
                 }
 
-                const event = await this.timelineEventService.create(userId, validation.data);
+                const event = await this.timelineEventService.create(userId, body);
                 return c.json(createSuccessResponse('S002', 'Timeline event created', event), 201);
             } catch (error) {
                 if (error instanceof Error) {
@@ -144,7 +133,7 @@ export class TimelineEventController {
                         return c.json(createErrorResponse(ResponseCodes.VALIDATION_ERROR, error.message), 400);
                     }
                 }
-                return c.json(serverError('Internal server error'), 500);
+                throw error; // Let global error handler handle it
             }
         };
     }
@@ -166,19 +155,13 @@ export class TimelineEventController {
                     );
                 }
 
-                const body = await c.req.json();
-
-                const validation = updateTimelineEventSchema.safeParse(body);
-                if (!validation.success) {
-                    const errors: Record<string, string[]> = {};
-                    const fieldErrors = validation.error.flatten().fieldErrors;
-                    for (const [key, value] of Object.entries(fieldErrors)) {
-                        errors[key] = Array.isArray(value) ? value : [];
-                    }
-                    return c.json(validationError(errors), 400);
+                // Get validated data from middleware, or parse body for backward compatibility
+                let body = c.get('validatedData');
+                if (!body) {
+                    body = await c.req.json();
                 }
 
-                const event = await this.timelineEventService.update(userId, eventId, validation.data);
+                const event = await this.timelineEventService.update(userId, eventId, body);
                 return c.json(createSuccessResponse('S003', 'Timeline event updated', event));
             } catch (error) {
                 if (error instanceof Error) {
@@ -197,7 +180,7 @@ export class TimelineEventController {
                         return c.json(createErrorResponse(ResponseCodes.VALIDATION_ERROR, error.message), 400);
                     }
                 }
-                return c.json(serverError('Internal server error'), 500);
+                throw error; // Let global error handler handle it
             }
         };
     }
@@ -225,7 +208,7 @@ export class TimelineEventController {
                 if (error instanceof Error && error.message === 'Timeline event not found') {
                     return c.json(notFound('Timeline event not found'), 404);
                 }
-                return c.json(serverError('Internal server error'), 500);
+                throw error; // Let global error handler handle it
             }
         };
     }
