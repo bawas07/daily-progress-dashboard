@@ -4,10 +4,10 @@ import { UserPreferencesController } from '../../../../src/modules/user-preferen
 import { UserPreferencesService } from '../../../../src/modules/user-preferences/services/user.preferences.service';
 import { UserPreferencesRepository } from '../../../../src/modules/auth/repositories/user.preferences.repository';
 import { authMiddleware } from '../../../../src/shared/middleware/auth.middleware';
+import { validateRequest } from '../../../../src/shared/validation/validation.middleware';
+import { updatePreferencesSchema } from '../../../../src/shared/validation/validation.schemas';
 import { JwtService } from '../../../../src/shared/jwt/jwt.service';
-
-// Mock the repository
-vi.mock('../../../../src/modules/auth/repositories/user.preferences.repository');
+import { errorHandler } from '../../../../src/shared/middleware/error.middleware';
 
 describe('UserPreferencesController', () => {
   let jwtService: JwtService;
@@ -18,7 +18,7 @@ describe('UserPreferencesController', () => {
 
   beforeEach(() => {
     // Clear all mocks
-    vi.clearAllMocks();
+    vi?.clearAllMocks?.();
 
     // Setup JWT service
     jwtService = new JwtService();
@@ -143,6 +143,7 @@ describe('UserPreferencesController', () => {
       // Setup mock to throw error
       (mockRepository.findByUserId as any).mockRejectedValue(new Error('Database error'));
 
+      app.onError(errorHandler);
       app.use('/api/user/preferences', authMiddleware(jwtService));
       app.get('/api/user/preferences', controller.getPreferences());
 
@@ -250,8 +251,8 @@ describe('UserPreferencesController', () => {
 
       expect(response.status).toBe(400);
       const json = await response.json();
-      // Schema validation catches invalid enum values (E001)
-      expect(json.code).toBe('E001');
+      // Service-level validation catches invalid enum values (E003) when no schema middleware is registered
+      expect(json.code).toBe('E003');
     });
 
     it('should return 400 for invalid defaultActiveDays (empty array)', async () => {
@@ -275,8 +276,8 @@ describe('UserPreferencesController', () => {
 
       expect(response.status).toBe(400);
       const json = await response.json();
-      // Schema validation catches empty arrays (E001), not service validation (E003)
-      expect(json.code).toBe('E001');
+      // Service-level validation catches empty arrays (E003) when no schema middleware is registered
+      expect(json.code).toBe('E003');
     });
 
     it('should return 400 for invalid defaultActiveDays (invalid day)', async () => {
@@ -300,8 +301,8 @@ describe('UserPreferencesController', () => {
 
       expect(response.status).toBe(400);
       const json = await response.json();
-      // Schema validation catches invalid enum values (E001)
-      expect(json.code).toBe('E001');
+      // Service-level validation catches invalid enum values (E003) when no schema middleware is registered
+      expect(json.code).toBe('E003');
     });
 
     it('should return 400 for invalid timezone', async () => {
@@ -350,8 +351,8 @@ describe('UserPreferencesController', () => {
 
       expect(response.status).toBe(400);
       const json = await response.json();
-      // Empty string is caught by Zod schema validation (E001), not service validation (E003)
-      expect(json.code).toBe('E001');
+      // Service-level validation catches empty timezone (E003) when no schema middleware is registered
+      expect(json.code).toBe('E003');
     });
 
     it('should return 401 when no token provided', async () => {
@@ -379,6 +380,7 @@ describe('UserPreferencesController', () => {
       // Setup mock to throw unexpected error
       (mockRepository.update as any).mockRejectedValue(new Error('Unexpected error'));
 
+      app.onError(errorHandler);
       app.use('/api/user/preferences', authMiddleware(jwtService));
       app.put('/api/user/preferences', controller.updatePreferences());
 
@@ -414,7 +416,7 @@ describe('UserPreferencesController', () => {
       });
 
       app.use('/api/user/preferences', authMiddleware(jwtService));
-      app.put('/api/user/preferences', controller.updatePreferences());
+      app.put('/api/user/preferences', validateRequest(updatePreferencesSchema), controller.updatePreferences());
 
       const response = await app.request('/api/user/preferences', {
         method: 'PUT',
@@ -438,7 +440,7 @@ describe('UserPreferencesController', () => {
       };
 
       app.use('/api/user/preferences', authMiddleware(jwtService));
-      app.put('/api/user/preferences', controller.updatePreferences());
+      app.put('/api/user/preferences', validateRequest(updatePreferencesSchema), controller.updatePreferences());
 
       const response = await app.request('/api/user/preferences', {
         method: 'PUT',

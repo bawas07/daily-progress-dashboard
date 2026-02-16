@@ -86,21 +86,6 @@ describe('Auth Controller - Refresh Token Endpoints', () => {
             expect(mockAuthService.refreshToken).toHaveBeenCalledWith('valid-refresh-token');
         });
 
-        it('should return 400 if refreshToken is missing', async () => {
-            mockContext = createMockContext({}); // Empty body
-
-            const authController = new AuthController(mockAuthService as unknown as AuthService);
-            await authController.refresh()(mockContext as unknown as Context);
-
-            expect(mockContext.status).toBe(400);
-            expect(mockContext.json).toHaveBeenCalledWith(
-                expect.objectContaining({
-                    code: 'E001'
-                }),
-                400
-            );
-        });
-
         it('should return 401 if refresh token is invalid', async () => {
             const body = { refreshToken: 'invalid-token' };
             mockContext = createMockContext(body);
@@ -140,13 +125,5 @@ describe('Auth Controller - Refresh Token Endpoints', () => {
             expect(mockAuthService.revokeToken).toHaveBeenCalledWith('valid-refresh-token');
         });
 
-        it('should return 400 if refreshToken is missing', async () => {
-            mockContext = createMockContext({}); // Empty body
-
-            const authController = new AuthController(mockAuthService as unknown as AuthService);
-            await authController.revoke()(mockContext as unknown as Context);
-
-            expect(mockContext.status).toBe(400);
-        });
     });
 });

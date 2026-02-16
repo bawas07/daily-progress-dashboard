@@ -140,107 +140,6 @@ describe('Auth Controller', () => {
       expect(mockAuthService.login).toHaveBeenCalledWith(loginData);
     });
 
-    it('should return 400 when email is missing', async () => {
-      const { AuthController } = await importAuthController();
-
-
-      const loginData = {
-        password: 'CorrectP@ss123',
-      };
-
-      mockContext = createMockContext(loginData);
-
-      const authController = new AuthController(mockAuthService as unknown as AuthService);
-      await authController.login()(mockContext as unknown as Context);
-
-      expect(mockContext.status).toBe(400);
-      expect(mockContext.json).toHaveBeenCalledWith(
-        expect.objectContaining({
-          code: 'E001',
-          message: 'Validation failed',
-          data: expect.objectContaining({
-            details: expect.objectContaining({
-              email: expect.arrayContaining(['Required']),
-            }),
-          }),
-        }),
-        400
-      );
-      expect(mockAuthService.login).not.toHaveBeenCalled();
-    });
-
-    it('should return 400 when email format is invalid', async () => {
-      const { AuthController } = await importAuthController();
-
-
-      const loginData = {
-        email: 'not-an-email',
-        password: 'CorrectP@ss123',
-      };
-
-      mockContext = createMockContext(loginData);
-
-      const authController = new AuthController(mockAuthService as unknown as AuthService);
-      await authController.login()(mockContext as unknown as Context);
-
-      expect(mockContext.status).toBe(400);
-      expect(mockContext.json).toHaveBeenCalledWith(
-        expect.objectContaining({
-          code: 'E001',
-        }),
-        400
-      );
-      expect(mockAuthService.login).not.toHaveBeenCalled();
-    });
-
-    it('should return 400 when password is missing', async () => {
-      const { AuthController } = await importAuthController();
-
-
-      const loginData = {
-        email: 'test@example.com',
-      };
-
-      mockContext = createMockContext(loginData);
-
-      const authController = new AuthController(mockAuthService as unknown as AuthService);
-      await authController.login()(mockContext as unknown as Context);
-
-      expect(mockContext.status).toBe(400);
-      expect(mockContext.json).toHaveBeenCalledWith(
-        expect.objectContaining({
-          code: 'E001',
-        }),
-        400
-      );
-      expect(mockAuthService.login).not.toHaveBeenCalled();
-    });
-
-    it('should return 401 with code E001 for invalid password', async () => {
-      const { AuthController } = await importAuthController();
-
-
-      const loginData: LoginData = {
-        email: 'test@example.com',
-        password: 'WrongPassword123',
-      };
-
-      mockContext = createMockContext(loginData);
-      mockAuthService.login.mockRejectedValue(new Error('Invalid email or password'));
-
-      const authController = new AuthController(mockAuthService as unknown as AuthService);
-      await authController.login()(mockContext as unknown as Context);
-
-      expect(mockContext.status).toBe(401);
-      expect(mockContext.json).toHaveBeenCalledWith(
-        expect.objectContaining({
-          code: 'E001',
-          message: 'Invalid email or password',
-        }),
-        401
-      );
-    });
-
     it('should return 401 with code E001 for non-existent user', async () => {
       const { AuthController } = await importAuthController();
 
@@ -299,19 +198,6 @@ describe('Auth Controller', () => {
           email: 'test@example.com',
         })
       );
-    });
-
-    it('should handle empty request body gracefully', async () => {
-      const { AuthController } = await importAuthController();
-
-
-      mockContext = createMockContext({});
-
-      const authController = new AuthController(mockAuthService as unknown as AuthService);
-      await authController.login()(mockContext as unknown as Context);
-
-      expect(mockContext.status).toBe(400);
-      expect(mockAuthService.login).not.toHaveBeenCalled();
     });
 
     it('should ignore extra fields in request body', async () => {
@@ -408,169 +294,6 @@ describe('Auth Controller', () => {
       expect(mockAuthService.register).toHaveBeenCalledWith(registerData);
     });
 
-    it('should return 400 when name is missing', async () => {
-      const { AuthController } = await importAuthController();
-
-      const registerData = {
-        email: 'new@example.com',
-        password: 'SecurePass123',
-      };
-
-      mockContext = createMockContext(registerData);
-
-      const authController = new AuthController(mockAuthService as unknown as AuthService);
-      await authController.register()(mockContext as unknown as Context);
-
-      expect(mockContext.status).toBe(400);
-      expect(mockContext.json).toHaveBeenCalledWith(
-        expect.objectContaining({
-          code: 'E001',
-          data: expect.objectContaining({
-            details: expect.objectContaining({
-              name: expect.arrayContaining(['Required']),
-            }),
-          }),
-        }),
-        400
-      );
-      expect(mockAuthService.register).not.toHaveBeenCalled();
-    });
-
-    it('should return 400 when name is too short (less than 2 characters)', async () => {
-      const { AuthController } = await importAuthController();
-
-      const registerData = {
-        name: 'A',
-        email: 'new@example.com',
-        password: 'SecurePass123',
-      };
-
-      mockContext = createMockContext(registerData);
-
-      const authController = new AuthController(mockAuthService as unknown as AuthService);
-      await authController.register()(mockContext as unknown as Context);
-
-      expect(mockContext.status).toBe(400);
-      expect(mockContext.json).toHaveBeenCalledWith(
-        expect.objectContaining({
-          code: 'E001',
-          data: expect.objectContaining({
-            details: expect.objectContaining({
-              name: expect.arrayContaining([expect.stringContaining('2')]),
-            }),
-          }),
-        }),
-        400
-      );
-    });
-
-    it('should return 400 when email format is invalid', async () => {
-      const { AuthController } = await importAuthController();
-
-      const registerData = {
-        name: 'New User',
-        email: '',
-        password: 'CorrectP@ss123',
-      };
-
-      mockContext = createMockContext(registerData);
-
-      const authController = new AuthController(mockAuthService as unknown as AuthService);
-      await authController.register()(mockContext as unknown as Context);
-
-      expect(mockContext.status).toBe(400);
-      expect(mockContext.json).toHaveBeenCalledWith(
-        expect.objectContaining({
-          code: 'E001',
-        }),
-        400
-      );
-    });
-
-    it('should return 400 when password is too short (less than 8 characters)', async () => {
-      const { AuthController } = await importAuthController();
-
-      const registerData = {
-        name: 'New User',
-        email: 'new@example.com',
-        password: 'Short1',
-      };
-
-      mockContext = createMockContext(registerData);
-
-      const authController = new AuthController(mockAuthService as unknown as AuthService);
-      await authController.register()(mockContext as unknown as Context);
-
-      expect(mockContext.status).toBe(400);
-      expect(mockContext.json).toHaveBeenCalledWith(
-        expect.objectContaining({
-          code: 'E001',
-          data: expect.objectContaining({
-            details: expect.objectContaining({
-              password: expect.arrayContaining([expect.stringContaining('8')]),
-            }),
-          }),
-        }),
-        400
-      );
-    });
-
-    it('should return 400 when password lacks uppercase letter', async () => {
-      const { AuthController } = await importAuthController();
-
-      const registerData = {
-        name: 'New User',
-        email: 'new@example.com',
-        password: 'lowercase123',
-      };
-
-      mockContext = createMockContext(registerData);
-
-      const authController = new AuthController(mockAuthService as unknown as AuthService);
-      await authController.register()(mockContext as unknown as Context);
-
-      expect(mockContext.status).toBe(400);
-      expect(mockContext.json).toHaveBeenCalledWith(
-        expect.objectContaining({
-          code: 'E001',
-          data: expect.objectContaining({
-            details: expect.objectContaining({
-              password: expect.arrayContaining([expect.stringContaining('uppercase')]),
-            }),
-          }),
-        }),
-        400
-      );
-    });
-
-    it('should return 400 when password lacks number', async () => {
-      const { AuthController } = await importAuthController();
-
-      const registerData = {
-        name: 'New User',
-        email: 'new@example.com',
-        password: 'NoNumbersHere',
-      };
-
-      mockContext = createMockContext(registerData);
-
-      const authController = new AuthController(mockAuthService as unknown as AuthService);
-      await authController.register()(mockContext as unknown as Context);
-
-      expect(mockContext.status).toBe(400);
-      expect(mockContext.json).toHaveBeenCalledWith(
-        expect.objectContaining({
-          code: 'E001',
-          data: expect.objectContaining({
-            details: expect.objectContaining({
-              password: expect.arrayContaining([expect.stringContaining('number')]),
-            }),
-          }),
-        }),
-        400
-      );
-    });
-
     it('should return 400 with code E002 for duplicate email', async () => {
       const { AuthController } = await importAuthController();
 
@@ -633,18 +356,6 @@ describe('Auth Controller', () => {
           email: 'new@example.com',
         })
       );
-    });
-
-    it('should handle empty request body gracefully', async () => {
-      const { AuthController } = await importAuthController();
-
-      mockContext = createMockContext({});
-
-      const authController = new AuthController(mockAuthService as unknown as AuthService);
-      await authController.register()(mockContext as unknown as Context);
-
-      expect(mockContext.status).toBe(400);
-      expect(mockAuthService.register).not.toHaveBeenCalled();
     });
   });
 
@@ -763,7 +474,7 @@ describe('Auth Controller', () => {
   });
 
   describe('Error Handling', () => {
-    it('should handle unexpected errors gracefully', async () => {
+    it('should propagate unexpected errors for global handler', async () => {
       const { AuthController } = await importAuthController();
 
 
@@ -776,33 +487,11 @@ describe('Auth Controller', () => {
       mockAuthService.login.mockRejectedValue(new Error('Unexpected database error'));
 
       const authController = new AuthController(mockAuthService as unknown as AuthService);
-      await authController.login()(mockContext as unknown as Context);
 
-      expect(mockContext.status).toBe(500);
-      expect(mockContext.json).toHaveBeenCalledWith(
-        expect.objectContaining({
-          code: 'E004',
-          message: 'Internal server error',
-        }),
-        500
-      );
-    });
-
-    it('should handle validation errors from validation middleware', async () => {
-      const { AuthController } = await importAuthController();
-
-
-      const invalidData = {
-        email: '',
-        password: '',
-      };
-
-      mockContext = createMockContext(invalidData);
-
-      const authController = new AuthController(mockAuthService as unknown as AuthService);
-      await authController.login()(mockContext as unknown as Context);
-
-      expect(mockContext.status).toBe(400);
+      // Controller re-throws unexpected errors for the global error handler
+      await expect(
+        authController.login()(mockContext as unknown as Context)
+      ).rejects.toThrow('Unexpected database error');
     });
   });
 
@@ -897,25 +586,6 @@ describe('Auth Controller', () => {
   });
 
   describe('Edge Cases', () => {
-    it('should handle very long name in registration', async () => {
-      const { AuthController } = await importAuthController();
-
-
-      const registerData = {
-        name: 'A'.repeat(101),  // 101 characters to exceed max of 100
-        email: 'test@example.com',
-        password: 'SecurePass123',
-      };
-
-      mockContext = createMockContext(registerData);
-
-      const authController = new AuthController(mockAuthService as unknown as AuthService);
-      await authController.register()(mockContext as unknown as Context);
-
-      // Should fail validation due to name being too long
-      expect(mockContext.status).toBe(400);
-    });
-
     it('should handle special characters in name', async () => {
       const { AuthController } = await importAuthController();
 
