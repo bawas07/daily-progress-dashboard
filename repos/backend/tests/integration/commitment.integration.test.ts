@@ -18,6 +18,7 @@ import { ProgressLogRepository } from '../../src/modules/progress-items/reposito
 import { ProgressItemService } from '../../src/modules/progress-items/services/progress-item.service';
 import { TimelineEventRepository } from '../../src/modules/timeline-events/repositories/timeline-event.repository';
 import { TimelineEventService } from '../../src/modules/timeline-events/services/timeline-event.service';
+import { DashboardService } from '../../src/modules/dashboard/dashboard.service';
 
 // Mock DatabaseService
 class MockDatabaseService {
@@ -80,6 +81,7 @@ describe('Commitment Integration Tests', () => {
         // Timeline events (needed for routes.ts)
         container.register('TimelineEventRepository', TimelineEventRepository);
         container.register('TimelineEventService', TimelineEventService);
+        container.register('DashboardService', DashboardService);
 
         // 4. Create app
         app = createApp();

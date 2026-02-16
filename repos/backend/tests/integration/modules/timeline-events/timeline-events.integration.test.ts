@@ -18,6 +18,7 @@ import { CommitmentLogRepository } from '../../../../src/modules/commitment/repo
 import { CommitmentService } from '../../../../src/modules/commitment/services/commitment.service';
 import { TimelineEventRepository } from '../../../../src/modules/timeline-events/repositories/timeline-event.repository';
 import { TimelineEventService } from '../../../../src/modules/timeline-events/services/timeline-event.service';
+import { DashboardService } from '../../../../src/modules/dashboard/dashboard.service';
 
 // Mock DatabaseService
 class MockDatabaseService {
@@ -131,6 +132,9 @@ describe('Timeline Events Integration Tests', () => {
         // Timeline Events Module
         container.register('TimelineEventRepository', TimelineEventRepository);
         container.register('TimelineEventService', TimelineEventService);
+
+        // Dashboard Module (needed for routes.ts)
+        container.register('DashboardService', DashboardService);
 
         // 4. Create app
         app = createApp();

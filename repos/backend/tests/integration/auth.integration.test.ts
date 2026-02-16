@@ -19,6 +19,7 @@ import { CommitmentLogRepository } from '../../src/modules/commitment/repositori
 import { CommitmentService } from '../../src/modules/commitment/services/commitment.service';
 import { TimelineEventRepository } from '../../src/modules/timeline-events/repositories/timeline-event.repository';
 import { TimelineEventService } from '../../src/modules/timeline-events/services/timeline-event.service';
+import { DashboardService } from '../../src/modules/dashboard/dashboard.service';
 
 // Mock DatabaseService
 class MockDatabaseService {
@@ -89,6 +90,7 @@ describe('Authentication Integration Tests', () => {
         container.register('CommitmentService', CommitmentService);
         container.register('TimelineEventRepository', TimelineEventRepository);
         container.register('TimelineEventService', TimelineEventService);
+        container.register('DashboardService', DashboardService);
 
         // 4. Create app
         app = createApp();

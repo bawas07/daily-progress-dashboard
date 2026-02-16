@@ -59,14 +59,14 @@
   - [x] Implement POST /api/timeline-events with validation
   - [x] Write integration tests for timeline events
 
-- [ ] 2.2 Dashboard API (TDD)
-  - [ ] Write failing tests for dashboard data aggregation
-  - [ ] Implement service to gather timeline events, progress items, and commitments
-  - [ ] Implement day-of-week filtering logic
-  - [ ] Write failing tests for Dashboard Controller
-  - [ ] Implement GET /api/dashboard endpoint with date parameter
-  - [ ] Implement proper response structure with all dashboard sections
-  - [ ] Optimize database queries with proper indexing
+- [x] 2.2 Dashboard API (TDD)
+  - [x] Write failing tests for dashboard data aggregation
+  - [x] Implement service to gather timeline events, progress items, and commitments
+  - [x] Implement day-of-week filtering logic
+  - [x] Write failing tests for Dashboard Controller
+  - [x] Implement GET /api/dashboard endpoint with date parameter
+  - [x] Implement proper response structure with all dashboard sections
+  - [x] Optimize database queries with proper indexing
 
 - [ ] 2.3 History API (TDD)
   - [ ] Write failing tests for daily history aggregation

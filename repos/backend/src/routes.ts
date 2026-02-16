@@ -13,6 +13,9 @@ import { createCommitmentRoutes } from './modules/commitment/commitment.routes';
 import { TimelineEventController } from './modules/timeline-events/timeline-event.controller';
 import { TimelineEventService } from './modules/timeline-events/services/timeline-event.service';
 import { createTimelineEventRoutes } from './modules/timeline-events/timeline-event.routes';
+import { DashboardController } from './modules/dashboard/dashboard.controller';
+import { DashboardService } from './modules/dashboard/dashboard.service';
+import { createDashboardRoutes } from './modules/dashboard/dashboard.routes';
 import { Container } from './shared/container';
 import { env } from './shared/config/env';
 
@@ -46,4 +49,9 @@ export function registerRoutes(app: Hono<{ Bindings: typeof env }>, container: C
     const timelineEventService = container.resolve<TimelineEventService>('TimelineEventService');
     const timelineEventController = new TimelineEventController(timelineEventService);
     app.route('/api/timeline-events', createTimelineEventRoutes(timelineEventController, jwtService));
+
+  // Mount dashboard routes
+  const dashboardService = container.resolve<DashboardService>('DashboardService');
+  const dashboardController = new DashboardController(dashboardService);
+  app.route('/api/dashboard', createDashboardRoutes(dashboardController, jwtService));
 }

@@ -1,5 +1,4 @@
-
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { createApp } from '../../../../src/app';
 import { container } from '../../../../src/shared/container';
 import { createMockPrismaClient } from '../../../setup/mocks/database.mock';
@@ -33,7 +32,7 @@ class MockDatabaseService {
     async disconnect() { return Promise.resolve(); }
 }
 
-describe('Progress Items Integration Tests', () => {
+describe('Dashboard Integration Tests', () => {
     let app: any;
     let mockPrisma: ReturnType<typeof createMockPrismaClient>;
     let token: string;
@@ -47,12 +46,25 @@ describe('Progress Items Integration Tests', () => {
         updatedAt: new Date(),
     };
 
-    const mockDate = new Date('2024-01-01T12:00:00Z');
+    const mockDate = new Date('2024-01-15T00:00:00Z'); // Monday
 
-    const mockItem = {
+    const mockTimelineEvent = {
+        id: 'event-123',
+        userId: 'user-123',
+        title: 'Morning Standup',
+        startTime: new Date('2024-01-15T09:00:00Z'),
+        durationMinutes: 30,
+        recurrencePattern: 'daily',
+        daysOfWeek: null,
+        status: 'active',
+        createdAt: mockDate,
+        updatedAt: mockDate,
+    };
+
+    const mockProgressItem = {
         id: 'item-123',
         userId: 'user-123',
-        title: 'Integration Test Item',
+        title: 'Complete project proposal',
         importance: 'high',
         urgency: 'high',
         activeDays: ['mon', 'wed', 'fri'],
@@ -62,15 +74,22 @@ describe('Progress Items Integration Tests', () => {
         updatedAt: mockDate,
     };
 
+    const mockCommitment = {
+        id: 'commitment-123',
+        userId: 'user-123',
+        title: 'Exercise',
+        scheduledDays: ['mon', 'wed', 'fri'],
+        createdAt: mockDate,
+        updatedAt: mockDate,
+        logs: [],
+    };
+
     beforeEach(() => {
-        // 1. Clear container
         container.clear();
 
-        // 2. Create mock database service instance
         const mockDbService = new MockDatabaseService();
         mockPrisma = mockDbService.client;
 
-        // 3. Register services manually
         container.register('DatabaseService', class {
             constructor() { return mockDbService; }
         } as any);
@@ -84,158 +103,74 @@ describe('Progress Items Integration Tests', () => {
         container.register('UserPreferencesService', UserPreferencesService);
         container.register('RefreshTokenService', RefreshTokenService);
 
-        // Progress Items Module
         container.register('ProgressItemRepository', ProgressItemRepository);
         container.register('ProgressLogRepository', ProgressLogRepository);
         container.register('ProgressItemService', ProgressItemService);
 
-        // Commitment Module (needed for routes.ts)
         container.register('CommitmentRepository', CommitmentRepository);
         container.register('CommitmentLogRepository', CommitmentLogRepository);
         container.register('CommitmentService', CommitmentService);
 
-        // Timeline Events Module (needed for routes.ts)
         container.register('TimelineEventRepository', TimelineEventRepository);
         container.register('TimelineEventService', TimelineEventService);
-
-        // Dashboard Module (needed for routes.ts)
         container.register('DashboardService', DashboardService);
 
-        // 4. Create app
         app = createApp();
 
-        // 5. Generate Token
         const jwtService = new JwtService();
         token = jwtService.sign({ sub: mockUser.id, email: mockUser.email });
     });
 
-    describe('POST /api/progress-items', () => {
-        it('should create a progress item', async () => {
-            mockPrisma.progressItem.create.mockResolvedValue(mockItem);
+    describe('GET /api/dashboard', () => {
+        it('should return aggregated dashboard data for a specific date', async () => {
+            mockPrisma.timelineEvent.findMany.mockResolvedValue([mockTimelineEvent]);
+            mockPrisma.progressItem.findMany.mockResolvedValue([mockProgressItem]);
+            mockPrisma.progressItem.count.mockResolvedValue(1);
+            mockPrisma.commitment.findMany.mockResolvedValue([mockCommitment]);
 
-            const res = await app.request('/api/progress-items', {
-                method: 'POST',
+            const res = await app.request('/api/dashboard?date=2024-01-15', {
+                method: 'GET',
                 headers: {
-                    'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    title: 'Integration Test Item',
-                    importance: 'high',
-                    urgency: 'high',
-                    activeDays: ['mon', 'wed', 'fri']
-                })
+                }
             });
 
-            expect(res.status).toBe(201);
+            expect(res.status).toBe(200);
             const body = await res.json();
-            expect(body.data.title).toBe(mockItem.title);
-            expect(mockPrisma.progressItem.create).toHaveBeenCalled();
+            expect(body.code).toBe('S001');
+            expect(body.data).toHaveProperty('timeline');
+            expect(body.data).toHaveProperty('progressItems');
+            expect(body.data).toHaveProperty('commitments');
         });
 
-        it('should fail without auth', async () => {
-            const res = await app.request('/api/progress-items', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    title: 'Fail Item',
-                    importance: 'high',
-                    urgency: 'high',
-                    activeDays: ['mon']
-                })
+        it('should return 401 without authentication', async () => {
+            const res = await app.request('/api/dashboard?date=2024-01-15', {
+                method: 'GET',
             });
+
             expect(res.status).toBe(401);
         });
-    });
 
-    describe('GET /api/progress-items', () => {
-        it('should list progress items', async () => {
-            mockPrisma.progressItem.findMany.mockResolvedValue([mockItem]);
-            mockPrisma.progressItem.count.mockResolvedValue(1);
-
-            const res = await app.request('/api/progress-items', {
+        it('should return 400 with missing date parameter', async () => {
+            const res = await app.request('/api/dashboard', {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
             });
 
-            expect(res.status).toBe(200);
-            const body = await res.json();
-            expect(body.data.data).toHaveLength(1);
-            expect(body.data.data[0].id).toBe(mockItem.id);
+            expect(res.status).toBe(400);
         });
-    });
 
-    describe('POST /api/progress-items/:id/logs', () => {
-        it('should log progress', async () => {
-            // Mock findById for validation
-            mockPrisma.progressItem.findUnique.mockResolvedValue(mockItem);
-
-            const mockLog = {
-                id: 'log-1',
-                progressItemId: mockItem.id,
-                loggedAt: new Date(),
-                note: 'Worked on integration test',
-                isOffDay: false,
-                createdAt: new Date(),
-            };
-            mockPrisma.progressLog.create.mockResolvedValue(mockLog);
-
-            const res = await app.request(`/api/progress-items/${mockItem.id}/logs`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    loggedAt: new Date().toISOString(),
-                    note: 'Worked on integration test'
-                })
-            });
-
-            expect(res.status).toBe(201);
-            const body = await res.json();
-            expect(body.data.id).toBe(mockLog.id);
-        });
-    });
-
-    describe('GET /api/progress-items/:id/logs', () => {
-        it('should get logs history', async () => {
-            mockPrisma.progressItem.findUnique.mockResolvedValue(mockItem);
-            mockPrisma.progressLog.findMany.mockResolvedValue([]);
-            mockPrisma.progressLog.count.mockResolvedValue(0);
-
-            const res = await app.request(`/api/progress-items/${mockItem.id}/logs`, {
+        it('should return 400 with invalid date format', async () => {
+            const res = await app.request('/api/dashboard?date=invalid-date', {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
             });
 
-            expect(res.status).toBe(200);
-            const body = await res.json();
-            expect(body.data.data).toEqual([]);
-        });
-    });
-
-    describe('PUT /api/progress-items/:id/settle', () => {
-        it('should settle item', async () => {
-            mockPrisma.progressItem.findUnique.mockResolvedValue(mockItem);
-            mockPrisma.progressItem.update.mockResolvedValue({ ...mockItem, status: 'settled' });
-
-            const res = await app.request(`/api/progress-items/${mockItem.id}/settle`, {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-
-            expect(res.status).toBe(200);
-            const body = await res.json();
-            expect(body.data.status).toBe('settled');
+            expect(res.status).toBe(400);
         });
     });
 });
