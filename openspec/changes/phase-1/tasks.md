@@ -91,17 +91,17 @@
 
 ## 3. Remaining Frontend Work
 
-- [ ] 3.1 Dashboard Frontend (TDD)
-  - [ ] Write failing tests for Dashboard component structure
-  - [ ] Implement main dashboard layout with collapsible sections
-  - [ ] Write failing tests for TimelineSection component
-  - [ ] Implement timeline events display with chronological ordering
-  - [ ] Write failing tests for EisenhowerMatrix component
-  - [ ] Implement four-quadrant layout for progress items
-  - [ ] Write failing tests for CommitmentsSection component
-  - [ ] Implement commitment list with checkbox interactions
-  - [ ] Write failing tests for useDashboard composable
-  - [ ] Implement dashboard data fetching and state management
+- [x] 3.1 Dashboard Frontend (TDD)
+  - [x] Write failing tests for Dashboard component structure
+  - [x] Implement main dashboard layout with collapsible sections
+  - [x] Write failing tests for TimelineSection component
+  - [x] Implement timeline events display with chronological ordering
+  - [x] Write failing tests for EisenhowerMatrix component
+  - [x] Implement four-quadrant layout for progress items
+  - [x] Write failing tests for CommitmentsSection component
+  - [x] Implement commitment list with checkbox interactions
+  - [x] Write failing tests for useDashboard composable
+  - [x] Implement dashboard data fetching and state management
   - [ ] Write E2E tests for complete dashboard functionality
 
 - [ ] 3.2 Progress Items Frontend (TDD)

@@ -4,7 +4,7 @@
   "description": "Daily Progress PWA - Monorepo",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev": "concurrently --kill-others-on-fail --handle-input --names \"BE,FE\" \"npm run dev:backend\" \"npm run dev:frontend\"",
     "dev:backend": "cd repos/backend && npm run dev",
     "dev:frontend": "cd repos/frontend && npm run dev",
     "build": "npm run build:backend && npm run build:frontend",
