@@ -115,6 +115,7 @@ describe('History API Integration Tests', () => {
 
         it('should require authentication', async () => {
             const response = await app.request('/api/history/today?date=2024-01-15');
+
             expect(response.status).toBe(401);
         });
     });
