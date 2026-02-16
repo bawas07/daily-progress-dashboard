@@ -7,6 +7,7 @@ import { logger as winstonLogger } from './shared/logger/logger.service';
 import { createSuccessResponse, notFound } from './shared/response/response.helper';
 import { container } from './shared/registry';
 import { registerRoutes } from './routes';
+import { errorHandler } from './shared/middleware/error.middleware';
 
 export function createApp() {
   const app = new Hono<{ Bindings: typeof env }>();
@@ -29,6 +30,9 @@ export function createApp() {
 
   // Register all application routes
   registerRoutes(app, container);
+
+  // Global error handler (must be after routes)
+  app.onError(errorHandler);
 
   // Health check endpoint
   app.get('/health', (c) => {

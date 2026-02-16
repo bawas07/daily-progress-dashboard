@@ -11,7 +11,10 @@ function createMockContext(body: any = null, param: any = null) {
             json: async () => body || {},
             param: (key: string) => param ? param[key] : undefined,
         },
-        get: vi.fn().mockReturnValue('user-1'), // Mock userId from middleware
+        get: vi.fn().mockImplementation((key: string) => {
+            if (key === 'userId') return 'user-1';
+            return undefined; // validatedData and other keys return undefined
+        }),
         json: vi.fn().mockImplementation((data, statusCode) => {
             status = statusCode || 200;
             return { data, status };

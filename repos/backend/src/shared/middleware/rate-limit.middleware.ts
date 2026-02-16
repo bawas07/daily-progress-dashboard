@@ -11,6 +11,13 @@ interface RateLimitOption {
 const memoryStore = new Map<string, { count: number; resetTime: number }>();
 
 /**
+ * Clear the rate limit store (primarily for testing)
+ */
+export const clearRateLimitStore = () => {
+  memoryStore.clear();
+};
+
+/**
  * Simple in-memory rate limiter middleware
  */
 export const rateLimit = (options: RateLimitOption) => {

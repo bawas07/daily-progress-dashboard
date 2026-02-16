@@ -16,6 +16,7 @@ import { createTimelineEventRoutes } from './modules/timeline-events/timeline-ev
 import { DashboardController } from './modules/dashboard/dashboard.controller';
 import { DashboardService } from './modules/dashboard/dashboard.service';
 import { createDashboardRoutes } from './modules/dashboard/dashboard.routes';
+import { createHistoryRoutes, createItemsRoutes } from './modules/history/history.routes';
 import { Container } from './shared/container';
 import { env } from './shared/config/env';
 
@@ -54,4 +55,8 @@ export function registerRoutes(app: Hono<{ Bindings: typeof env }>, container: C
   const dashboardService = container.resolve<DashboardService>('DashboardService');
   const dashboardController = new DashboardController(dashboardService);
   app.route('/api/dashboard', createDashboardRoutes(dashboardController, jwtService));
+
+  // Mount history routes
+  app.route('/api/history', createHistoryRoutes(jwtService));
+  app.route('/api/items', createItemsRoutes(jwtService));
 }

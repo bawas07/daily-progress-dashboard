@@ -1,6 +1,7 @@
 import { ZodSchema, ZodError } from 'zod';
 import type { Context, Next } from 'hono';
 import { createErrorResponse, validationError } from '../response/response.helper';
+import { ResponseCodes } from '../response/response.types';
 import { logger } from '../logger/logger.service';
 
 /**
@@ -40,14 +41,27 @@ export function validateRequest<T>(schema: ZodSchema<T>) {
       c.set('validatedData', result.data);
 
       await next();
-    } catch (error) {
+    } catch (error: any) {
+      // Handle JSON parsing errors
+      if (error instanceof SyntaxError || error?.name === 'SyntaxError') {
+        logger.debug('Invalid JSON in request body');
+        return c.json(
+          createErrorResponse(
+            ResponseCodes.VALIDATION_ERROR,
+            'Invalid JSON format',
+            { body: ['Invalid JSON in request body'] }
+          ),
+          400
+        );
+      }
+
       if (error instanceof ZodError) {
         const errors = formatZodErrors(error);
         return c.json(validationError(errors), 400);
       }
 
       logger.error('Validation middleware error', { error });
-      return c.json(createErrorResponse('E004', 'Validation error'), 500);
+      throw error; // Let global error handler handle it
     }
   };
 }

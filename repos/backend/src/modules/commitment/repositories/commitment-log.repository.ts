@@ -49,6 +49,24 @@ export class CommitmentLogRepository {
         });
     }
 
+    async findByDateRange(userId: string, start: Date, end: Date): Promise<CommitmentLog[]> {
+        return this.prisma.commitmentLog.findMany({
+            where: {
+                commitment: {
+                    userId,
+                },
+                completedAt: {
+                    gte: start,
+                    lte: end,
+                },
+            },
+            orderBy: { completedAt: 'desc' },
+            include: {
+                commitment: true,
+            },
+        });
+    }
+
     async delete(id: string): Promise<CommitmentLog> {
         return this.prisma.commitmentLog.delete({
             where: { id },
