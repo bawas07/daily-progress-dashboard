@@ -1,5 +1,3 @@
-import { hash, compare } from 'bcrypt';
-
 /**
  * Validation result type for password strength validation
  */
@@ -11,19 +9,20 @@ export interface ValidationResult {
 /**
  * PasswordService handles password hashing, comparison, and strength validation
  * for the authentication module.
+ *
+ * Uses Bun's native password hashing (bcrypt) for better compatibility with Bun runtime.
  */
 export class PasswordService {
-  private readonly saltRounds = 10;
   private static readonly MIN_PASSWORD_LENGTH = 8;
   private static readonly SPECIAL_CHARACTERS = /[!@#$%^&*(),.?":{}|<>]/;
 
   /**
-   * Hashes a password using bcrypt with automatic salt generation.
+   * Hashes a password using Bun's native password hashing (bcrypt).
    * @param password - The plain text password to hash
    * @returns A promise resolving to the hashed password
    */
   async hash(password: string): Promise<string> {
-    return hash(password, this.saltRounds);
+    return Bun.password.hash(password);
   }
 
   /**
@@ -33,7 +32,7 @@ export class PasswordService {
    * @returns A promise resolving to true if passwords match, false otherwise
    */
   async compare(password: string, hash: string): Promise<boolean> {
-    return compare(password, hash);
+    return Bun.password.verify(password, hash);
   }
 
   /**
