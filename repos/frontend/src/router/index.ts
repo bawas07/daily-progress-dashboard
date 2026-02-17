@@ -10,6 +10,7 @@ const SettingsView = () => import('@/features/settings/views/SettingsView.vue')
 const ProgressItemsView = () => import('@/features/progress/views/ProgressItemsView.vue')
 const CommitmentsView = () => import('@/features/commitments/views/CommitmentsView.vue')
 const TimelineView = () => import('@/features/timeline/views/TimelineView.vue')
+const TestComponents = () => import('@/components/ui/TestComponents.vue')
 
 const routes: RouteRecordRaw[] = [
   {
@@ -59,6 +60,12 @@ const routes: RouteRecordRaw[] = [
     name: 'timeline',
     component: TimelineView,
     meta: { requiresAuth: true },
+  },
+  {
+    path: '/test-components',
+    name: 'test-components',
+    component: TestComponents,
+    meta: { requiresAuth: false },
   },
   {
     path: '/:pathMatch(.*)*',

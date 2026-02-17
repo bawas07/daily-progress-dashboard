@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import type { DashboardProgressQuadrants, DashboardProgressItem } from '../types/dashboard.types'
+import type { DashboardProgressQuadrants } from '../types/dashboard.types'
 
 const props = defineProps<{
   progressItems: DashboardProgressQuadrants
