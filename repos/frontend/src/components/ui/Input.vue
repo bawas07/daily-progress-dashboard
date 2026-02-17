@@ -24,12 +24,14 @@ interface Props {
   required?: boolean
   id?: string
   name?: string
+  error?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   type: 'text',
   disabled: false,
   required: false,
+  error: false,
 })
 
 const emit = defineEmits<{
@@ -41,9 +43,27 @@ const localValue = computed({
   set: (value) => emit('update:modelValue', value),
 })
 
+// Handle input with proper type conversion for number inputs
+function handleInput(event: Event) {
+  const target = event.target as HTMLInputElement
+  if (props.type === 'number') {
+    emit('update:modelValue', target.value === '' ? '' : Number(target.value))
+  } else {
+    emit('update:modelValue', target.value)
+  }
+}
+
 // Input classes using Tailwind
 // Consistent border, padding, and focus states
-const inputClasses = 'w-full px-3 py-2 border border-neutral-300 rounded-md shadow-sm placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 disabled:bg-neutral-100 disabled:cursor-not-allowed sm:text-sm transition-colors'
+const inputClasses = computed(() => {
+  const base = 'w-full px-3 py-2 border rounded-md shadow-sm placeholder-neutral-400 focus:outline-none focus:ring-2 disabled:bg-neutral-100 disabled:cursor-not-allowed sm:text-sm transition-colors'
+  
+  if (props.error) {
+    return `${base} border-red-300 text-red-900 focus:ring-red-500 focus:border-red-500`
+  }
+  
+  return `${base} border-neutral-300 focus:ring-primary-500 focus:border-primary-500`
+})
 </script>
 
 <template>
@@ -56,7 +76,7 @@ const inputClasses = 'w-full px-3 py-2 border border-neutral-300 rounded-md shad
     :disabled="disabled"
     :required="required"
     :class="inputClasses"
-    @input="(e: Event) => localValue = (e.target as HTMLInputElement).value"
+    @input="handleInput"
     v-bind="$attrs"
   />
 </template>

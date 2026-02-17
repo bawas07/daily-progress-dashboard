@@ -59,6 +59,18 @@ const baseClasses = 'rounded-lg transition-shadow'
 
 <template>
   <div :class="[baseClasses, variantClasses, paddingClasses]" v-bind="$attrs">
+    <slot name="header">
+      <div v-if="$slots.title" class="mb-4">
+        <slot name="title" />
+      </div>
+    </slot>
+    
     <slot />
+    
+    <slot name="footer">
+      <div v-if="$slots.actions" class="mt-4 pt-4 border-t border-neutral-200">
+        <slot name="actions" />
+      </div>
+    </slot>
   </div>
 </template>

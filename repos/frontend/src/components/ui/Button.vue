@@ -16,7 +16,7 @@
  */
 import { computed } from 'vue'
 
-type ButtonVariant = 'primary' | 'secondary'
+type ButtonVariant = 'primary' | 'secondary' | 'ghost'
 type ButtonSize = 'sm' | 'md' | 'lg'
 
 interface Props {
@@ -38,6 +38,7 @@ const variantClasses = computed(() => {
   const variants = {
     primary: 'bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500 focus:ring-offset-primary-600',
     secondary: 'bg-neutral-200 text-neutral-900 hover:bg-neutral-300 focus:ring-neutral-500 focus:ring-offset-neutral-200',
+    ghost: 'bg-transparent text-primary-600 border border-primary-600 hover:bg-primary-50 focus:ring-primary-500 focus:ring-offset-0',
   }
   return variants[props.variant]
 })
