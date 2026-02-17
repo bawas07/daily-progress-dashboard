@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { Card, Badge } from '@/components/ui'
 import type { DashboardTimelineEvent } from '../types/dashboard.types'
 
 defineProps<{
@@ -31,41 +32,43 @@ function formatDuration(minutes: number): string {
 </script>
 
 <template>
-  <section class="timeline-section bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-    <button
-      class="section-header w-full flex items-center justify-between px-4 py-3 bg-gray-50 hover:bg-gray-100 transition-colors"
-      data-testid="timeline-header"
-      @click="toggleCollapse"
-    >
-      <h2 class="text-lg font-semibold text-gray-800">Timeline</h2>
-      <span class="text-gray-400 transition-transform" :class="{ 'rotate-180': !collapsed }">
-        ▼
-      </span>
-    </button>
+  <Card variant="default" padding="none">
+    <template #title>
+      <button
+        class="section-header w-full flex items-center justify-between px-4 py-3 hover:bg-neutral-50 transition-colors -mx-6 -mt-6 rounded-t-lg"
+        data-testid="timeline-header"
+        @click="toggleCollapse"
+      >
+        <h2 class="text-lg font-semibold text-neutral-800">Timeline</h2>
+        <span class="text-neutral-400 transition-transform" :class="{ 'rotate-180': !collapsed }">
+          ▼
+        </span>
+      </button>
+    </template>
 
     <div v-if="!collapsed" class="section-content" data-testid="timeline-content">
-      <div v-if="events.length === 0" class="empty-state px-4 py-8 text-center text-gray-500" data-testid="timeline-empty">
+      <div v-if="events.length === 0" class="empty-state px-4 py-8 text-center text-neutral-500" data-testid="timeline-empty">
         <p>No events scheduled today</p>
       </div>
 
-      <ul v-else class="divide-y divide-gray-100">
+      <ul v-else class="divide-y divide-neutral-100">
         <li
           v-for="event in events"
           :key="event.id"
-          class="timeline-event flex items-center gap-4 px-4 py-3 hover:bg-gray-50 transition-colors"
+          class="timeline-event flex items-center gap-4 px-4 py-3 hover:bg-neutral-50 transition-colors"
           data-testid="timeline-event"
         >
-          <div class="flex-shrink-0 text-sm font-medium text-indigo-600 w-20">
+          <div class="flex-shrink-0 text-sm font-medium text-primary-600 w-20">
             {{ formatTime(event.startTime) }}
           </div>
           <div class="flex-1 min-w-0">
-            <p class="text-sm font-medium text-gray-900 truncate">{{ event.title }}</p>
+            <p class="text-sm font-medium text-neutral-900 truncate">{{ event.title }}</p>
           </div>
-          <div class="flex-shrink-0 text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+          <Badge variant="info">
             {{ formatDuration(event.durationMinutes) }}
-          </div>
+          </Badge>
         </li>
       </ul>
     </div>
-  </section>
+  </Card>
 </template>

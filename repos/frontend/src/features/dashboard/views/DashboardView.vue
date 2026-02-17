@@ -3,6 +3,7 @@ import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth.store'
 import { useDashboard } from '../composables/useDashboard'
+import { Button, Spinner } from '@/components/ui'
 import TimelineSection from '../components/TimelineSection.vue'
 import EisenhowerMatrix from '../components/EisenhowerMatrix.vue'
 import CommitmentsSection from '../components/CommitmentsSection.vue'
@@ -50,29 +51,32 @@ onMounted(() => {
           </p>
         </div>
         <div class="flex items-center gap-3">
-          <button
+          <Button
             v-if="!isToday"
             data-testid="today-button"
-            class="inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-md text-indigo-600 bg-indigo-50 hover:bg-indigo-100 transition-colors"
+            variant="ghost"
+            size="sm"
             @click="goToToday(); fetchDashboard()"
           >
             Today
-          </button>
-          <button
+          </Button>
+          <Button
             data-testid="refresh-button"
-            class="inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-md text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors"
+            variant="secondary"
+            size="sm"
             :disabled="loading"
             @click="refresh"
           >
             ↻ Refresh
-          </button>
-          <button
+          </Button>
+          <Button
             data-testid="logout-button"
+            variant="primary"
+            size="sm"
             @click="handleLogout"
-            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
           >
             Logout
-          </button>
+          </Button>
         </div>
       </div>
     </header>
@@ -88,8 +92,8 @@ onMounted(() => {
           data-testid="dashboard-loading"
         >
           <div class="text-center">
-            <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600 mx-auto"></div>
-            <p class="mt-3 text-sm text-gray-500">Loading dashboard...</p>
+            <Spinner size="lg" label="Loading dashboard" />
+            <p class="mt-3 text-sm text-neutral-500">Loading dashboard...</p>
           </div>
         </div>
 
@@ -101,13 +105,14 @@ onMounted(() => {
         >
           <div class="text-center">
             <p class="text-red-600 text-base font-medium">{{ error }}</p>
-            <button
+            <Button
               data-testid="retry-button"
-              class="mt-4 inline-flex items-center px-4 py-2 text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition-colors"
+              variant="primary"
+              class="mt-4"
               @click="fetchDashboard"
             >
               Retry
-            </button>
+            </Button>
           </div>
         </div>
 
