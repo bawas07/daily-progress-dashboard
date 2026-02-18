@@ -6,7 +6,9 @@ export interface DashboardTimelineEvent {
     id: string
     title: string
     startTime: string
+    endTime: string
     durationMinutes: number
+    description?: string | null
     recurrencePattern?: string | null
 }
 

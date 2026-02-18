@@ -52,6 +52,20 @@ export default {
           800: '#262626',
           900: '#171717',
         },
+        // Dashboard theme colors from example design
+        sage: {
+          DEFAULT: '#789482',
+          5: 'rgba(120, 148, 130, 0.05)',
+          10: 'rgba(120, 148, 130, 0.1)',
+          20: 'rgba(120, 148, 130, 0.2)',
+        },
+        cream: '#fdfcf8',
+        'background-light': '#f6f6f8',
+        'background-dark': '#101622',
+        'neutral-soft': '#e2e4e9',
+      },
+      fontFamily: {
+        display: ['Lexend', 'sans-serif'],
       },
       spacing: {
         // Using Tailwind's default spacing scale (0.25rem increments)

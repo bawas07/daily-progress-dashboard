@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Daily Progress Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                        "sage": "#789482",
+                        "cream": "#fdfcf8",
+                        "neutral-soft": "#e2e4e9"
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Lexend', sans-serif;
+        }
+        .profile-dropdown:hover .dropdown-menu {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-200 antialiased">
+<header class="fixed top-0 left-0 right-0 h-16 bg-white dark:bg-background-dark border-b border-slate-200 dark:border-slate-800 z-50 px-6 flex items-center justify-between">
+<div class="flex items-center gap-3 w-1/4">
+<div class="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-xl">eco</span>
+</div>
+<h1 class="text-lg font-bold tracking-tight text-slate-900 dark:text-white">Daily Progress</h1>
+</div>
+<div class="flex-1 flex justify-center max-w-xl px-4">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">search</span>
+<input class="w-full bg-slate-100/50 dark:bg-slate-800/50 border-none rounded-xl py-2 pl-10 pr-4 text-sm text-slate-700 dark:text-slate-200 placeholder:text-slate-400 focus:ring-2 focus:ring-primary/20 focus:bg-white dark:focus:bg-slate-800 transition-all outline-none" placeholder="Search items, notes, or history..." type="text"/>
+</div>
+</div>
+<div class="flex items-center justify-end gap-4 w-1/4">
+<div class="relative profile-dropdown">
+<button class="flex items-center gap-2 focus:outline-none">
+<div class="h-9 w-9 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden border-2 border-white dark:border-slate-800 shadow-sm">
+<img alt="User Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLFz1K307ZwGamnZ5jBWrFRLzeNMx_15qgWEFWu6z1gcIT6URZlaFvE8WJ_4h_wqrTLfAHvzvikAds5dvV_OK8k71I5L7VQQk4qEOYmm0TTdfA__EcDVv6zPvxHENmeaIrsLsAU3HQWEV6qpner_oiUmYu4Nte64FU2F2WsMUqiSre61SbzrL_FLS3FFWMCf9-HR3OhKEdGOrwvO-e8VJaKyxHRXMfSCEoISUor6heDl6lS1zp1j14Go8pbgFti_2cV6hDdG1ATN4"/>
+</div>
+</button>
+<div class="dropdown-menu hidden absolute right-0 mt-0 w-48 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl py-2 z-50">
+<a class="flex items-center gap-3 px-4 py-2 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined text-lg">person</span>
+                    Profile Settings
+                </a>
+<div class="h-px bg-slate-100 dark:bg-slate-800 my-1 mx-4"></div>
+<a class="flex items-center gap-3 px-4 py-2 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors" href="#">
+<span class="material-symbols-outlined text-lg">logout</span>
+                    Logout
+                </a>
+</div>
+</div>
+</div>
+</header>
+<div class="flex min-h-screen pt-16">
+<aside class="w-64 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-background-dark flex flex-col fixed h-[calc(100vh-64px)]">
+<nav class="flex-1 px-4 py-6 space-y-2">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 text-primary font-medium" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-sm">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="text-sm">History</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="text-sm">Insights</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-sm">Settings</span>
+</a>
+</nav>
+<div class="p-4 mt-auto">
+<div class="bg-primary/5 rounded-xl p-4 border border-primary/10">
+<p class="text-xs font-medium text-primary uppercase tracking-wider mb-2">Daily Quote</p>
+<p class="text-sm italic text-slate-600 dark:text-slate-400">"Nature does not hurry, yet everything is accomplished."</p>
+</div>
+</div>
+</aside>
+<main class="ml-64 flex-1 p-8 lg:p-12 overflow-y-auto">
+<header class="flex justify-between items-end mb-10">
+<div>
+<h2 class="text-4xl font-black text-slate-900 dark:text-white tracking-tight">Today's Awareness</h2>
+<p class="text-lg text-slate-500 dark:text-slate-400 mt-2 font-light">Gently moving forward, one step at a time.</p>
+</div>
+<div class="flex gap-4">
+<button class="flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 font-medium">
+<span class="material-symbols-outlined text-lg">add</span>
+<span>Log Progress</span>
+</button>
+</div>
+</header>
+<div class="grid grid-cols-12 gap-8">
+<div class="col-span-12 lg:col-span-8 space-y-10">
+<section>
+<div class="flex items-center justify-between mb-6">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">grid_view</span>
+<h3 class="text-xl font-bold text-slate-800 dark:text-slate-100 tracking-tight">Eisenhower Matrix</h3>
+</div>
+<span class="text-xs text-slate-400 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full uppercase font-bold tracking-tighter">Priority View</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="bg-primary/5 border border-primary/10 p-5 rounded-2xl">
+<div class="flex justify-between items-center mb-4">
+<h4 class="text-sm font-bold text-primary uppercase tracking-widest">Do Now</h4>
+<span class="material-symbols-outlined text-primary text-sm">priority_high</span>
+</div>
+<div class="space-y-3">
+<div class="bg-white dark:bg-slate-900/80 p-3 rounded-xl border border-primary/5 text-sm text-slate-700 dark:text-slate-300 shadow-sm">
+                                    Finalize project proposal
+                                </div>
+<div class="bg-white dark:bg-slate-900/80 p-3 rounded-xl border border-primary/5 text-sm text-slate-700 dark:text-slate-300 shadow-sm">
+                                    Client emergency call
+                                </div>
+</div>
+</div>
+<div class="bg-sage/5 border border-sage/10 p-5 rounded-2xl">
+<div class="flex justify-between items-center mb-4">
+<h4 class="text-sm font-bold text-sage uppercase tracking-widest">Schedule</h4>
+<span class="material-symbols-outlined text-sage text-sm">event</span>
+</div>
+<div class="space-y-3">
+<div class="bg-white dark:bg-slate-900/80 p-3 rounded-xl border border-sage/5 text-sm text-slate-700 dark:text-slate-300 shadow-sm">
+                                    Learning: Vue.js 3 updates
+                                </div>
+<div class="bg-white dark:bg-slate-900/80 p-3 rounded-xl border border-sage/5 text-sm text-slate-700 dark:text-slate-300 shadow-sm">
+                                    Weekly planning session
+                                </div>
+</div>
+</div>
+<div class="bg-slate-100 dark:bg-slate-800/50 p-5 rounded-2xl">
+<div class="flex justify-between items-center mb-4">
+<h4 class="text-sm font-bold text-slate-500 uppercase tracking-widest">Delegate</h4>
+<span class="material-symbols-outlined text-slate-500 text-sm">group</span>
+</div>
+<div class="space-y-3">
+<div class="bg-white dark:bg-slate-900/80 p-3 rounded-xl border border-slate-200 dark:border-slate-700 text-sm text-slate-500 dark:text-slate-400 italic">
+                                    Email sorting
+                                </div>
+</div>
+</div>
+<div class="bg-slate-50 dark:bg-slate-800/20 p-5 rounded-2xl border border-dashed border-slate-200 dark:border-slate-700">
+<div class="flex justify-between items-center mb-4">
+<h4 class="text-sm font-bold text-slate-400 uppercase tracking-widest text-opacity-60">Eliminate</h4>
+<span class="material-symbols-outlined text-slate-400 text-sm">delete_sweep</span>
+</div>
+<p class="text-xs text-slate-400">Clear any distractions here to maintain emotional calm.</p>
+</div>
+</div>
+</section>
+<section>
+<div class="flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-sage">schedule</span>
+<h3 class="text-xl font-bold text-slate-800 dark:text-slate-100 tracking-tight">Timeline</h3>
+</div>
+<div class="space-y-0 pl-4 border-l-2 border-slate-200 dark:border-slate-800">
+<div class="relative pb-8 pl-8">
+<div class="absolute -left-[9px] top-1.5 h-4 w-4 rounded-full bg-sage ring-4 ring-background-light dark:ring-background-dark"></div>
+<div class="bg-white dark:bg-slate-900/50 p-5 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm transition-hover hover:shadow-md">
+<span class="text-xs font-bold text-sage uppercase tracking-widest">9:00 AM — 11:00 AM</span>
+<h4 class="text-lg font-semibold text-slate-900 dark:text-white mt-1">Deep Work: Strategy Design</h4>
+<p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Focusing on long-term architectural goals without distractions.</p>
+</div>
+</div>
+<div class="relative pb-8 pl-8">
+<div class="absolute -left-[9px] top-1.5 h-4 w-4 rounded-full bg-slate-300 dark:bg-slate-700 ring-4 ring-background-light dark:ring-background-dark"></div>
+<div class="bg-white dark:bg-slate-900/50 p-5 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm transition-hover hover:shadow-md">
+<span class="text-xs font-bold text-slate-400 uppercase tracking-widest">1:00 PM — 2:00 PM</span>
+<h4 class="text-lg font-semibold text-slate-900 dark:text-white mt-1">Mindful Review</h4>
+<p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Assessing morning progress and recalibrating the afternoon flow.</p>
+</div>
+</div>
+<div class="relative pl-8">
+<div class="absolute -left-[9px] top-1.5 h-4 w-4 rounded-full bg-slate-300 dark:bg-slate-700 ring-4 ring-background-light dark:ring-background-dark"></div>
+<div class="bg-white dark:bg-slate-900/50 p-5 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm transition-hover hover:shadow-md">
+<span class="text-xs font-bold text-slate-400 uppercase tracking-widest">4:00 PM — 5:00 PM</span>
+<h4 class="text-lg font-semibold text-slate-900 dark:text-white mt-1">Daily Wrap-up</h4>
+<p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Cleaning up the workspace and logging final reflections.</p>
+</div>
+</div>
+</div>
+</section>
+</div>
+<div class="col-span-12 lg:col-span-4 space-y-8">
+<section class="bg-cream dark:bg-slate-900/40 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-sm">
+<div class="flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-amber-500">star</span>
+<h3 class="text-xl font-bold text-slate-800 dark:text-slate-100 tracking-tight">Daily Commitments</h3>
+</div>
+<div class="space-y-4">
+<div class="group relative flex flex-col gap-3 p-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 transition-all hover:border-primary/20">
+<div class="flex justify-between items-start">
+<div class="flex flex-col">
+<span class="text-lg font-medium text-slate-900 dark:text-white leading-snug">Research New UI patterns</span>
+<span class="text-xs text-slate-400 mt-1 uppercase font-bold tracking-widest">Design Track</span>
+</div>
+<div class="flex h-6 w-6 items-center justify-center rounded-full bg-sage/20 text-sage">
+<span class="material-symbols-outlined text-sm font-bold">check</span>
+</div>
+</div>
+<div class="flex justify-between items-center mt-2 pt-3 border-t border-slate-50 dark:border-slate-800">
+<span class="text-xs text-slate-500 font-medium">Progress: Steady</span>
+<button class="text-primary text-xs font-bold hover:underline">Edit Entry</button>
+</div>
+</div>
+<div class="group relative flex flex-col gap-3 p-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 transition-all hover:border-primary/20">
+<div class="flex justify-between items-start">
+<div class="flex flex-col">
+<span class="text-lg font-medium text-slate-900 dark:text-white leading-snug">Write 500 words of documentation</span>
+<span class="text-xs text-slate-400 mt-1 uppercase font-bold tracking-widest">Focus Area</span>
+</div>
+<div class="flex h-6 w-6 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400">
+<span class="material-symbols-outlined text-sm font-bold">more_horiz</span>
+</div>
+</div>
+<div class="flex justify-between items-center mt-2 pt-3 border-t border-slate-50 dark:border-slate-800">
+<span class="text-xs text-slate-500 font-medium">Progress: In Progress</span>
+<button class="bg-primary/10 text-primary px-3 py-1 rounded-lg text-xs font-bold hover:bg-primary/20 transition-colors">Log Work</button>
+</div>
+</div>
+<div class="group relative flex flex-col gap-3 p-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 transition-all hover:border-primary/20">
+<div class="flex justify-between items-start">
+<div class="flex flex-col text-slate-400">
+<span class="text-lg font-medium leading-snug">Prepare monthly report</span>
+<span class="text-xs mt-1 uppercase font-bold tracking-widest">Upcoming</span>
+</div>
+<div class="flex h-6 w-6 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-300">
+<span class="material-symbols-outlined text-sm font-bold">hourglass_empty</span>
+</div>
+</div>
+<div class="flex justify-between items-center mt-2 pt-3 border-t border-slate-50 dark:border-slate-800">
+<span class="text-xs text-slate-400 font-medium italic">Pending Afternoon Start</span>
+<button class="text-slate-400 text-xs font-bold hover:text-slate-600 transition-colors">Details</button>
+</div>
+</div>
+</div>
+<div class="mt-8">
+<div class="bg-sage/10 rounded-2xl p-5 border border-sage/20 text-center">
+<h5 class="text-sage text-sm font-bold mb-1">Moment of Calm</h5>
+<p class="text-slate-600 dark:text-slate-400 text-xs leading-relaxed">Take 5 minutes to breathe before starting your next commitment.</p>
+</div>
+</div>
+</section>
+<div class="p-6 bg-slate-900 rounded-3xl text-white shadow-xl">
+<div class="flex items-center justify-between mb-4">
+<span class="text-sm font-medium opacity-80 tracking-wide uppercase">Daily Flow</span>
+<span class="material-symbols-outlined text-primary">waves</span>
+</div>
+<div class="flex items-end gap-1 h-12 mb-4">
+<div class="flex-1 bg-primary/40 rounded-t-lg h-2/3"></div>
+<div class="flex-1 bg-primary rounded-t-lg h-full"></div>
+<div class="flex-1 bg-primary/60 rounded-t-lg h-3/4"></div>
+<div class="flex-1 bg-slate-800 rounded-t-lg h-1/4"></div>
+<div class="flex-1 bg-slate-800 rounded-t-lg h-1/4"></div>
+<div class="flex-1 bg-slate-800 rounded-t-lg h-1/4"></div>
+</div>
+<p class="text-xs text-slate-400 leading-relaxed font-light">Your progress is steady and balanced today. No need to rush.</p>
+</div>
+</div>
+</div>
+</main>
+</div>
+
+</body></html>

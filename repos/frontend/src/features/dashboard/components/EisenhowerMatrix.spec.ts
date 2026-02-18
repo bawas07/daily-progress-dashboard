@@ -1,16 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
-import { createRouter, createMemoryHistory } from 'vue-router'
 import EisenhowerMatrix from './EisenhowerMatrix.vue'
 import type { DashboardProgressQuadrants } from '../types/dashboard.types'
-
-const router = createRouter({
-    history: createMemoryHistory(),
-    routes: [
-        { path: '/', component: { template: '<div />' } },
-        { path: '/history', component: { template: '<div />' } },
-    ],
-})
 
 const emptyItems: DashboardProgressQuadrants = {
     important: { urgent: [], notUrgent: [] },
@@ -59,93 +50,54 @@ const populatedItems: DashboardProgressQuadrants = {
 }
 
 function mountComponent(props: { progressItems: DashboardProgressQuadrants }) {
-    return mount(EisenhowerMatrix, {
-        props,
-        global: {
-            plugins: [router],
-        },
-    })
+    return mount(EisenhowerMatrix, { props })
 }
 
 describe('EisenhowerMatrix', () => {
-    it('renders section header', () => {
+    it('renders section with Eisenhower Matrix title', () => {
         const wrapper = mountComponent({ progressItems: populatedItems })
 
-        expect(wrapper.find('[data-testid="matrix-header"]').exists()).toBe(true)
-        expect(wrapper.text()).toContain('Progress Items')
+        expect(wrapper.find('[data-testid="matrix-section"]').exists()).toBe(true)
+        expect(wrapper.text()).toContain('Eisenhower Matrix')
     })
 
-    it('renders four quadrant labels', () => {
+    it('renders four quadrant cards', () => {
         const wrapper = mountComponent({ progressItems: populatedItems })
 
-        expect(wrapper.text()).toContain('Important & Urgent')
-        expect(wrapper.text()).toContain('Important & Not Urgent')
-        expect(wrapper.text()).toContain('Not Important & Urgent')
-        expect(wrapper.text()).toContain('Not Important & Not Urgent')
+        expect(wrapper.find('[data-testid="quadrant-do-now"]').exists()).toBe(true)
+        expect(wrapper.find('[data-testid="quadrant-schedule"]').exists()).toBe(true)
+        expect(wrapper.find('[data-testid="quadrant-delegate"]').exists()).toBe(true)
+        expect(wrapper.find('[data-testid="quadrant-eliminate"]').exists()).toBe(true)
+    })
+
+    it('renders four themed quadrant labels', () => {
+        const wrapper = mountComponent({ progressItems: populatedItems })
+
+        expect(wrapper.text()).toContain('Do Now')
+        expect(wrapper.text()).toContain('Schedule')
+        expect(wrapper.text()).toContain('Delegate')
+        expect(wrapper.text()).toContain('Eliminate')
     })
 
     it('places items in correct quadrants', () => {
         const wrapper = mountComponent({ progressItems: populatedItems })
 
-        const urgentQuadrant = wrapper.find('[data-testid="quadrant-important-urgent"]')
-        expect(urgentQuadrant.text()).toContain('Fix critical bug')
-
-        const notUrgentQuadrant = wrapper.find('[data-testid="quadrant-important-not-urgent"]')
-        expect(notUrgentQuadrant.text()).toContain('Plan architecture')
-
-        const notImportantUrgent = wrapper.find('[data-testid="quadrant-not-important-urgent"]')
-        expect(notImportantUrgent.text()).toContain('Reply to emails')
+        expect(wrapper.find('[data-testid="quadrant-do-now"]').text()).toContain('Fix critical bug')
+        expect(wrapper.find('[data-testid="quadrant-schedule"]').text()).toContain('Plan architecture')
+        expect(wrapper.find('[data-testid="quadrant-delegate"]').text()).toContain('Reply to emails')
     })
 
-    it('shows deadline when present', () => {
+    it('shows progress items as cards', () => {
         const wrapper = mountComponent({ progressItems: populatedItems })
-        const deadlineEl = wrapper.find('[data-testid="item-deadline"]')
-        expect(deadlineEl.exists()).toBe(true)
-        expect(deadlineEl.text()).toContain('Feb 18')
+
+        const items = wrapper.findAll('[data-testid="progress-item"]')
+        expect(items.length).toBe(3)
     })
 
-    it('shows overdue visual indicator for past deadlines', () => {
-        const overdueItems: DashboardProgressQuadrants = {
-            important: {
-                urgent: [
-                    {
-                        id: 'pi-overdue',
-                        title: 'Overdue task',
-                        importance: 'high',
-                        urgency: 'high',
-                        activeDays: ['mon'],
-                        deadline: '2020-01-01',
-                        status: 'active',
-                    },
-                ],
-                notUrgent: [],
-            },
-            notImportant: { urgent: [], notUrgent: [] },
-        }
-
-        const wrapper = mountComponent({ progressItems: overdueItems })
-        const deadlineEl = wrapper.find('[data-testid="item-deadline"]')
-        expect(deadlineEl.text()).toContain('Overdue')
-        expect(deadlineEl.classes()).toContain('text-red-600')
-    })
-
-    it('shows empty state when no items', () => {
+    it('shows empty state text in empty quadrants', () => {
         const wrapper = mountComponent({ progressItems: emptyItems })
 
-        expect(wrapper.find('[data-testid="matrix-empty"]').exists()).toBe(true)
-        expect(wrapper.text()).toContain('Your weekday items are taking a break')
-        expect(wrapper.text()).toContain('View all items in History')
-    })
-
-    it('collapses and expands on header click', async () => {
-        const wrapper = mountComponent({ progressItems: populatedItems })
-
-        expect(wrapper.find('[data-testid="matrix-content"]').exists()).toBe(true)
-
-        await wrapper.find('[data-testid="matrix-header"]').trigger('click')
-        expect(wrapper.find('[data-testid="matrix-content"]').exists()).toBe(false)
-
-        await wrapper.find('[data-testid="matrix-header"]').trigger('click')
-        expect(wrapper.find('[data-testid="matrix-content"]').exists()).toBe(true)
+        // Eliminate quadrant shows a calm message
+        expect(wrapper.find('[data-testid="quadrant-eliminate"]').text()).toContain('Clear any distractions')
     })
 })

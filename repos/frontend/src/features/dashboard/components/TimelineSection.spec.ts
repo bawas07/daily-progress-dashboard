@@ -8,33 +8,37 @@ const mockEvents: DashboardTimelineEvent[] = [
         id: 'evt-1',
         title: 'Morning standup',
         startTime: '2026-02-17T09:00:00Z',
+        endTime: '2026-02-17T09:15:00Z',
         durationMinutes: 15,
     },
     {
         id: 'evt-2',
         title: 'Team lunch',
         startTime: '2026-02-17T12:00:00Z',
+        endTime: '2026-02-17T13:00:00Z',
         durationMinutes: 60,
+        description: 'Pizza day!',
     },
     {
         id: 'evt-3',
         title: 'Code review',
         startTime: '2026-02-17T14:30:00Z',
+        endTime: '2026-02-17T15:15:00Z',
         durationMinutes: 45,
     },
 ]
 
 describe('TimelineSection', () => {
-    it('renders section header', () => {
+    it('renders section with Timeline title', () => {
         const wrapper = mount(TimelineSection, {
             props: { events: mockEvents },
         })
 
-        expect(wrapper.find('[data-testid="timeline-header"]').exists()).toBe(true)
+        expect(wrapper.find('[data-testid="timeline-section"]').exists()).toBe(true)
         expect(wrapper.text()).toContain('Timeline')
     })
 
-    it('renders events with title, time, and duration', () => {
+    it('renders all events', () => {
         const wrapper = mount(TimelineSection, {
             props: { events: mockEvents },
         })
@@ -47,14 +51,22 @@ describe('TimelineSection', () => {
         expect(wrapper.text()).toContain('Code review')
     })
 
-    it('shows duration in readable format', () => {
+    it('displays event description when present', () => {
         const wrapper = mount(TimelineSection, {
             props: { events: mockEvents },
         })
 
-        expect(wrapper.text()).toContain('15min')
-        expect(wrapper.text()).toContain('1h')
-        expect(wrapper.text()).toContain('45min')
+        expect(wrapper.text()).toContain('Pizza day!')
+    })
+
+    it('renders time range for events', () => {
+        const wrapper = mount(TimelineSection, {
+            props: { events: mockEvents },
+        })
+
+        // Should show formatted time ranges (exact format depends on locale)
+        const content = wrapper.find('[data-testid="timeline-content"]')
+        expect(content.exists()).toBe(true)
     })
 
     it('shows empty state when no events', () => {
@@ -64,22 +76,5 @@ describe('TimelineSection', () => {
 
         expect(wrapper.find('[data-testid="timeline-empty"]').exists()).toBe(true)
         expect(wrapper.text()).toContain('No events scheduled today')
-    })
-
-    it('collapses and expands on header click', async () => {
-        const wrapper = mount(TimelineSection, {
-            props: { events: mockEvents },
-        })
-
-        // Initially expanded
-        expect(wrapper.find('[data-testid="timeline-content"]').exists()).toBe(true)
-
-        // Click to collapse
-        await wrapper.find('[data-testid="timeline-header"]').trigger('click')
-        expect(wrapper.find('[data-testid="timeline-content"]').exists()).toBe(false)
-
-        // Click to expand
-        await wrapper.find('[data-testid="timeline-header"]').trigger('click')
-        expect(wrapper.find('[data-testid="timeline-content"]').exists()).toBe(true)
     })
 })

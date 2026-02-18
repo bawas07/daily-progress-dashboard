@@ -28,16 +28,16 @@ const mockCommitments: DashboardCommitment[] = [
 ]
 
 describe('CommitmentsSection', () => {
-    it('renders section header', () => {
+    it('renders section with Daily Commitments title', () => {
         const wrapper = mount(CommitmentsSection, {
             props: { commitments: mockCommitments },
         })
 
-        expect(wrapper.find('[data-testid="commitments-header"]').exists()).toBe(true)
-        expect(wrapper.text()).toContain('Commitments')
+        expect(wrapper.find('[data-testid="commitments-section"]').exists()).toBe(true)
+        expect(wrapper.text()).toContain('Daily Commitments')
     })
 
-    it('renders all commitments', () => {
+    it('renders all commitment cards', () => {
         const wrapper = mount(CommitmentsSection, {
             props: { commitments: mockCommitments },
         })
@@ -50,36 +50,23 @@ describe('CommitmentsSection', () => {
         expect(wrapper.text()).toContain('Meditate')
     })
 
-    it('shows checked checkbox for completed commitments', () => {
+    it('shows Completed label for completed commitments', () => {
         const wrapper = mount(CommitmentsSection, {
             props: { commitments: mockCommitments },
         })
 
-        const checkboxes = wrapper.findAll('[data-testid="commitment-checkbox"]')
-        const completedCheckbox = checkboxes[1] // "Read for 30 minutes" is completed
-        const incompleteCheckbox = checkboxes[0] // "Exercise" is not completed
-
-        expect((completedCheckbox.element as HTMLInputElement).checked).toBe(true)
-        expect((incompleteCheckbox.element as HTMLInputElement).checked).toBe(false)
+        // "Read for 30 minutes" is completedToday
+        expect(wrapper.text()).toContain('Completed')
     })
 
-    it('shows "Done today" badge for completed commitments', () => {
+    it('emits toggle event when action button is clicked', async () => {
         const wrapper = mount(CommitmentsSection, {
             props: { commitments: mockCommitments },
         })
 
-        const badges = wrapper.findAll('[data-testid="commitment-completed-badge"]')
-        expect(badges).toHaveLength(1)
-        expect(badges[0].text()).toContain('Done today')
-    })
-
-    it('emits toggle event on checkbox change', async () => {
-        const wrapper = mount(CommitmentsSection, {
-            props: { commitments: mockCommitments },
-        })
-
-        const firstCheckbox = wrapper.findAll('[data-testid="commitment-checkbox"]')[0]
-        await firstCheckbox.trigger('change')
+        // Find action buttons and click the first one
+        const buttons = wrapper.findAll('[data-testid="commitment-item"] button')
+        await buttons[0].trigger('click')
 
         expect(wrapper.emitted('toggle')).toBeTruthy()
         expect(wrapper.emitted('toggle')![0]).toEqual([mockCommitments[0]])
@@ -90,21 +77,15 @@ describe('CommitmentsSection', () => {
             props: { commitments: [] },
         })
 
-        expect(wrapper.find('[data-testid="commitments-header"]').exists()).toBe(false)
+        expect(wrapper.find('[data-testid="commitments-section"]').exists()).toBe(false)
         expect(wrapper.html()).toBe('<!--v-if-->')
     })
 
-    it('collapses and expands on header click', async () => {
+    it('renders Moment of Calm widget', () => {
         const wrapper = mount(CommitmentsSection, {
             props: { commitments: mockCommitments },
         })
 
-        expect(wrapper.find('[data-testid="commitments-content"]').exists()).toBe(true)
-
-        await wrapper.find('[data-testid="commitments-header"]').trigger('click')
-        expect(wrapper.find('[data-testid="commitments-content"]').exists()).toBe(false)
-
-        await wrapper.find('[data-testid="commitments-header"]').trigger('click')
-        expect(wrapper.find('[data-testid="commitments-content"]').exists()).toBe(true)
+        expect(wrapper.text()).toContain('Moment of Calm')
     })
 })

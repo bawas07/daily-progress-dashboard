@@ -1,17 +1,9 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { Card, Badge } from '@/components/ui'
 import type { DashboardTimelineEvent } from '../types/dashboard.types'
 
 defineProps<{
   events: DashboardTimelineEvent[]
 }>()
-
-const collapsed = ref(false)
-
-function toggleCollapse() {
-  collapsed.value = !collapsed.value
-}
 
 function formatTime(isoString: string): string {
   const date = new Date(isoString)
@@ -22,53 +14,53 @@ function formatTime(isoString: string): string {
   })
 }
 
-function formatDuration(minutes: number): string {
-  if (minutes < 60) return `${minutes}min`
-  const hours = Math.floor(minutes / 60)
-  const remaining = minutes % 60
-  if (remaining === 0) return `${hours}h`
-  return `${hours}h ${remaining}min`
+function formatTimeRange(startTime: string, endTime: string): string {
+  return `${formatTime(startTime)} — ${formatTime(endTime)}`
 }
 </script>
 
 <template>
-  <Card variant="default" padding="none">
-    <template #title>
-      <button
-        class="section-header w-full flex items-center justify-between px-4 py-3 hover:bg-neutral-50 transition-colors -mx-6 -mt-6 rounded-t-lg"
-        data-testid="timeline-header"
-        @click="toggleCollapse"
-      >
-        <h2 class="text-lg font-semibold text-neutral-800">Timeline</h2>
-        <span class="text-neutral-400 transition-transform" :class="{ 'rotate-180': !collapsed }">
-          ▼
-        </span>
-      </button>
-    </template>
-
-    <div v-if="!collapsed" class="section-content" data-testid="timeline-content">
-      <div v-if="events.length === 0" class="empty-state px-4 py-8 text-center text-neutral-500" data-testid="timeline-empty">
-        <p>No events scheduled today</p>
-      </div>
-
-      <ul v-else class="divide-y divide-neutral-100">
-        <li
-          v-for="event in events"
-          :key="event.id"
-          class="timeline-event flex items-center gap-4 px-4 py-3 hover:bg-neutral-50 transition-colors"
-          data-testid="timeline-event"
-        >
-          <div class="flex-shrink-0 text-sm font-medium text-primary-600 w-20">
-            {{ formatTime(event.startTime) }}
-          </div>
-          <div class="flex-1 min-w-0">
-            <p class="text-sm font-medium text-neutral-900 truncate">{{ event.title }}</p>
-          </div>
-          <Badge variant="info">
-            {{ formatDuration(event.durationMinutes) }}
-          </Badge>
-        </li>
-      </ul>
+  <section data-testid="timeline-section">
+    <div class="flex items-center gap-2 mb-6">
+      <span class="material-symbols-outlined text-sage">schedule</span>
+      <h3 class="text-xl font-bold text-slate-800 tracking-tight">Timeline</h3>
     </div>
-  </Card>
+
+    <div v-if="events.length === 0" class="text-center py-8 text-slate-500" data-testid="timeline-empty">
+      <p>No events scheduled today</p>
+    </div>
+
+    <div v-else class="space-y-0 pl-4 border-l-2 border-slate-200" data-testid="timeline-content">
+      <div
+        v-for="(event, index) in events"
+        :key="event.id"
+        class="relative pl-8"
+        :class="index < events.length - 1 ? 'pb-8' : ''"
+        data-testid="timeline-event"
+      >
+        <!-- Dot indicator -->
+        <div
+          class="absolute -left-[9px] top-1.5 h-4 w-4 rounded-full ring-4 ring-background-light"
+          :class="index === 0 ? 'bg-sage' : 'bg-slate-300'"
+        ></div>
+
+        <!-- Event card -->
+        <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm transition-all hover:shadow-md">
+          <span
+            class="text-xs font-bold uppercase tracking-widest"
+            :class="index === 0 ? 'text-sage' : 'text-slate-400'"
+          >
+            {{ formatTimeRange(event.startTime, event.endTime) }}
+          </span>
+          <h4 class="text-lg font-semibold text-slate-900 mt-1">{{ event.title }}</h4>
+          <p
+            v-if="event.description"
+            class="text-slate-500 text-sm mt-1"
+          >
+            {{ event.description }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
 </template>

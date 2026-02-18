@@ -4,7 +4,9 @@ interface TimelineEvent {
     id: string;
     title: string;
     startTime: Date;
+    endTime: Date;
     durationMinutes: number;
+    description?: string | null;
     recurrencePattern?: string | null;
 }
 
@@ -139,6 +141,29 @@ export class DashboardService {
     }
 
     /**
+     * Enrich timeline events with computed endTime
+     * @param events - Raw timeline events from the service
+     * @returns Events with computed endTime and description fields
+     */
+    private enrichTimelineEvents(events: any[]): TimelineEvent[] {
+        return events.map(event => {
+            const startTime = new Date(event.startTime);
+            const durationMinutes = event.durationMinutes || 30;
+            const endTime = new Date(startTime.getTime() + durationMinutes * 60 * 1000);
+
+            return {
+                id: event.id,
+                title: event.title,
+                startTime: event.startTime,
+                endTime,
+                durationMinutes,
+                description: event.description || null,
+                recurrencePattern: event.recurrencePattern || null,
+            };
+        });
+    }
+
+    /**
      * Get aggregated dashboard data for a specific date
      * @param userId - User ID
      * @param dateStr - Date string in YYYY-MM-DD format
@@ -159,6 +184,9 @@ export class DashboardService {
             this.commitmentService.getCommitments(userId),
         ]);
 
+        // Enrich timeline events with computed endTime
+        const enrichedEvents = this.enrichTimelineEvents(timelineEvents);
+
         // Extract progress items data
         const progressItems = progressItemsResult.data || [];
 
@@ -170,7 +198,7 @@ export class DashboardService {
 
         return {
             timeline: {
-                events: timelineEvents,
+                events: enrichedEvents,
             },
             progressItems: groupedProgressItems,
             commitments,

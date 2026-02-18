@@ -26,6 +26,7 @@ const router = createRouter({
         { path: '/', component: DashboardView },
         { path: '/login', component: { template: '<div>Login</div>' } },
         { path: '/history', component: { template: '<div>History</div>' } },
+        { path: '/settings', component: { template: '<div>Settings</div>' } },
     ],
 })
 
@@ -36,6 +37,7 @@ const mockDashboardData: DashboardData = {
                 id: 'evt-1',
                 title: 'Morning standup',
                 startTime: '2026-02-17T09:00:00Z',
+                endTime: '2026-02-17T09:15:00Z',
                 durationMinutes: 15,
             },
         ],
@@ -72,6 +74,9 @@ function mountComponent() {
     return mount(DashboardView, {
         global: {
             plugins: [createPinia(), router],
+            stubs: {
+                DailyFlowWidget: true,
+            },
         },
     })
 }
@@ -82,22 +87,13 @@ describe('DashboardView', () => {
         setActivePinia(createPinia())
     })
 
-    it('renders dashboard title', async () => {
+    it('renders page header with title and subtitle', async () => {
         vi.mocked(dashboardApi.getDashboard).mockResolvedValue(mockDashboardData)
         const wrapper = mountComponent()
         await flushPromises()
 
-        expect(wrapper.find('[data-testid="dashboard-title"]').text()).toBe('Dashboard')
-    })
-
-    it('renders formatted date', async () => {
-        vi.mocked(dashboardApi.getDashboard).mockResolvedValue(mockDashboardData)
-        const wrapper = mountComponent()
-        await flushPromises()
-
-        const dateText = wrapper.find('[data-testid="dashboard-date"]').text()
-        // Should contain current date parts
-        expect(dateText.length).toBeGreaterThan(0)
+        expect(wrapper.find('[data-testid="dashboard-header"]').exists()).toBe(true)
+        expect(wrapper.text()).toContain("Today's Awareness")
     })
 
     it('shows loading indicator while fetching', async () => {
@@ -109,7 +105,6 @@ describe('DashboardView', () => {
         )
 
         const wrapper = mountComponent()
-        // Wait for next tick so onMounted fires and loading state is set
         await wrapper.vm.$nextTick()
         await wrapper.vm.$nextTick()
 
@@ -121,15 +116,15 @@ describe('DashboardView', () => {
         expect(wrapper.find('[data-testid="dashboard-loading"]').exists()).toBe(false)
     })
 
-    it('renders all three sections after data loads', async () => {
+    it('renders dashboard sections (matrix, timeline, commitments) after data loads', async () => {
         vi.mocked(dashboardApi.getDashboard).mockResolvedValue(mockDashboardData)
         const wrapper = mountComponent()
         await flushPromises()
 
         expect(wrapper.find('[data-testid="dashboard-sections"]').exists()).toBe(true)
-        expect(wrapper.find('[data-testid="timeline-header"]').exists()).toBe(true)
-        expect(wrapper.find('[data-testid="matrix-header"]').exists()).toBe(true)
-        expect(wrapper.find('[data-testid="commitments-header"]').exists()).toBe(true)
+        expect(wrapper.find('[data-testid="matrix-section"]').exists()).toBe(true)
+        expect(wrapper.find('[data-testid="timeline-section"]').exists()).toBe(true)
+        expect(wrapper.find('[data-testid="commitments-section"]').exists()).toBe(true)
     })
 
     it('shows error state with retry button on API failure', async () => {
@@ -149,7 +144,6 @@ describe('DashboardView', () => {
         const wrapper = mountComponent()
         await flushPromises()
 
-        // Now mock success
         mockGetDashboard.mockResolvedValueOnce(mockDashboardData)
 
         await wrapper.find('[data-testid="retry-button"]').trigger('click')
@@ -159,19 +153,11 @@ describe('DashboardView', () => {
         expect(mockGetDashboard).toHaveBeenCalledTimes(2)
     })
 
-    it('has a refresh button', async () => {
+    it('has a Log Progress button', async () => {
         vi.mocked(dashboardApi.getDashboard).mockResolvedValue(mockDashboardData)
         const wrapper = mountComponent()
         await flushPromises()
 
-        expect(wrapper.find('[data-testid="refresh-button"]').exists()).toBe(true)
-    })
-
-    it('has a logout button', async () => {
-        vi.mocked(dashboardApi.getDashboard).mockResolvedValue(mockDashboardData)
-        const wrapper = mountComponent()
-        await flushPromises()
-
-        expect(wrapper.find('[data-testid="logout-button"]').exists()).toBe(true)
+        expect(wrapper.find('[data-testid="log-progress-button"]').exists()).toBe(true)
     })
 })

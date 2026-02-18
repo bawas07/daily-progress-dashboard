@@ -83,6 +83,52 @@ describe('DashboardService', () => {
             expect(result.commitments).toHaveLength(1);
         });
 
+        it('should compute endTime from startTime + durationMinutes on timeline events', async () => {
+            const userId = 'user-123';
+            const date = '2024-01-15';
+
+            const event = {
+                id: 'event-1',
+                title: 'Deep Work Session',
+                startTime: new Date('2024-01-15T09:00:00Z'),
+                durationMinutes: 120,
+                description: 'Focusing on architecture',
+                recurrencePattern: null,
+            };
+
+            mockTimelineEventService.getEventsForDate.mockResolvedValue([event]);
+            mockProgressItemService.getAll.mockResolvedValue({
+                data: [],
+                pagination: { total: 0, perPage: 10, currentPage: 1, lastPage: 1 },
+            });
+            mockCommitmentService.getCommitments.mockResolvedValue([]);
+
+            const result = await dashboardService.getDashboardData(userId, date);
+
+            expect(result.timeline.events).toHaveLength(1);
+            const enrichedEvent = result.timeline.events[0];
+            expect(enrichedEvent.endTime).toEqual(new Date('2024-01-15T11:00:00Z'));
+            expect(enrichedEvent.durationMinutes).toBe(120);
+            expect(enrichedEvent.description).toBe('Focusing on architecture');
+        });
+
+        it('should set description to null when event has no description', async () => {
+            const userId = 'user-123';
+            const date = '2024-01-15';
+
+            mockTimelineEventService.getEventsForDate.mockResolvedValue([mockTimelineEvent]);
+            mockProgressItemService.getAll.mockResolvedValue({
+                data: [],
+                pagination: { total: 0, perPage: 10, currentPage: 1, lastPage: 1 },
+            });
+            mockCommitmentService.getCommitments.mockResolvedValue([]);
+
+            const result = await dashboardService.getDashboardData(userId, date);
+
+            expect(result.timeline.events[0].description).toBeNull();
+            expect(result.timeline.events[0]).toHaveProperty('endTime');
+        });
+
         it('should filter progress items by activeDays matching current day (Monday)', async () => {
             const userId = 'user-123';
             const date = '2024-01-15'; // Monday
