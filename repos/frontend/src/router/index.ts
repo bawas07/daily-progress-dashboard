@@ -10,6 +10,7 @@ const SettingsView = () => import('@/features/settings/views/SettingsView.vue')
 const ProgressItemsView = () => import('@/features/progress/views/ProgressItemsView.vue')
 const ProgressItemDetailView = () => import('@/features/progress/components/ProgressItemDetail.vue')
 const CommitmentsView = () => import('@/features/commitments/views/CommitmentsView.vue')
+const CommitmentDetailView = () => import('@/features/commitments/components/CommitmentDetail.vue')
 const TimelineView = () => import('@/features/timeline/views/TimelineView.vue')
 const TestComponents = () => import('@/components/ui/TestComponents.vue')
 
@@ -69,6 +70,13 @@ const routes: RouteRecordRaw[] = [
     name: 'commitments',
     component: CommitmentsView,
     meta: { requiresAuth: true },
+  },
+  {
+    path: '/commitments/:commitmentId',
+    name: 'commitment-detail',
+    component: CommitmentDetailView,
+    meta: { requiresAuth: true },
+    props: true,
   },
   {
     path: '/timeline',
