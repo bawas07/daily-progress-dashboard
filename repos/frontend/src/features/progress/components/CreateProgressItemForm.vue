@@ -68,12 +68,19 @@ async function handleSubmit() {
   submitting.value = true
 
   try {
+    // Convert date to ISO datetime if provided
+    let deadlineValue: string | undefined = undefined
+    if (deadline.value) {
+      // Set to end of day (23:59:59) in user's timezone
+      deadlineValue = new Date(deadline.value + 'T23:59:59').toISOString()
+    }
+
     const dto: CreateProgressItemDto = {
       title: title.value.trim(),
       importance: importance.value,
       urgency: urgency.value,
       activeDays: activeDays.value,
-      deadline: deadline.value || undefined,
+      deadline: deadlineValue,
     }
 
     emit('success', dto)

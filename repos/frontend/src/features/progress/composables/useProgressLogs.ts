@@ -17,8 +17,10 @@ export function useProgressLogs() {
     loading.value = true
     error.value = null
     try {
-      logs.value = await progressItemsApi.getLogs(itemId)
-      return logs.value
+      const response = await progressItemsApi.getLogs(itemId)
+      // Paginated response: { data: { data: logs, pagination }, message, code }
+      logs.value = response
+      return response
     } catch (err: any) {
       error.value = err.response?.data?.message || 'Failed to fetch progress logs'
       throw err

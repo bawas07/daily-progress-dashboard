@@ -51,11 +51,15 @@ export interface CreateProgressLogDto {
 }
 
 export interface ProgressItemListResponse {
-  data: ProgressItem[]
-  meta: {
-    total: number
-    perPage: number
-    currentPage: number
-    lastPage: number
+  data: {
+    data: ProgressItem[]
+    pagination: {
+      total: number
+      perPage: number
+      currentPage: number
+      lastPage: number
+    }
   }
+  message: string
+  code: string
 }

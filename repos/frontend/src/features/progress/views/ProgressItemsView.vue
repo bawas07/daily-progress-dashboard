@@ -7,30 +7,25 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { Button, Card, Spinner, Badge } from '@/components/ui'
+import AppHeader from '@/shared/components/AppHeader.vue'
 import CreateProgressItemForm from '../components/CreateProgressItemForm.vue'
 import { useProgressItems } from '../composables/useProgressItems'
-import type { ProgressItem, CreateProgressItemDto } from '../types/progress.types'
+import type { CreateProgressItemDto, ProgressItem } from '../types/progress.types'
 
 const router = useRouter()
 
 // State
 const showCreateForm = ref(false)
-const items = ref<ProgressItem[]>([])
-const loading = ref(true)
-const error = ref<string | null>(null)
 
 // Composable
-const { items: progressItems, fetchItems, createItem } = useProgressItems()
+const { items, fetchItems, createItem, loading, error } = useProgressItems()
 
 // Load items on mount
 onMounted(async () => {
   try {
     await fetchItems({ limit: 100 })
-    items.value = progressItems.value || []
   } catch (err: any) {
-    error.value = err.response?.data?.message || 'Failed to load progress items'
-  } finally {
-    loading.value = false
+    console.error('Failed to load items:', err)
   }
 })
 
@@ -67,14 +62,17 @@ function formatDate(dateStr: string): string {
 
 // Actions
 async function handleCreate(dto: CreateProgressItemDto) {
+  console.log('Creating progress item with DTO:', dto)
   try {
-    await createItem(dto)
+    const newItem = await createItem(dto)
+    console.log('Created item successfully:', newItem)
     showCreateForm.value = false
-    // Reload items
+    // Reload items to get fresh data
     await fetchItems({ limit: 100 })
-    items.value = progressItems.value || []
   } catch (err: any) {
-    error.value = err.response?.data?.message || 'Failed to create item'
+    console.error('Failed to create item:', err)
+    console.error('Error response:', err.response)
+    // Keep form open on error
   }
 }
 
@@ -92,25 +90,39 @@ function cancelCreate() {
 </script>
 
 <template>
-  <div class="progress-items-view max-w-6xl mx-auto">
-    <!-- Header -->
-    <div class="flex items-center justify-between mb-6">
-      <div>
-        <h1 class="text-3xl font-bold text-neutral-900">Progress Items</h1>
-        <p class="text-neutral-600 mt-1">Track your long-term progress with the Eisenhower Matrix</p>
-      </div>
-      <Button
-        v-if="!showCreateForm"
-        variant="primary"
-        @click="createNewItem"
-      >
-        + Create Item
-      </Button>
-    </div>
+  <div class="progress-items-view min-h-screen bg-gray-50">
+    <AppHeader
+      title="Progress Items"
+      subtitle="Track your long-term progress with the Eisenhower Matrix"
+    >
+      <template #actions>
+        <Button
+          v-if="!showCreateForm"
+          variant="primary"
+          @click="createNewItem"
+        >
+          + Create Item
+        </Button>
+      </template>
+    </AppHeader>
 
-    <!-- Error Display -->
-    <div v-if="error" class="mb-4 text-red-600" role="alert">
-      {{ error }}
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+      <!-- Error Display -->
+    <div v-if="error" class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg" role="alert">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+          </svg>
+        </div>
+        <div class="ml-3">
+          <h3 class="text-sm font-medium text-red-800">Error</h3>
+          <div class="mt-2 text-sm text-red-700">
+            {{ error }}
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Loading State -->
@@ -167,23 +179,24 @@ function cancelCreate() {
       </Card>
     </div>
 
-    <!-- Empty State -->
-    <Card
-      v-else-if="!loading"
-      variant="default"
-      padding="lg"
-      class="text-center"
-    >
-      <div class="py-8">
-        <h3 class="text-xl font-semibold text-neutral-900 mb-2">No progress items yet</h3>
-        <p class="text-neutral-600 mb-6">
-          Create your first progress item to start tracking your long-term goals.
-        </p>
-        <Button variant="primary" @click="createNewItem">
-          + Create Your First Item
-        </Button>
-      </div>
-    </Card>
+      <!-- Empty State -->
+      <Card
+        v-else-if="!loading && !showCreateForm"
+        variant="default"
+        padding="lg"
+        class="text-center"
+      >
+        <div class="py-8">
+          <h3 class="text-xl font-semibold text-neutral-900 mb-2">No progress items yet</h3>
+          <p class="text-neutral-600 mb-6">
+            Create your first progress item to start tracking your long-term goals.
+          </p>
+          <Button variant="primary" @click="createNewItem">
+            + Create Your First Item
+          </Button>
+        </div>
+      </Card>
+    </main>
   </div>
 </template>
 

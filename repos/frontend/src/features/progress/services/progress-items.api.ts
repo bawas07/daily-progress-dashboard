@@ -27,6 +27,7 @@ export const progressItemsApi = {
    */
   async getById(id: string): Promise<ProgressItem> {
     const response = await apiClient.get(`${API_BASE}/${id}`)
+    // Single item responses use createSuccessResponse: { data, message, code }
     return response.data.data
   },
 
@@ -34,7 +35,10 @@ export const progressItemsApi = {
    * Create a new progress item
    */
   async create(dto: CreateProgressItemDto): Promise<ProgressItem> {
+    console.log('API Client: POST', API_BASE, dto)
     const response = await apiClient.post(API_BASE, dto)
+    console.log('API Client: Response', response.data)
+    // Single item responses use createSuccessResponse: { data, message, code }
     return response.data.data
   },
 
@@ -43,6 +47,7 @@ export const progressItemsApi = {
    */
   async update(id: string, dto: UpdateProgressItemDto): Promise<ProgressItem> {
     const response = await apiClient.put(`${API_BASE}/${id}`, dto)
+    // Single item responses use createSuccessResponse: { data, message, code }
     return response.data.data
   },
 
@@ -58,6 +63,7 @@ export const progressItemsApi = {
    */
   async logProgress(id: string, dto: CreateProgressLogDto): Promise<ProgressLog> {
     const response = await apiClient.post(`${API_BASE}/${id}/logs`, dto)
+    // Single item responses use createSuccessResponse: { data, message, code }
     return response.data.data
   },
 
@@ -66,6 +72,7 @@ export const progressItemsApi = {
    */
   async getLogs(id: string): Promise<ProgressLog[]> {
     const response = await apiClient.get(`${API_BASE}/${id}/logs`)
-    return response.data.data
+    // Paginated responses: { data: { data: items, pagination }, message, code }
+    return response.data.data.data
   },
 }

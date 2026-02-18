@@ -24,8 +24,9 @@ export function useProgressItems() {
     error.value = null
     try {
       const response = await progressItemsApi.getAll(params)
-      items.value = response.data
-      pagination.value = response.meta
+      // Response structure: { data: { data: items, pagination }, message, code }
+      items.value = response.data.data
+      pagination.value = response.data.pagination
     } catch (err: any) {
       error.value = err.response?.data?.message || 'Failed to fetch progress items'
       throw err
@@ -41,11 +42,15 @@ export function useProgressItems() {
     loading.value = true
     error.value = null
     try {
+      console.log('API call: Creating progress item', dto)
       const newItem = await progressItemsApi.create(dto)
+      console.log('API response: Item created', newItem)
       items.value.unshift(newItem)
       return newItem
     } catch (err: any) {
-      error.value = err.response?.data?.message || 'Failed to create progress item'
+      console.error('API error:', err)
+      console.error('Error response data:', err.response?.data)
+      error.value = err.response?.data?.message || err.message || 'Failed to create progress item'
       throw err
     } finally {
       loading.value = false

@@ -53,7 +53,8 @@ watch(() => props.item, (newItem) => {
   importance.value = newItem.importance
   urgency.value = newItem.urgency
   activeDays.value = [...newItem.activeDays]
-  deadline.value = newItem.deadline || ''
+  // Convert ISO datetime to date string for input
+  deadline.value = newItem.deadline ? newItem.deadline.split('T')[0] : ''
 }, { deep: true })
 
 function toggleDay(day: DayOfWeek) {
@@ -83,12 +84,19 @@ async function handleSubmit() {
   submitting.value = true
 
   try {
+    // Convert date to ISO datetime if provided
+    let deadlineValue: string | null = null
+    if (deadline.value) {
+      // Set to end of day (23:59:59) in user's timezone
+      deadlineValue = new Date(deadline.value + 'T23:59:59').toISOString()
+    }
+
     const dto: UpdateProgressItemDto = {
       title: title.value.trim(),
       importance: importance.value,
       urgency: urgency.value,
       activeDays: activeDays.value,
-      deadline: deadline.value || null,
+      deadline: deadlineValue,
     }
 
     emit('success', dto)
