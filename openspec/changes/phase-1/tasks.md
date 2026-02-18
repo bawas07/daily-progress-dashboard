@@ -114,14 +114,14 @@
   - [x] Implement item detail with metadata and progress history
   - [x] Write E2E tests for complete progress item lifecycle
 
-- [ ] 3.3 Commitments Frontend (TDD)
-  - [ ] Write failing tests for CreateCommitmentForm component
-  - [ ] Implement form with title and scheduled days selection
-  - [ ] Implement day selection presets (weekdays, daily, 3x/week)
-  - [ ] Write failing tests for LogCommitmentModal component
-  - [ ] Implement modal for commitment completion with notes
-  - [ ] Write failing tests for CommitmentDetail component
-  - [ ] Implement detail view with scheduled days and completion history
+- [x] 3.3 Commitments Frontend (TDD)
+  - [x] Write failing tests for CreateCommitmentForm component
+  - [x] Implement form with title and scheduled days selection
+  - [x] Implement day selection presets (weekdays, daily, 3x/week)
+  - [x] Write failing tests for LogCommitmentModal component
+  - [x] Implement modal for commitment completion with notes
+  - [x] Write failing tests for CommitmentDetail component
+  - [x] Implement detail view with scheduled days and completion history
   - [ ] Write E2E tests for commitment lifecycle
 
 - [ ] 3.4 Timeline Events Frontend (TDD)
