@@ -8,6 +8,7 @@ const DashboardView = () => import('@/features/dashboard/views/DashboardView.vue
 const HistoryView = () => import('@/features/history/views/HistoryView.vue')
 const SettingsView = () => import('@/features/settings/views/SettingsView.vue')
 const ProgressItemsView = () => import('@/features/progress/views/ProgressItemsView.vue')
+const ProgressItemDetailView = () => import('@/features/progress/components/ProgressItemDetail.vue')
 const CommitmentsView = () => import('@/features/commitments/views/CommitmentsView.vue')
 const TimelineView = () => import('@/features/timeline/views/TimelineView.vue')
 const TestComponents = () => import('@/components/ui/TestComponents.vue')
@@ -48,6 +49,20 @@ const routes: RouteRecordRaw[] = [
     name: 'progress',
     component: ProgressItemsView,
     meta: { requiresAuth: true },
+  },
+  {
+    path: '/progress/:id',
+    name: 'progress-item-detail',
+    component: ProgressItemDetailView,
+    meta: { requiresAuth: true },
+    props: true,
+  },
+  {
+    path: '/progress/:id/edit',
+    name: 'progress-item-edit',
+    component: ProgressItemsView, // Will be updated to EditProgressItemForm
+    meta: { requiresAuth: true },
+    props: true,
   },
   {
     path: '/commitments',

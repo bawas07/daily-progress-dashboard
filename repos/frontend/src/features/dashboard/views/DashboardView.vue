@@ -51,6 +51,40 @@ onMounted(() => {
           </p>
         </div>
         <div class="flex items-center gap-3">
+          <!-- Navigation Links -->
+          <nav class="hidden md:flex items-center gap-2">
+            <router-link
+              to="/progress"
+              class="px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 rounded-md hover:bg-gray-100 transition-colors"
+            >
+              Progress Items
+            </router-link>
+            <router-link
+              to="/commitments"
+              class="px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 rounded-md hover:bg-gray-100 transition-colors"
+            >
+              Commitments
+            </router-link>
+            <router-link
+              to="/timeline"
+              class="px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 rounded-md hover:bg-gray-100 transition-colors"
+            >
+              Timeline
+            </router-link>
+            <router-link
+              to="/history"
+              class="px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 rounded-md hover:bg-gray-100 transition-colors"
+            >
+              History
+            </router-link>
+            <router-link
+              to="/settings"
+              class="px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 rounded-md hover:bg-gray-100 transition-colors"
+            >
+              Settings
+            </router-link>
+          </nav>
+
           <Button
             v-if="!isToday"
             data-testid="today-button"

@@ -104,15 +104,15 @@
   - [x] Implement dashboard data fetching and state management
   - [ ] Write E2E tests for complete dashboard functionality
 
-- [ ] 3.2 Progress Items Frontend (TDD)
-  - [ ] Write failing tests for CreateProgressItemForm component
-  - [ ] Implement form with title, importance, urgency, and active days
-  - [ ] Write failing tests for EditProgressItemForm component
-  - [ ] Write failing tests for LogProgressModal component
-  - [ ] Implement modal with note input and character counter
-  - [ ] Write failing tests for ProgressItemDetail component
-  - [ ] Implement item detail with metadata and progress history
-  - [ ] Write E2E tests for complete progress item lifecycle
+- [x] 3.2 Progress Items Frontend (TDD)
+  - [x] Write failing tests for CreateProgressItemForm component
+  - [x] Implement form with title, importance, urgency, and active days
+  - [x] Write failing tests for EditProgressItemForm component
+  - [x] Write failing tests for LogProgressModal component
+  - [x] Implement modal with note input and character counter
+  - [x] Write failing tests for ProgressItemDetail component
+  - [x] Implement item detail with metadata and progress history
+  - [x] Write E2E tests for complete progress item lifecycle
 
 - [ ] 3.3 Commitments Frontend (TDD)
   - [ ] Write failing tests for CreateCommitmentForm component

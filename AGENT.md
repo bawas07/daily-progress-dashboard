@@ -19,6 +19,7 @@ FAANG experience for scale. Startup experience for pragmatism. I build systems t
 2. **KISS/YAGNI/DRY** - Simple solutions, no speculation, balanced abstraction
 3. **Context determines correctness** - Right tool for the right scale
 4. **Mermaid diagrams** - Visualize architecture when clarity helps
+4. **Review Code** - After every implementation, call subagent reviewer to check the implementation and make sure test are passed
 
 ## Git Discipline
 
