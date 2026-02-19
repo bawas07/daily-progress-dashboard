@@ -124,13 +124,13 @@
   - [x] Implement detail view with scheduled days and completion history
   - [ ] Write E2E tests for commitment lifecycle
 
-- [ ] 3.4 Timeline Events Frontend (TDD)
-  - [ ] Write failing tests for CreateTimelineEventForm component
-  - [ ] Implement form with title, date/time, duration, and recurrence
-  - [ ] Implement dynamic form fields based on recurrence type
-  - [ ] Write failing tests for TimelineEvent component
-  - [ ] Implement event card with time, duration, and title
-  - [ ] Write E2E tests for timeline event management
+- [x] 3.4 Timeline Events Frontend (TDD)
+  - [x] Write failing tests for CreateTimelineEventForm component
+  - [x] Implement form with title, date/time, duration, and recurrence
+  - [x] Implement dynamic form fields based on recurrence type
+  - [x] Write failing tests for TimelineEvent component
+  - [x] Implement event card with time, duration, and title
+  - [x] Write E2E tests for timeline event management
 
 - [ ] 3.5 History and Analytics Frontend (TDD)
   - [ ] Write failing tests for HistoryTabs component
