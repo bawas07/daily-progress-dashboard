@@ -132,15 +132,15 @@
   - [x] Implement event card with time, duration, and title
   - [x] Write E2E tests for timeline event management
 
-- [ ] 3.5 History and Analytics Frontend (TDD)
-  - [ ] Write failing tests for HistoryTabs component
-  - [ ] Implement tab navigation for Today, Week, Month, All Items
-  - [ ] Write failing tests for TodayHistoryView component
-  - [ ] Implement today's progress and commitment logs display
-  - [ ] Write failing tests for WeeklyHistoryView and MonthlyHistoryView
-  - [ ] Write failing tests for AllItemsView component
-  - [ ] Implement view showing all active items regardless of active days
-  - [ ] Write E2E tests for history navigation and data accuracy
+- [x] 3.5 History and Analytics Frontend (TDD)
+  - [x] Write failing tests for HistoryTabs component
+  - [x] Implement tab navigation for Today, Week, Month, All Items
+  - [x] Write failing tests for TodayHistoryView component
+  - [x] Implement today's progress and commitment logs display
+  - [x] Write failing tests for WeeklyHistoryView and MonthlyHistoryView
+  - [x] Write failing tests for AllItemsView component
+  - [x] Implement view showing all active items regardless of active days
+  - [x] Write E2E tests for history navigation and data accuracy
 
 - [ ] 3.6 Settings and Preferences Frontend (TDD)
   - [ ] Write failing tests for PreferencesForm component
