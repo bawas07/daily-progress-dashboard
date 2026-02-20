@@ -58,7 +58,7 @@ describe('useUserPreferencesStore', () => {
       expect(store.theme).toBe('auto')
       expect(store.timezone).toBe('UTC')
       expect(store.defaultActiveDays).toEqual(['mon', 'tue', 'wed', 'thu', 'fri'])
-      expect(store.enableNotifications).toBe(false)
+      expect(store.enableNotifications).toBe(true)
       expect(store.isInitialized).toBe(false)
     })
   })

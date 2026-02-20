@@ -49,9 +49,9 @@
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-neutral-200;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background-light text-slate-900 font-display;
   }
 }

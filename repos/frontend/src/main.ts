@@ -2,8 +2,9 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
-import { useAuthStore } from '@/shared/stores'
-import './styles/main.css'
+import { useAuthStore, useUserPreferencesStore } from '@/shared/stores'
+import { applyTheme } from '@/composables/useTheme'
+import './index.css'
 
 // Register service worker for PWA
 import { registerSW } from 'virtual:pwa-register'
@@ -41,12 +42,18 @@ if (import.meta.env.PROD) {
 }
 
 const app = createApp(App)
+const pinia = createPinia()
 
-app.use(createPinia())
+app.use(pinia)
 app.use(router)
 
 // Initialize auth store once at app startup
 const authStore = useAuthStore()
 authStore.initialize()
+
+// Restore preferences + theme before initial render
+const preferencesStore = useUserPreferencesStore()
+preferencesStore.initializeFromStorage()
+applyTheme(preferencesStore.theme)
 
 app.mount('#app')

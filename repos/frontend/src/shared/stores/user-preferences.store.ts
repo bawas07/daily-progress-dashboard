@@ -26,7 +26,7 @@ export const useUserPreferencesStore = defineStore('userPreferences', () => {
   )
   
   const enableNotifications = computed(
-    () => preferences.value?.enableNotifications ?? false
+    () => preferences.value?.enableNotifications ?? true
   )
 
   const isInitialized = computed(() => preferences.value !== null)

@@ -4,6 +4,7 @@ export const API_ENDPOINTS = {
     LOGIN: '/auth/login',
     ME: '/auth/me',
     REVOKE: '/auth/revoke',
+    CHANGE_PASSWORD: '/auth/change-password',
   },
   USER: {
     PREFERENCES: '/user/preferences',
