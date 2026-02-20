@@ -43,8 +43,8 @@ function getActionLabel(commitment: DashboardCommitment): string {
       <h3 class="text-xl font-bold text-slate-800 tracking-tight">Daily Commitments</h3>
     </div>
 
-    <div class="space-y-4" data-testid="commitments-content">
-      <div
+    <ul class="space-y-4" data-testid="commitments-content" aria-label="Commitments list">
+      <li
         v-for="commitment in commitments"
         :key="commitment.id"
         class="group relative flex flex-col gap-3 p-4 bg-white rounded-2xl border border-slate-100 transition-all hover:border-primary-500/20"
@@ -79,19 +79,21 @@ function getActionLabel(commitment: DashboardCommitment): string {
             {{ getStatusText(commitment) }}
           </span>
           <button
+            type="button"
             class="text-xs font-bold transition-colors"
             :class="commitment.completedToday
               ? 'text-primary-600 hover:underline'
               : commitment.completionCount > 0
                 ? 'bg-primary-500/10 text-primary-600 px-3 py-1 rounded-lg hover:bg-primary-500/20'
                 : 'text-slate-400 hover:text-slate-600'"
+            :aria-label="`${getActionLabel(commitment)} for ${commitment.title}`"
             @click="handleToggle(commitment)"
           >
             {{ getActionLabel(commitment) }}
           </button>
         </div>
-      </div>
-    </div>
+      </li>
+    </ul>
 
     <!-- Moment of Calm -->
     <div class="mt-8">

@@ -35,7 +35,12 @@ describe('CreateTimelineEventForm', () => {
     const emitted = wrapper.emitted('success')
     expect(emitted).toBeTruthy()
 
-    const payload = emitted?.[0]?.[0]
+    const payload = emitted?.[0]?.[0] as {
+      title: string
+      durationMinutes: number
+      recurrencePattern?: string
+      startTime: string
+    }
     expect(payload.title).toBe('Daily planning')
     expect(payload.durationMinutes).toBe(45)
     expect(payload.recurrencePattern).toBeUndefined()
@@ -55,7 +60,10 @@ describe('CreateTimelineEventForm', () => {
 
     await wrapper.find('form').trigger('submit.prevent')
 
-    const payload = wrapper.emitted('success')?.[0]?.[0]
+    const payload = wrapper.emitted('success')?.[0]?.[0] as {
+      recurrencePattern?: string
+      daysOfWeek?: string[]
+    }
     expect(payload.recurrencePattern).toBe('weekly')
     expect(payload.daysOfWeek).toContain('mon')
     expect(payload.daysOfWeek).toContain('tue')

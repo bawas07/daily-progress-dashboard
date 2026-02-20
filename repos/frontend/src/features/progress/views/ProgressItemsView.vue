@@ -7,7 +7,6 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { Button, Card, Spinner, Badge } from '@/components/ui'
-import AppHeader from '@/shared/components/AppHeader.vue'
 import CreateProgressItemForm from '../components/CreateProgressItemForm.vue'
 import { useProgressItems } from '../composables/useProgressItems'
 import type { CreateProgressItemDto, ProgressItem } from '../types/progress.types'
@@ -90,24 +89,24 @@ function cancelCreate() {
 </script>
 
 <template>
-  <div class="progress-items-view min-h-screen bg-gray-50">
-    <AppHeader
-      title="Progress Items"
-      subtitle="Track your long-term progress with the Eisenhower Matrix"
-    >
-      <template #actions>
-        <Button
-          v-if="!showCreateForm"
-          variant="primary"
-          @click="createNewItem"
-        >
-          + Create Item
-        </Button>
-      </template>
-    </AppHeader>
+  <section class="progress-items-view space-y-6" aria-labelledby="progress-items-title">
+    <header class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <h1 id="progress-items-title" class="text-3xl font-black tracking-tight text-slate-900">Progress Items</h1>
+        <p class="text-sm text-slate-600">Track your long-term progress with the Eisenhower Matrix.</p>
+      </div>
+      <Button
+        v-if="!showCreateForm"
+        variant="primary"
+        data-testid="progress-create-button"
+        @click="createNewItem"
+      >
+        + Create Item
+      </Button>
+    </header>
 
     <!-- Main Content -->
-    <main class="max-w-6xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+    <main>
       <!-- Error Display -->
     <div v-if="error" class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg" role="alert">
       <div class="flex">
@@ -197,6 +196,5 @@ function cancelCreate() {
         </div>
       </Card>
     </main>
-  </div>
+  </section>
 </template>
-

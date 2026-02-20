@@ -52,11 +52,17 @@ const remainingChars = () => MAX_NOTE_LENGTH - note.value.length
 </script>
 
 <template>
-  <div v-if="localOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+  <div
+    v-if="localOpen"
+    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
+    role="dialog"
+    aria-modal="true"
+    data-testid="commitment-log-modal"
+  >
     <div class="bg-white rounded-lg shadow-xl max-w-lg w-full">
       <div class="flex items-center justify-between p-6 border-b">
-        <h2 class="text-lg font-semibold">Log Activity: {{ commitmentTitle }}</h2>
-        <button @click="handleClose" class="text-gray-400 hover:text-gray-600">✕</button>
+        <h2 class="text-lg font-semibold" data-testid="commitment-log-title">Log Activity: {{ commitmentTitle }}</h2>
+        <button @click="handleClose" class="text-gray-400 hover:text-gray-600" aria-label="Close log activity modal">✕</button>
       </div>
 
       <form @submit.prevent="handleSubmit" class="p-6 space-y-4">
@@ -69,6 +75,7 @@ const remainingChars = () => MAX_NOTE_LENGTH - note.value.length
             maxlength="1000"
             class="w-full px-3 py-2 border border-gray-300 rounded-md"
             placeholder="Add notes about this activity..."
+            data-testid="commitment-log-note"
           />
         </div>
 
@@ -78,6 +85,7 @@ const remainingChars = () => MAX_NOTE_LENGTH - note.value.length
             @click="handleClose"
             :disabled="submitting"
             class="px-4 py-2 border border-gray-300 rounded-md"
+            data-testid="commitment-log-cancel"
           >
             Cancel
           </button>
@@ -85,6 +93,7 @@ const remainingChars = () => MAX_NOTE_LENGTH - note.value.length
             type="submit"
             :disabled="submitting || note.length > MAX_NOTE_LENGTH"
             class="px-4 py-2 bg-blue-600 text-white rounded-md disabled:opacity-50"
+            data-testid="commitment-log-submit"
           >
             {{ submitting ? 'Logging...' : 'Log Activity' }}
           </button>

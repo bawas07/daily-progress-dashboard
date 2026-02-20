@@ -6,9 +6,9 @@ describe('RegisterForm', () => {
     it('renders register form properly', () => {
         const wrapper = mount(RegisterForm)
         expect(wrapper.find('form').exists()).toBe(true)
-        expect(wrapper.find('input[id="name"]').exists()).toBe(true)
-        expect(wrapper.find('input[id="email"]').exists()).toBe(true)
-        expect(wrapper.find('input[id="password"]').exists()).toBe(true)
+        expect(wrapper.find('input[type="text"]').exists()).toBe(true)
+        expect(wrapper.find('input[type="email"]').exists()).toBe(true)
+        expect(wrapper.find('input[type="password"]').exists()).toBe(true)
         expect(wrapper.find('button[type="submit"]').exists()).toBe(true)
     })
 
@@ -21,33 +21,33 @@ describe('RegisterForm', () => {
         expect(wrapper.text()).toContain('Name is required')
 
         // Fill name, check email
-        await wrapper.find('input[id="name"]').setValue('John Doe')
+        await wrapper.find('input[type="text"]').setValue('John Doe')
         await form.trigger('submit.prevent')
         expect(wrapper.text()).toContain('Email is required')
 
         // Fill email, check password
-        await wrapper.find('input[id="email"]').setValue('john@example.com')
+        await wrapper.find('input[type="email"]').setValue('john@example.com')
         await form.trigger('submit.prevent')
         expect(wrapper.text()).toContain('Password is required')
 
         // Check password complexity
         // Check password complexity - length
-        await wrapper.find('input[id="password"]').setValue('123')
+        await wrapper.find('input[type="password"]').setValue('123')
         await form.trigger('submit.prevent')
         expect(wrapper.text()).toContain('Password must be at least 8 characters')
 
         // Check password complexity - lowercase
-        await wrapper.find('input[id="password"]').setValue('12345678')
+        await wrapper.find('input[type="password"]').setValue('12345678')
         await form.trigger('submit.prevent')
         expect(wrapper.text()).toContain('Password must contain at least one lowercase letter')
 
         // Check password complexity - uppercase
-        await wrapper.find('input[id="password"]').setValue('password')
+        await wrapper.find('input[type="password"]').setValue('password')
         await form.trigger('submit.prevent')
         expect(wrapper.text()).toContain('Password must contain at least one uppercase letter')
 
         // Check password complexity - number
-        await wrapper.find('input[id="password"]').setValue('Password')
+        await wrapper.find('input[type="password"]').setValue('Password')
         await form.trigger('submit.prevent')
         expect(wrapper.text()).toContain('Password must contain at least one number')
     })
@@ -55,9 +55,9 @@ describe('RegisterForm', () => {
     it('emits submit event with valid data', async () => {
         const wrapper = mount(RegisterForm)
 
-        await wrapper.find('input[id="name"]').setValue('John Doe')
-        await wrapper.find('input[id="email"]').setValue('john@example.com')
-        await wrapper.find('input[id="password"]').setValue('Password123!')
+        await wrapper.find('input[type="text"]').setValue('John Doe')
+        await wrapper.find('input[type="email"]').setValue('john@example.com')
+        await wrapper.find('input[type="password"]').setValue('Password123!')
 
         await wrapper.find('form').trigger('submit.prevent')
 
@@ -86,6 +86,6 @@ describe('RegisterForm', () => {
         })
         const button = wrapper.find('button[type="submit"]')
         expect(button.attributes('disabled')).toBeDefined()
-        expect(button.text()).toContain('Loading')
+        expect(button.text()).toContain('Creating account')
     })
 })

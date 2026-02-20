@@ -160,7 +160,7 @@ async function handleDelete() {
     </Button>
   </div>
 
-  <div v-else-if="commitment" class="max-w-4xl mx-auto space-y-6">
+  <div v-else-if="commitment" class="max-w-4xl mx-auto space-y-6" data-testid="commitment-detail-view">
     <!-- Header Card -->
     <Card variant="default" padding="md">
       <div class="flex items-start justify-between">
@@ -181,7 +181,7 @@ async function handleDelete() {
           </div>
         </div>
         <div class="flex items-center gap-2">
-          <Button variant="primary" size="sm" @click="showLogModal = true">
+          <Button variant="primary" size="sm" data-testid="commitment-log-button" @click="showLogModal = true">
             Log Activity
           </Button>
           <Button
@@ -195,6 +195,7 @@ async function handleDelete() {
             variant="ghost"
             size="sm"
             class="text-red-600 hover:text-red-700"
+            data-testid="commitment-delete-button"
             @click="handleDelete"
           >
             Delete

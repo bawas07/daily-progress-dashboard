@@ -47,17 +47,17 @@ const quadrants = computed(() => [
 </script>
 
 <template>
-  <section data-testid="matrix-section">
+  <section data-testid="matrix-section" aria-labelledby="matrix-heading">
     <div class="flex items-center justify-between mb-6">
       <div class="flex items-center gap-2">
         <span class="material-symbols-outlined text-primary-600">grid_view</span>
-        <h3 class="text-xl font-bold text-slate-800 tracking-tight">Eisenhower Matrix</h3>
+        <h3 id="matrix-heading" class="text-xl font-bold text-slate-800 tracking-tight">Eisenhower Matrix</h3>
       </div>
       <span class="text-xs text-slate-400 bg-slate-100 px-3 py-1 rounded-full uppercase font-bold tracking-tighter">Priority View</span>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4" data-testid="matrix-grid">
-      <div
+    <ul class="grid grid-cols-1 md:grid-cols-2 gap-4" data-testid="matrix-grid">
+      <li
         v-for="quadrant in quadrants"
         :key="quadrant.key"
         class="p-5 rounded-2xl border"
@@ -90,7 +90,7 @@ const quadrants = computed(() => [
           Clear any distractions here to maintain emotional calm.
         </p>
         <p v-else class="text-xs text-slate-400 italic">No items</p>
-      </div>
-    </div>
+      </li>
+    </ul>
   </section>
 </template>

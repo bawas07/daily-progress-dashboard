@@ -20,18 +20,18 @@ function formatTimeRange(startTime: string, endTime: string): string {
 </script>
 
 <template>
-  <section data-testid="timeline-section">
+  <section data-testid="timeline-section" aria-labelledby="timeline-heading">
     <div class="flex items-center gap-2 mb-6">
       <span class="material-symbols-outlined text-sage">schedule</span>
-      <h3 class="text-xl font-bold text-slate-800 tracking-tight">Timeline</h3>
+      <h3 id="timeline-heading" class="text-xl font-bold text-slate-800 tracking-tight">Timeline</h3>
     </div>
 
     <div v-if="events.length === 0" class="text-center py-8 text-slate-500" data-testid="timeline-empty">
       <p>No events scheduled today</p>
     </div>
 
-    <div v-else class="space-y-0 pl-4 border-l-2 border-slate-200" data-testid="timeline-content">
-      <div
+    <ol v-else class="space-y-0 pl-4 border-l-2 border-slate-200" data-testid="timeline-content">
+      <li
         v-for="(event, index) in events"
         :key="event.id"
         class="relative pl-8"
@@ -60,7 +60,7 @@ function formatTimeRange(startTime: string, endTime: string): string {
             {{ event.description }}
           </p>
         </div>
-      </div>
-    </div>
+      </li>
+    </ol>
   </section>
 </template>

@@ -65,9 +65,36 @@ function handleBackdropClick(event: MouseEvent) {
 }
 
 // Handle ESC key
-function handleEscKey(event: KeyboardEvent) {
+function handleKeydown(event: KeyboardEvent) {
   if (props.closeOnEsc && event.key === 'Escape') {
     close()
+    return
+  }
+
+  if (event.key !== 'Tab' || !modalContent.value) return
+
+  const focusable = modalContent.value.querySelectorAll<HTMLElement>(
+    'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+  )
+
+  if (focusable.length === 0) {
+    event.preventDefault()
+    return
+  }
+
+  const first = focusable[0]
+  const last = focusable[focusable.length - 1]
+  const active = document.activeElement as HTMLElement | null
+
+  if (event.shiftKey && active === first) {
+    event.preventDefault()
+    last.focus()
+    return
+  }
+
+  if (!event.shiftKey && active === last) {
+    event.preventDefault()
+    first.focus()
   }
 }
 
@@ -82,7 +109,10 @@ watch(isOpen, async (newValue) => {
     
     // Wait for DOM to update then focus modal content
     await nextTick()
-    modalContent.value?.focus()
+    const firstFocusable = modalContent.value?.querySelector<HTMLElement>(
+      'button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])'
+    )
+    firstFocusable?.focus() || modalContent.value?.focus()
   } else {
     // Restore body scroll
     document.body.style.overflow = ''
@@ -116,7 +146,7 @@ onUnmounted(() => {
         :aria-labelledby="title ? 'modal-title' : undefined"
         tabindex="-1"
         @click="handleBackdropClick"
-        @keydown="handleEscKey"
+        @keydown="handleKeydown"
       >
         <Transition
           enter-active-class="transition-all duration-300"

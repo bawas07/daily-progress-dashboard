@@ -62,6 +62,6 @@ describe('LoginForm', () => {
         })
         const button = wrapper.find('button[type="submit"]')
         expect(button.attributes('disabled')).toBeDefined()
-        expect(button.text()).toContain('Loading')
+        expect(button.text()).toContain('Signing in')
     })
 })

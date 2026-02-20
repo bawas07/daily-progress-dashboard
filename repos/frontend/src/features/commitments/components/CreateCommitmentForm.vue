@@ -128,6 +128,7 @@ function handleCancel() {
             type="text"
             placeholder="What routine do you want to track?"
             :error="Boolean(validationError && !title)"
+            data-testid="commitment-title-input"
           />
         </template>
       </FormField>
@@ -139,6 +140,7 @@ function handleCancel() {
             v-for="preset in presets"
             :key="preset.label"
             type="button"
+            :data-testid="`commitment-preset-${preset.label.toLowerCase().replace('/', '-')}`"
             class="px-3 py-1.5 text-xs rounded-md border transition-colors bg-neutral-100 text-neutral-700 border-neutral-300 hover:bg-primary-50 hover:border-primary-500 hover:text-primary-700"
             @click="applyPreset(preset)"
           >
@@ -154,6 +156,8 @@ function handleCancel() {
             v-for="day in dayOptions"
             :key="day.value"
             type="button"
+            :data-testid="`commitment-day-${day.value}`"
+            :aria-pressed="isDaySelected(day.value)"
             :class="[
               'px-3 py-1.5 text-sm rounded-md border transition-colors',
               isDaySelected(day.value)
@@ -173,6 +177,7 @@ function handleCancel() {
           type="submit"
           variant="primary"
           :disabled="submitting || !isValid"
+          data-testid="commitment-form-submit"
         >
           {{ submitting ? 'Saving...' : (isEditing ? 'Save Changes' : 'Create Commitment') }}
         </Button>
@@ -181,6 +186,7 @@ function handleCancel() {
           variant="secondary"
           @click="handleCancel"
           :disabled="submitting"
+          data-testid="commitment-form-cancel"
         >
           Cancel
         </Button>

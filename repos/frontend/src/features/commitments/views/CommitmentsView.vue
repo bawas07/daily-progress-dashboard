@@ -7,7 +7,6 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { Button, Card, Spinner, Badge } from '@/components/ui'
-import AppHeader from '@/shared/components/AppHeader.vue'
 import CreateCommitmentForm from '../components/CreateCommitmentForm.vue'
 import { useCommitments } from '../composables/useCommitments'
 import type { CreateCommitmentDto, Commitment } from '../types/commitment.types'
@@ -86,24 +85,24 @@ function cancelCreate() {
 </script>
 
 <template>
-  <div class="commitments-view min-h-screen bg-gray-50">
-    <AppHeader
-      title="Commitments"
-      subtitle="Track your recurring routines and habits"
-    >
-      <template #actions>
-        <Button
-          v-if="!showCreateForm"
-          variant="primary"
-          @click="createNewCommitment"
-        >
-          + Create Commitment
-        </Button>
-      </template>
-    </AppHeader>
+  <section class="commitments-view space-y-6" aria-labelledby="commitments-title">
+    <header class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <h1 id="commitments-title" class="text-3xl font-black tracking-tight text-slate-900">Commitments</h1>
+        <p class="text-sm text-slate-600">Track your recurring routines and habits.</p>
+      </div>
+      <Button
+        v-if="!showCreateForm"
+        variant="primary"
+        data-testid="commitment-create-button"
+        @click="createNewCommitment"
+      >
+        + Create Commitment
+      </Button>
+    </header>
 
     <!-- Main Content -->
-    <main class="max-w-6xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+    <main>
       <!-- Error Display -->
       <div v-if="error" class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg" role="alert">
         <div class="flex">
@@ -135,13 +134,18 @@ function cancelCreate() {
       </div>
 
       <!-- Commitments List -->
-      <div v-else-if="commitments.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div
+        v-else-if="commitments.length > 0"
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+        data-testid="commitments-list"
+      >
         <Card
           v-for="commitment in commitments"
           :key="commitment.id"
           variant="default"
           padding="md"
           class="cursor-pointer hover:shadow-lg transition-shadow"
+          data-testid="commitment-card"
           @click="viewCommitment(commitment.id)"
         >
           <div class="flex items-start justify-between mb-3">
@@ -180,6 +184,7 @@ function cancelCreate() {
         variant="default"
         padding="lg"
         class="text-center"
+        data-testid="commitments-empty-state"
       >
         <div class="py-8">
           <h3 class="text-xl font-semibold text-neutral-900 mb-2">No commitments yet</h3>
@@ -192,5 +197,5 @@ function cancelCreate() {
         </div>
       </Card>
     </main>
-  </div>
+  </section>
 </template>

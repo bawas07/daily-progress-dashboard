@@ -16,6 +16,7 @@ const mockDashboardData: DashboardData = {
                 id: 'evt-1',
                 title: 'Morning standup',
                 startTime: '2026-02-17T09:00:00Z',
+                endTime: '2026-02-17T09:15:00Z',
                 durationMinutes: 15,
             },
         ],
