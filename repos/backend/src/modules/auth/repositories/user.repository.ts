@@ -84,6 +84,23 @@ export class UserRepository {
     }
   }
 
+  async updatePasswordHash(userId: string, passwordHash: string): Promise<User> {
+    try {
+      return await this.prisma.user.update({
+        where: { id: userId },
+        data: { passwordHash },
+      });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        throw new Error(`Database error updating password hash for user ${userId}: ${error.message} [${error.code}]`);
+      }
+      if (error instanceof Error) {
+        throw new Error(`Database error updating password hash for user ${userId}: ${error.message}`);
+      }
+      throw error;
+    }
+  }
+
   async delete(userId: string): Promise<User> {
     try {
       return await this.prisma.user.delete({

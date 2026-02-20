@@ -190,7 +190,55 @@ export class AuthController {
     };
   }
 
+  /**
+   * Change password handler
+   * POST /api/auth/change-password (protected)
+   */
+  changePassword() {
+    return async (c: Context): Promise<Response> => {
+      try {
+        const userId = c.get('userId');
+        if (!userId) {
+          return c.json(
+            createErrorResponse('E004', 'Unauthorized'),
+            401
+          );
+        }
+
+        let body = c.get('validatedData') as { currentPassword: string; newPassword: string };
+        if (!body) {
+          body = await c.req.json();
+        }
+
+        await this.authService.changePassword(userId, body.currentPassword, body.newPassword);
+
+        return c.json(
+          createSuccessResponse('S001', 'Password updated successfully', {}),
+          200
+        );
+      } catch (error) {
+        if (error instanceof Error && error.message === 'Current password is incorrect') {
+          return c.json(
+            createErrorResponse('E001', 'Current password is incorrect'),
+            401
+          );
+        }
+        if (error instanceof Error && error.message.startsWith('Password validation failed:')) {
+          return c.json(
+            createErrorResponse('E002', error.message.replace('Password validation failed: ', '')),
+            400
+          );
+        }
+        if (error instanceof Error && error.message === 'User not found') {
+          return c.json(
+            createErrorResponse('E004', 'User not found'),
+            404
+          );
+        }
+        throw error;
+      }
+    };
+  }
 }
 
 // Export singleton instance for convenience
-

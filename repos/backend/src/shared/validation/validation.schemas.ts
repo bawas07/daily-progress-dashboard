@@ -151,6 +151,12 @@ export const refreshTokenSchema = z.object({
   refreshToken: z.string().min(1, 'Refresh token is required'),
 });
 
+// Change password schema
+export const changePasswordSchema = z.object({
+  currentPassword: z.string().min(1, 'Current password is required'),
+  newPassword: passwordSchema,
+});
+
 // Dashboard query schema
 export const dashboardQuerySchema = z.object({
   date: z.string().datetime().optional(),

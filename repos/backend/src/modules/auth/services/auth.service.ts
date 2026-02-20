@@ -277,4 +277,27 @@ export class AuthService {
       },
     };
   }
+
+  /**
+   * Change user password
+   */
+  async changePassword(userId: string, currentPassword: string, newPassword: string): Promise<void> {
+    const user = await this.userRepository.findById(userId);
+    if (!user) {
+      throw new AuthenticationError('User not found');
+    }
+
+    const currentPasswordValid = await this.passwordService.compare(currentPassword, user.passwordHash);
+    if (!currentPasswordValid) {
+      throw new AuthenticationError('Current password is incorrect');
+    }
+
+    const validation = this.passwordService.validateStrength(newPassword);
+    if (!validation.valid) {
+      throw new ValidationError(`Password validation failed: ${validation.errors.join(', ')}`);
+    }
+
+    const newPasswordHash = await this.passwordService.hash(newPassword);
+    await this.userRepository.updatePasswordHash(userId, newPasswordHash);
+  }
 }
