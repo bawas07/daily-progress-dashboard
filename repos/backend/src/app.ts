@@ -9,6 +9,8 @@ import { container } from './shared/registry';
 import { registerRoutes } from './routes';
 import { errorHandler } from './shared/middleware/error.middleware';
 
+const startedAt = Date.now();
+
 export function createApp() {
   const app = new Hono<{ Bindings: typeof env }>();
 
@@ -45,6 +47,25 @@ export function createApp() {
         environment: env.NODE_ENV,
       }
     ));
+  });
+
+  // Prometheus-style metrics endpoint for lightweight monitoring
+  app.get('/metrics', (c) => {
+    const uptimeSeconds = Math.floor((Date.now() - startedAt) / 1000);
+    const rssBytes = typeof process !== 'undefined' ? process.memoryUsage().rss : 0;
+
+    const payload = [
+      '# HELP daily_progress_uptime_seconds Process uptime in seconds',
+      '# TYPE daily_progress_uptime_seconds gauge',
+      `daily_progress_uptime_seconds ${uptimeSeconds}`,
+      '# HELP daily_progress_memory_rss_bytes Resident set size memory usage in bytes',
+      '# TYPE daily_progress_memory_rss_bytes gauge',
+      `daily_progress_memory_rss_bytes ${rssBytes}`,
+    ].join('\n');
+
+    return c.text(payload, 200, {
+      'Content-Type': 'text/plain; version=0.0.4; charset=utf-8',
+    });
   });
 
   // Placeholder root endpoint

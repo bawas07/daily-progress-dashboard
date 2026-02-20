@@ -1,0 +1,15 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'daily-progress-backend'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['backend:3000']
+
+  - job_name: 'reverse-proxy-health'
+    metrics_path: /healthz
+    static_configs:
+      - targets: ['reverse-proxy:80']
+

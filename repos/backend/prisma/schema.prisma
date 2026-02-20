@@ -23,6 +23,7 @@ model User {
   refreshTokens  RefreshToken[]
 
   @@map("users")
+  @@index([lastLogin], map: "users_last_login_idx")
 }
 
 model UserPreferences {
@@ -56,6 +57,10 @@ model ProgressItem {
   logs ProgressLog[]
 
   @@map("progress_items")
+  @@index([userId], map: "progress_items_user_id_idx")
+  @@index([userId, status], map: "progress_items_user_status_idx")
+  @@index([updatedAt], map: "progress_items_updated_at_idx")
+  @@index([deadline], map: "progress_items_deadline_idx")
 }
 
 model ProgressLog {
@@ -69,6 +74,8 @@ model ProgressLog {
   progressItem ProgressItem @relation(fields: [progressItemId], references: [id], onDelete: Cascade)
 
   @@map("progress_logs")
+  @@index([progressItemId], map: "progress_logs_progress_item_id_idx")
+  @@index([loggedAt], map: "progress_logs_logged_at_idx")
 }
 
 model Commitment {
@@ -83,6 +90,7 @@ model Commitment {
   logs CommitmentLog[]
 
   @@map("commitments")
+  @@index([userId], map: "commitments_user_id_idx")
 }
 
 model CommitmentLog {
@@ -95,6 +103,8 @@ model CommitmentLog {
   commitment Commitment @relation(fields: [commitmentId], references: [id], onDelete: Cascade)
 
   @@map("commitment_logs")
+  @@index([commitmentId], map: "commitment_logs_commitment_id_idx")
+  @@index([completedAt], map: "commitment_logs_completed_at_idx")
 }
 
 model TimelineEvent {
@@ -112,6 +122,9 @@ model TimelineEvent {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("timeline_events")
+  @@index([userId], map: "timeline_events_user_id_idx")
+  @@index([userId, status], map: "timeline_events_user_status_idx")
+  @@index([startTime], map: "timeline_events_start_time_idx")
 }
 
 model RefreshToken {
@@ -124,4 +137,6 @@ model RefreshToken {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("refresh_tokens")
+  @@index([userId], map: "refresh_tokens_user_id_idx")
+  @@index([expiresAt], map: "refresh_tokens_expires_at_idx")
 }
